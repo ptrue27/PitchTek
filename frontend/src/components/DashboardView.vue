@@ -22,6 +22,8 @@
           <v-row>
             <BatterStats />
           </v-row>
+
+            <UploadStats></UploadStats>
         </v-col>
 
       </v-row>
@@ -34,9 +36,10 @@
   import PitcherStats from "@/components/PitcherStats.vue"
   import MatchupStats from "@/components/MatchupStats.vue"
   import BatterStats from "@/components/BatterStats.vue"
+  import UploadStats from "@/components/UploadStats.vue" 
   export default {
     components: {
-      RecordGame, ViewPredictions, PitcherStats, MatchupStats, BatterStats
+      RecordGame, ViewPredictions, PitcherStats, MatchupStats, BatterStats, UploadStats
     }
   }
 </script>
