@@ -9,6 +9,7 @@
           <v-row>
             <ViewPredictions />
           </v-row>
+            <UploadButton></UploadButton>
         </v-col>
   
         <!-- Right Column -->
@@ -34,9 +35,10 @@
   import PitcherStats from "@/components/PitcherStats.vue"
   import MatchupStats from "@/components/MatchupStats.vue"
   import BatterStats from "@/components/BatterStats.vue"
+  import UploadButton from "@/components/UploadButton.vue"
   export default {
     components: {
-      RecordGame, ViewPredictions, PitcherStats, MatchupStats, BatterStats
+      RecordGame, ViewPredictions, PitcherStats, MatchupStats, BatterStats, UploadButton
     }
   }
 </script>
