@@ -3,7 +3,7 @@
       <v-card>
         <v-row>
           <!--Game state column-->
-          <v-col cols="9">
+          <v-col cols="8">
             <v-container fluid>
                 <v-row class="text-center">
                     <!--Input home team-->
@@ -189,20 +189,20 @@
           </v-col>
   
           <!--Input pitch column-->
-        <v-col cols="3" class="d-flex flex-column justify-center">
+          <v-col cols="4" class="d-flex flex-column justify-center pr-5">
               <!--Input pitch dialog-->
-                <div>
-                    <v-dialog width="500">
-                        <template v-slot:activator="{ props }">
-                            <v-img
-                                src="@/assets/strikezone.png"
-                                v-bind="props"
-                                class="input-pitch-v-dialog"
-                            ></v-img>
-                        </template>
+              <div>
+                  <v-dialog width="500">
+                      <template v-slot:activator="{ props }">
+                          <v-img
+                              src="@/assets/strikezone.png"
+                              v-bind="props"
+                              class="input-pitch-v-dialog mx-auto"
+                          ></v-img>
+                      </template>
 
-                        <template v-slot:default="{ isActive }">
-                            <v-card title="Input Pitch">
+                      <template v-slot:default="{ isActive }">
+                          <v-card title="Input Pitch">
                             <v-card-text>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                             </v-card-text>
@@ -214,27 +214,26 @@
                                     @click="isActive.value = false"
                                 ></v-btn>
                             </v-card-actions>
-                            </v-card>
-                        </template>
-                    </v-dialog>
-                </div>
+                          </v-card>
+                      </template>
+                  </v-dialog>
+              </div>
 
               <!--Predict button-->
-              <v-btn 
-                class="predict-btn"
-                @click="handlePredictButtonClick"
+              <v-btn
+                  prepend-icon="mdi-arrow-right-bold-box"
+                  class="predict-btn my-font mx-auto"
+                  @click="handlePredictButtonClick"
               >Predict</v-btn>   
 
-            <!--Start/stop game record button-->
-                <v-btn 
-                    prepend-icon="mdi-record-circle"
-                    @click="handleGameButtonClick"
-                    class="start-stop-game-btn"
-                >
-                    Start<br>Game
-                </v-btn>
+              <!--Start/stop game record button-->
+              <v-btn 
+                  prepend-icon="mdi-record-circle"
+                  @click="handleGameButtonClick"
+                  class="start-stop-game-btn my-font mx-auto"
+              >Start<br>Game</v-btn>
 
-        </v-col>
+          </v-col>
         </v-row>
       </v-card>
     </v-container>
@@ -268,17 +267,18 @@
   }
   .input-pitch-v-dialog {
     width: 95%;
+    max-height: 175px;
     margin-top: 2px;
     margin-bottom: 5px;
   }
   .start-stop-game-btn {
     width: 75%;
-    min-width: 80px;
+    min-width: 90px;
     margin-top: 5px;
     margin-bottom: 5px;
   }
   .predict-btn {
-    min-width: 80px;
+    min-width: 90px;
     width: 75%;
     margin-top: 5px;
     margin-bottom: 2px;

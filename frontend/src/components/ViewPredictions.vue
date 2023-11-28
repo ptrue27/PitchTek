@@ -17,7 +17,20 @@
                     <v-col cols="7">
                         <!--Title-->
                         <v-row>
-                            <v-col class="my-title">{{item.name}}</v-col>
+                            <v-col class="my-title">Confidence: {{item.confidence}}%</v-col>
+                        </v-row>
+                        <!--Pitch info-->
+                        <v-row>
+                            <v-col>Pitch type:</v-col>
+                            <v-col>{{item.type}}</v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col>Speed:</v-col>
+                            <v-col>{{item.speed}} mph</v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col>Location:</v-col>
+                            <v-col>({{item.locationX}}, {{item.locationY}})</v-col>
                         </v-row>
                     </v-col>    
                 </v-row>
@@ -41,6 +54,7 @@
             </v-btn>
         </v-container>
       </v-card-actions>
+
     </v-card>
   </v-container>
 </template>
@@ -63,9 +77,9 @@ export default {
   data() {
     return {
       data: [
-        { id: 1, name: 'Predicted Pitch: 1', description: 'Description for Row 1' },
-        { id: 2, name: 'Predicted Pitch: 2', description: 'Description for Row 2' },
-        { id: 3, name: 'Predicted Pitch: 3', description: 'Description for Row 3' }
+        {id: 1, confidence: '43.23', type: 'Fastball', speed: 98.21, locationX: 55, locationY: 79},
+        {id: 2, confidence: '25.90', type: 'Curveball', speed: 86.64, locationX: 12, locationY: 24},
+        { id: 3, confidence: '7.04', type: 'Slider', speed: 82.27, locationX: 78, locationY: 38},
       ],
       itemsPerPage: 1,
       currentPage: 0,
@@ -94,5 +108,3 @@ export default {
   },
 };
 </script>
-
-
