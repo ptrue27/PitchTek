@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container class="dashboard-container">
       <v-row>
         <!-- Left Column -->
         <v-col cols="6">
@@ -27,6 +27,12 @@
       </v-row>
     </v-container>
 </template>
+
+<style>
+.dashboard-container {
+  background-color: rgb(98, 189, 98);
+}
+</style>
 
 <script>
   import RecordGame from "@/components/RecordGame.vue"
