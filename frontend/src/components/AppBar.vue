@@ -1,5 +1,4 @@
 <template>
-  <v-card>
     <v-app-bar>
       <v-img
         src="@/assets/baseball-icon.png"
@@ -37,5 +36,4 @@
       </v-btn>
 
     </v-app-bar>
-  </v-card>
 </template>

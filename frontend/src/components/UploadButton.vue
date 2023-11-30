@@ -21,9 +21,8 @@ export default {
             this.selectedFile = event.target.files[0];
         },
         uploadFile() {
-            const formData = new FormData();
-            formData.append('file', this.selectedFile);
-
+            //const formData = new FormData();
+            //formData.append('file', this.selectedFile);
             //axios.post('http://localhost:5000/upload', formData, {
             //    headers: {
             //        'Content-Type': 'multipart/form-data'

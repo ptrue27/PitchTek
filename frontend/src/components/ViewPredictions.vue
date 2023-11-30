@@ -9,7 +9,7 @@
             <v-list-item-content>
                 <v-row>
                     <v-col cols="5">
-                        <v-img fluid
+                        <v-img
                             src="@/assets/strikezone.jpg"
                         ></v-img>
                     </v-col>
