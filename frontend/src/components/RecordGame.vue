@@ -9,21 +9,17 @@
                     <!--Input home team-->
                     <v-col cols="6">
                       <v-select
-                        :items="homeTeams"
-                        density="compact"
-                        label="Home Team"
-                        class="my-label"
-                        variant="filled"
+                        :items="homeTeams" v-model="homeTeam"
+                        variant="filled" density="compact"
+                        label="Home Team" class="my-label"
                       ></v-select>
                     </v-col>
                     <!--Input away team-->
                     <v-col cols="6">
                         <v-select
-                          :items="awayTeams"
-                          density="compact"
-                          label="Away Team"
-                          class="my-label"
-                          variant="filled"
+                          :items="awayTeams" v-model="awayTeam"
+                          variant="filled" density="compact"
+                          label="Away Team" class="my-label"
                         ></v-select>
                     </v-col>
                 </v-row>
@@ -76,8 +72,8 @@
                           <v-col class="text-center">
                             <v-chip
                               @click="toggleBase(2)"
-                              class="square-chip"
-                              size="small"
+                              :style="{backgroundColor: baseColors[1]}" 
+                              class="square-chip" size="small"
                             >2</v-chip>
                           </v-col>
                         </v-row>
@@ -88,15 +84,15 @@
                           <v-col class="text-center">
                             <v-chip
                               @click="toggleBase(3)"
-                              class="square-chip"
-                              size="small"
+                              :style="{backgroundColor: baseColors[2]}" 
+                              class="square-chip" size="small"
                             >3</v-chip>
                           </v-col>
                           <v-col class="text-center">
                             <v-chip
                               @click="toggleBase(1)"
-                              class="square-chip"
-                              size="small"
+                              :style="{backgroundColor: baseColors[0]}" 
+                              class="square-chip" size="small"
                             >1</v-chip>
                           </v-col>
                           <v-spacer></v-spacer>
@@ -125,9 +121,8 @@
                         </v-col>
                         <v-col>
                           <v-select
-                            :items="innings"
-                            density="compact"
-                            class="inning-v-select"
+                            :items="innings" v-model="inning"
+                            density="compact" class="inning-v-select"
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -138,31 +133,25 @@
                           <p class="out-ball-strike-text"> Outs</p>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setOuts(0)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              0
-                          </v-chip>
+                          <v-chip 
+                            @click="setOuts(0)" 
+                            :style="{backgroundColor: outColors[0]}" 
+                            size="x-small" class="mr-1"
+                          >0</v-chip>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setOuts(1)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              1
-                          </v-chip>
+                          <v-chip 
+                            @click="setOuts(1)" 
+                            :style="{backgroundColor: outColors[1]}"
+                            size="x-small" class="mr-1"
+                          >1</v-chip>
                         </v-col>
                         <v-col cols="2">
                           <v-chip
                               @click="setOuts(2)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              2
-                          </v-chip>
+                              :style="{backgroundColor: outColors[2]}"
+                              size="x-small" class="mr-1"
+                          >2</v-chip>
                         </v-col>
                       </v-row>
                       
@@ -172,40 +161,32 @@
                           <p class="out-ball-strike-text">Balls</p>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setBalls(0)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              0
-                          </v-chip>
+                          <v-chip 
+                            @click="setBalls(0)" 
+                            :style="{backgroundColor: ballColors[0]}"
+                            size="x-small" class="mr-1"
+                          >0</v-chip>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setBalls(1)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              1
-                          </v-chip>
+                          <v-chip 
+                            @click="setBalls(1)" 
+                            :style="{backgroundColor: ballColors[1]}"
+                            size="x-small" class="mr-1"
+                          >1</v-chip>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setBalls(2)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              2
-                          </v-chip>
+                          <v-chip 
+                            @click="setBalls(2)" 
+                            :style="{backgroundColor: ballColors[2]}"
+                            size="x-small" class="mr-1"
+                          >2</v-chip>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setBalls(3)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              3
-                          </v-chip>
+                          <v-chip 
+                            @click="setBalls(3)" 
+                            :style="{backgroundColor: ballColors[3]}"
+                            size="x-small" class="mr-1"
+                          >3</v-chip>
                         </v-col>
                       </v-row>
 
@@ -215,31 +196,25 @@
                           <p class="out-ball-strike-text">Strikes</p>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setStrikes(0)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              0
-                          </v-chip>
+                          <v-chip 
+                            @click="setStrikes(0)" 
+                            :style="{backgroundColor: strikeColors[0]}"
+                            size="x-small" class="mr-1"
+                          >0</v-chip>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setStrikes(1)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              1
-                          </v-chip>
+                          <v-chip 
+                            @click="setStrikes(1)" 
+                            :style="{backgroundColor: strikeColors[1]}"
+                            size="x-small" class="mr-1"
+                          >1</v-chip>
                         </v-col>
                         <v-col cols="2">
-                          <v-chip
-                              @click="setStrikes(2)" 
-                              size="x-small" 
-                              class="mr-1"
-                          >
-                              2
-                          </v-chip>
+                          <v-chip 
+                            @click="setStrikes(2)" 
+                            :style="{backgroundColor: strikeColors[2]}"
+                            size="x-small" class="mr-1"
+                          >2</v-chip>
                         </v-col>
                       </v-row>
 
@@ -287,7 +262,7 @@
               >Predict</v-btn>   
 
               <!--Start/stop game record button-->
-              <v-btn 
+              <v-btn style="background-color: ;"
                   prepend-icon="mdi-record-circle"
                   @click="handleGameButtonClick"
                   class="start-stop-game-btn my-font mx-auto"
@@ -364,14 +339,27 @@
   export default {
     data() {
       return {
+        unsetColor: 'white',
+        setBaseColor: 'cadetblue',
+        set0Color: 'gray',
+        setColor: 'cadetblue',
+
         homeTeams: ['Team1', 'Team2', 'Team3'],
         awayTeams: ['Team1', 'Team2', 'Team3'],
+        homeTeam: null,
+        awayTeam: null,
         homeScore: '0',
         awayScore: '0',
+        onBase: [false, false, false],
+        baseColors: [this.unsetColor, this.unsetColor, this.unsetColor],
         innings: ['1∧', '1∨','2∧', '2∨', '3∧', '3∨', '4∧', '4∨','5∧', '5∨', '6∧', '6∨', '7∧', '7∨','8∧', '8∨', '9∧', '9∨', '10∧', '10∨','11∧', '11∨', '12∧', '12∨', '13∧', '13∨','14∧', '14∨', '15∧', '15∨', '16∧', '16∨','17∧', '17∨', '18∧', '18∨', '19∧', '19∨','20∧', '20∨', '21∧', '21∨', '22∧', '22∨','23∧', '23∨', '24∧', '24∨', '25∧', '25∨','26∧', '26∨', '27∧', '27∨', '28∧', '28∨','29∧', '29∨', '30∧', '30∨', '31∧', '31∨','32∧', '32∨', '33∧', '33∨', '34∧', '34∨','35∧', '35∨', '36∧', '36∨', '37∧', '37∨','38∧', '38∨', '39∧', '39∨', '40∧', '40∨','41∧', '41∨', '42∧', '42∨', '43∧', '43∨','44∧', '44∨', '45∧', '45∨', '46∧', '46∨', '47∧', '47∨','48∧', '48∨', '49∧', '49∨', '50∧', '50∨'],
+        inning: '1∧',
         outNumber: 0,
+        outColors: [this.set0Color, this.unsetColor, this.unsetColor],
         ballNumber: 0,
+        ballColors: [this.set0Color, this.unsetColor, this.unsetColor, this.unsetColor],
         strikeNumber: 0,
+        strikeColors: [this.set0Color, this.unsetColor, this.unsetColor],
       };
     },
     methods: {
@@ -385,15 +373,56 @@
       },
       toggleBase(baseNumber) {
         console.log('Toggled base:', baseNumber);
+        const i = baseNumber - 1;
+        this.onBase[i] = !this.onBase[i];
+        if(!this.onBase[i]){
+          this.baseColors[i] = this.unsetColor;
+        }
+        else{
+          this.baseColors[i] = this.setBaseColor;
+        }
       },
       setOuts(outNumber) {
+        this.outNumber = outNumber;
         console.log('Changed number of outs:', outNumber)
+        if(outNumber == 0) {
+          this.outColors = [this.set0Color, this.unsetColor, this.unsetColor];
+        }
+        if(outNumber == 1) {
+          this.outColors = [this.unsetColor, this.setColor, this.unsetColor];
+        }
+        if(outNumber == 2) {
+          this.outColors = [this.unsetColor, this.setColor, this.setColor];
+        }
       },
       setBalls(ballNumber) {
+        this.ballNumber = ballNumber;
         console.log('Changed number of balls:', ballNumber)
+        if(ballNumber == 0) {
+          this.ballColors = [this.set0Color, this.unsetColor, this.unsetColor, this.unsetColor];
+        }
+        if(ballNumber == 1) {
+          this.ballColors = [this.unsetColor, this.setColor, this.unsetColor, this.unsetColor];
+        }
+        if(ballNumber == 2) {
+          this.ballColors = [this.unsetColor, this.setColor, this.setColor, this.unsetColor];
+        }
+        if(ballNumber == 3) {
+          this.ballColors = [this.unsetColor, this.setColor, this.setColor, this.setColor];
+        }
       },
       setStrikes(strikeNumber) {
+        this.strikeNumberNumber = strikeNumber;
         console.log('Changed number of strikes:', strikeNumber)
+        if(strikeNumber == 0) {
+          this.strikeColors = [this.set0Color, this.unsetColor, this.unsetColor];
+        }
+        if(strikeNumber == 1) {
+          this.strikeColors = [this.unsetColor, this.setColor, this.unsetColor];
+        }
+        if(strikeNumber == 2) {
+          this.strikeColors = [this.unsetColor, this.setColor, this.setColor];
+        }
       },
     },
   };
