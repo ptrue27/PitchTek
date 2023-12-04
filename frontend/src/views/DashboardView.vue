@@ -1,5 +1,5 @@
 <template>
-    <v-container class="dashboard-container">
+    <v-container fluid class="dashboard-container">
       <v-row>
         <!-- Left Column -->
         <v-col cols="6">

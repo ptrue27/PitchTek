@@ -11,7 +11,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      msg: 'Hi',
+      msg: 'ping',
     };
   },
   methods: {
@@ -22,7 +22,6 @@ export default {
           this.msg = res.data;
         })
         .catch((error) => {
-
           console.error(error);
         });
     },
