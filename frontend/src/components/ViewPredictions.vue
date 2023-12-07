@@ -97,6 +97,10 @@ export default {
     currentData() {
       return this.pages[this.currentPage] || [];
     },
+    predictionImgSrc() {
+      //return this.$store.state.predictionImgSrc
+      return "@/assets/strikezone.jpg"
+    },
   },
   methods: {
     prevPage() {

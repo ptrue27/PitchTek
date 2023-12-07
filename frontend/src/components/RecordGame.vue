@@ -336,6 +336,8 @@
 </style>
 
 <script>
+  //import axios from 'axios';
+
   export default {
     data() {
       return {
@@ -369,7 +371,15 @@
       },
       handlePredictButtonClick() {
         console.log('Predict Button clicked!');
-        // Generate next prediction
+        //axios
+        //  .get('http://your-flask-api-endpoint/get_image', { responseType: 'blob' })
+        //  .then((response) => {
+        //    const imageUrl = URL.createObjectURL(new Blob([response.data]));
+        //    this.imageSrc = imageUrl;
+        //  })
+        //  .catch((error) => {
+        //    console.error('Error fetching image:', error);
+        //  });
       },
       toggleBase(baseNumber) {
         console.log('Toggled base:', baseNumber);
