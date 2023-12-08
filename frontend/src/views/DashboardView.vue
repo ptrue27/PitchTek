@@ -41,6 +41,7 @@ import PitcherStats from "@/components/PitcherStats.vue"
 import MatchupStats from "@/components/MatchupStats.vue"
 import BatterStats from "@/components/BatterStats.vue"
 
+
 export default {
     components: {
     RecordGame,
