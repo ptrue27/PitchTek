@@ -6,7 +6,7 @@
     </v-row>
     <v-row>
         <v-col>
-            <UploadButton />
+            <UploadButton class="upload-button" />
         </v-col>
         <v-col>
             <FlaskPing />
@@ -144,34 +144,90 @@ export default {
 </script>
 
 <style>
+body {
+    background-color: #d4edda;
+    /* Light green background for the entire page */
+}
+
 .player-image {
     width: 100%;
     max-width: 300px;
     height: auto;
     margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Adds shadow to images */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
+    /* White background for the table */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Adds shadow to the table */
 }
 
 th,
 td {
-    border: 1px solid #ddd;
+    border: 1px solid #96ce8a;
+    /* Light green borders for table cells */
     padding: 8px;
     text-align: left;
 }
 
 th {
-    background-color: #f4f4f4;
+    background-color: #96ce8a;
+    /* Darker shade of green for header */
+    color: white;
+    /* White text for headers */
 }
 
 h2 {
     margin-top: 20px;
+    color: #2a6041;
+    /* Dark green color for headings */
 }
 
-tbody tr {
+tbody tr:hover {
+    background-color: #c9e7c9;
+    /* Light green for row hover effect */
     cursor: pointer;
 }
-</style>
+
+/* Styling for the chart container */
+#statChart {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+/* Enhanced styling for UploadButton */
+.upload-button {
+    background-color: #96ce8a;
+    /* Light green background for the button */
+    color: white;
+    /* White text */
+    padding: 10px 20px;
+    /* Padding for button */
+    border: none;
+    /* No border */
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 16px;
+    /* Font size */
+    font-weight: bold;
+    /* Font weight */
+    cursor: pointer;
+    /* Cursor on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Shadow effect */
+    transition: all 0.3s ease;
+    /* Transition for hover effect */
+}
+
+.upload-button:hover {
+    background-color: #2b8c2a;
+    /* Darker green on hover */
+}</style>
