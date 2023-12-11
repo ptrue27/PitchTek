@@ -1,50 +1,63 @@
-'''
-I am going to use a Multilayer Perceptron for the fist version. 
-Other potential models include a recurrent neural netowork and the encoder-decorer rnn.
-'''
-import csv
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
 
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.optimizers import Adam
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import make_classification
+def read_in_data(file_path):
 
-file_path = '../uploads/savant_data_2_with_labels.csv'
+    # Read in data
+    df = pd.read_csv(file_path)
 
-df = pd.read_csv(file_path)
+    # These are the columns I will use for the algorithm
+    cols = ["pitch_type", "type", "balls", "strikes",
+            "outs_when_up", "inning", "pitch_number", "next_pitch_type"]
 
-# Extract columns that I need
-df =df[["pitch_type", "stand", "type", "balls", "strikes", "on_3b", "on_2b", "on_1b", 
-        "outs_when_up", "inning", "pitch_number", "home_score", "away_score", "next_pitch_type"]]
+    # Extract columns that I need
+    df = df[cols]
 
-# Split the dataset into training and testing sets
-labels = df["next_pitch_type"]
-df.drop(columns="next_pitch_type", inplace=True)
-X_train, X_test, y_train, y_test = train_test_split(df, df, test_size=0.2, random_state=42)
+    return df
 
-# Build the MLP model
-model = Sequential()
-model.add(Dense(64, input_shape=(X_train.shape[1],), activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
 
-# Compile the model
-model.compile(optimizer=Adam(learning_rate=0.001), loss='binary_crossentropy', metrics=['accuracy'])
+def encode_data(df):
 
-# Train the model
-model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+    # Get categorical columns
+    categorical_columns = df.select_dtypes(include=['object']).columns
 
-# Evaluate the model on the test set
-loss, accuracy = model.evaluate(X_test, y_test)
-print(f"Test Loss: {loss:.4f}, Test Accuracy: {accuracy:.4f}")
+    # Create my OneHotEncoder and use it
+    encoder = OneHotEncoder(sparse=False)  
+    encoded_data = encoder.fit_transform(df[categorical_columns])
 
-'''for i, column_name in enumerate(df.columns):
-    print("COLUMN: ", i)
-    print(column_name)
-    print(df.iloc[0,i])
-    print()
-'''
+    # Convert the encoded data into a DataFrame and drop categorical columns
+    encoded_df = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(categorical_columns))
+
+    # Concatenate the original DataFrame with the encoded DataFrame
+    df_encoded = pd.concat([df.drop(columns=categorical_columns), encoded_df], axis=1)
+
+    return df_encoded
+
+
+def main():
+    
+    # Read in Data to df
+    df = read_in_data('../uploads/savant_data_2_with_labels.csv')
+
+    # extract the labels from df
+    labels = df["next_pitch_type"]
+    df.drop(columns="next_pitch_type", inplace=True)
+
+    # Encode the data
+    df = encode_data(df)
+    
+    # Split data into training and testing
+    X_train, X_test, y_train, y_test = train_test_split(df, labels, test_size=0.2, random_state=42)
+
+
+    dt_classifier = DecisionTreeClassifier()
+    dt_classifier.fit(X_train, y_train)
+
+    y_pred = dt_classifier.predict(X_test)
+
+    #accuracy = accuracy_score(y_test, y_pred)
+    #print(f"Accuracy: {accuracy}")
+
+main()

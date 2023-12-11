@@ -21,6 +21,7 @@ import pandas as pd
 
 def add_labels(df):
 
+    # Shift next Pitch
     df['next_pitch_type'] = df['pitch_type'].shift(1)
 
 
