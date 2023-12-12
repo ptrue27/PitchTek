@@ -13,9 +13,8 @@
         </v-col>
     </v-row>
     <v-row>
-        <v-col>
-            <v-img img src="@/assets/pitcher.jpg" alt="Pitcher" class="player-image">
-            </v-img>
+        <v-col cols="6"> <!-- Use 'cols' attribute to specify column width -->
+            <v-img img src="@/assets/pitcher.jpg" alt="Pitcher" class="player-image"></v-img>
             <h2>Pitcher Statistics</h2>
             <table>
                 <thead>
@@ -32,11 +31,8 @@
                 </tbody>
             </table>
         </v-col>
-    </v-row>
-    <v-row>
-        <v-col>
-            <v-img img src="@/assets/batter.jpg" alt="Batter" class="player-image">
-            </v-img>
+        <v-col cols="6"> <!-- Use 'cols' attribute to specify column width -->
+            <v-img img src="@/assets/batter.jpg" alt="Batter" class="player-image"></v-img>
             <h2>Batter Statistics</h2>
             <table>
                 <thead>
@@ -66,6 +62,9 @@
         </v-col>
     </v-row>
 </template>
+
+<!-- Your script and style sections remain the same -->
+
 
 <script>
 import Chart from 'chart.js/auto';
