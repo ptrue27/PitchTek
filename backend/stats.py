@@ -1,25 +1,26 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 
-class Stats:
-    def __init__(self, csv_file):
-        self.csv_file = csv_file
+# Replace 'your_file.csv' with the path to your CSV file
+df = pd.read_csv('uploads\savant_data_2_with_labels.csv')
 
-    def plot_box_and_whisker_pitch_number(self):
-        # Read the CSV file
-        data = pd.read_csv(self.csv_file)
+# Initialize the main list and a temporary sublist
+main_list = []
+sublist = []
 
-        # Check if 'pitch_number' column exists
-        if 'pitch_number' not in data.columns:
-            print("Column 'pitch_number' not found in the CSV file.")
-            return
+# Iterate through each row in the DataFrame
+for index, row in df.iterrows():
+    # Add row data to the sublist
+    sublist.append(row.tolist())
 
-        # Extract the 'pitch_number' column
-        pitch_data = data['pitch_number']
+    # Check if the 'events' column has a value
+    if pd.notna(row['events']):
+        # If an event is found, append the sublist to the main list and start a new sublist
+        main_list.append(sublist)
+        sublist = []
 
-        # Create a box and whisker plot
-        plt.figure(figsize=(10, 6))
-        plt.boxplot(pitch_data, vert=False)
-        plt.title("Box and Whisker Plot of 'pitch_number'")
-        plt.xlabel("Pitch Number")
-        plt.show()
+# Don't forget to add the last sublist if it's not empty
+if sublist:
+    main_list.append(sublist)
+
+# main_list now contains your data organized as a list of lists
+print(main_list)
