@@ -149,12 +149,12 @@ body {
 }
 
 .player-image {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Adds shadow to images */
+  width: 100%;
+  max-width: 300px;
+  height: 200px; /* Adjust the height as needed */
+  object-fit: cover; /* Maintain aspect ratio and cover the container */
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 table {
