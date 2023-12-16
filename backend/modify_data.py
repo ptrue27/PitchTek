@@ -21,8 +21,11 @@ import pandas as pd
 
 def add_labels(df):
 
-    # Shift next Pitch
+    # Shift next Pitch up
     df['next_pitch_type'] = df['pitch_type'].shift(1)
+
+    # Drop first row as the label equals 'None'
+    df.drop(df.index[0], inplace=True)
 
 
 def remove_features(df):

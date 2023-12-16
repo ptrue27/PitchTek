@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
 
 def read_in_data(file_path):
 
@@ -24,7 +25,7 @@ def encode_data(df):
     categorical_columns = df.select_dtypes(include=['object']).columns
 
     # Create my OneHotEncoder and use it
-    encoder = OneHotEncoder(sparse=False)  
+    encoder = OneHotEncoder(sparse_output=False)
     encoded_data = encoder.fit_transform(df[categorical_columns])
 
     # Convert the encoded data into a DataFrame and drop categorical columns
@@ -47,17 +48,18 @@ def main():
 
     # Encode the data
     df = encode_data(df)
-    
+
     # Split data into training and testing
     X_train, X_test, y_train, y_test = train_test_split(df, labels, test_size=0.2, random_state=42)
 
-
+    # Train the classifier
     dt_classifier = DecisionTreeClassifier()
     dt_classifier.fit(X_train, y_train)
 
+    # Get Predictions
     y_pred = dt_classifier.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy}")
 
-    #accuracy = accuracy_score(y_test, y_pred)
-    #print(f"Accuracy: {accuracy}")
 
 main()
