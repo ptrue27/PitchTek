@@ -26,3 +26,7 @@
 
 
 2. Attempted to get a DT classifier working. Unfortunately I am still running into errors.
+
+### <ins>Work Completed for 12/16/23
+
+1. Got a DT classifier to work and return an accuracy of 42%
