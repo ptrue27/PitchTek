@@ -18,14 +18,32 @@ What this file does:
 import csv
 import pandas as pd
 
+def handle_first_pitch():
 
-def add_labels(df):
+    file_path = '../uploads/savant_data_2.csv'
+    df = pd.read_csv(file_path)
 
-    # Shift next Pitch up
-    df['next_pitch_type'] = df['pitch_type'].shift(1)
+    df = df[df["pitch_number"] == 1]
 
-    # Drop first row as the label equals 'None'
-    df.drop(df.index[0], inplace=True)
+    new_file_path = '../uploads/first_pitch.csv'
+    df.to_csv(new_file_path, index=False)
+
+#
+def handle_subsequent_pitches():
+
+    file_path = '../uploads/savant_data_2.csv'
+    df = pd.read_csv(file_path)
+
+    # Shift data down
+    df['previous_pitch_type'] = df['pitch_type'].shift(-1)
+    df['previous_pitch_result'] = df['type'].shift(-1)
+
+    # Extract all the first pitches
+    df = df[df["pitch_number"] != 1]
+
+    # Export to csv
+    new_file_path = '../uploads/subsequent_pitches.csv'
+    df.to_csv(new_file_path, index=False)
 
 
 def remove_features(df):
@@ -39,13 +57,6 @@ def remove_features(df):
 
 def main():
 
-    file_path = '../uploads/savant_data_2.csv'
-
-    df = pd.read_csv(file_path)
-    
-    add_labels(df)
-
-    new_file_path = '../uploads/savant_data_2_with_labels.csv'
-    df.to_csv(new_file_path, index=False)
+    handle_subsequent_pitches()
 
 main()

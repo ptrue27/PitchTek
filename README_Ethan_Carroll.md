@@ -30,3 +30,11 @@
 ### <ins>Work Completed for 12/16/23
 
 1. Got a DT classifier to work and return an accuracy of 42%
+
+2. Split the data into two different categories: first_pitch.csv and subsequent_pitches.csv. One file contains all the 
+   data for the first pitch in each plate appearance, while the other only has the data for the following plate appearances.
+
+3. Wrote a DT classifier for each set where each DT uses different labels. The first pitch DT has an accuracy of 42% while
+   the other DT classifier has an accuracy of 39%. I know that this seems like a downgrade from part 1 but I still believe 
+   that this DT makes more sense.
+   

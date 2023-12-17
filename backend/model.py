@@ -4,14 +4,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 
-def read_in_data(file_path):
+def read_in_data(file_path, cols):
 
     # Read in data
     df = pd.read_csv(file_path)
-
-    # These are the columns I will use for the algorithm
-    cols = ["pitch_type", "type", "balls", "strikes",
-            "outs_when_up", "inning", "pitch_number", "next_pitch_type"]
 
     # Extract columns that I need
     df = df[cols]
@@ -37,14 +33,29 @@ def encode_data(df):
     return df_encoded
 
 
-def main():
-    
+def train(X_train, y_train):
+
+    # Train the classifier
+    dt_classifier = DecisionTreeClassifier()
+    dt_classifier.fit(X_train, y_train)
+
+    return dt_classifier
+
+
+def get_accuracy(dt_classifier, X_test, y_test):
+    y_pred = dt_classifier.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy}")
+
+
+def create_dt(path, cols):
+
     # Read in Data to df
-    df = read_in_data('../uploads/savant_data_2_with_labels.csv')
+    df = read_in_data(path, cols)
 
     # extract the labels from df
-    labels = df["next_pitch_type"]
-    df.drop(columns="next_pitch_type", inplace=True)
+    labels = df["pitch_type"]
+    df.drop(columns="pitch_type", inplace=True)
 
     # Encode the data
     df = encode_data(df)
@@ -52,14 +63,22 @@ def main():
     # Split data into training and testing
     X_train, X_test, y_train, y_test = train_test_split(df, labels, test_size=0.2, random_state=42)
 
-    # Train the classifier
-    dt_classifier = DecisionTreeClassifier()
-    dt_classifier.fit(X_train, y_train)
+    # Train the data
+    dt_classifier = train(X_train, y_train)
 
     # Get Predictions
-    y_pred = dt_classifier.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print(f"Accuracy: {accuracy}")
+    get_accuracy(dt_classifier, X_test, y_test)
 
+
+def main():
+
+    # First pitches
+    create_dt(path='../uploads/first_pitch.csv',
+              cols=["pitch_type","outs_when_up", "inning", "stand", "away_team", "home_score", "away_score"])
+
+    # following pitches
+    create_dt(path='../uploads/subsequent_pitches.csv',
+              cols=["pitch_type","outs_when_up", "inning", "stand", "away_team", "home_score", "away_score",
+                    "pitch_number", "previous_pitch_type", "previous_pitch_result"])
 
 main()
