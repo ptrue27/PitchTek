@@ -15,7 +15,7 @@ const app= createApp(App)
                                   .use(vuetify)
                                   .use(router)
                                   .use(store)
-                                  .mount('#app')
+                                  //.mount('#app')
 
 app.config.globalProperties.emitter = emitter;
 app.mount('#app');
