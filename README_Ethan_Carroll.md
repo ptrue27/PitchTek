@@ -7,7 +7,7 @@
 ### <ins>Work Completed Prior to 12/9/23
 1. I made a breakdown of data variables by usefulness. The Excel doc can be seen in the screenshot below or at the following link: https://docs.google.com/spreadsheets/d/1YPk4Ht_ik9Fv__ZcWwB1SbodhqzvTOse7eczARbWEdk/edit#gid=0
 
-    ![Feature Breakdown](images_for-ethans_read_me/feature_breakdown.png)   
+    ![Feature Breakdown](images_for_ethans_read_me/feature_breakdown.png)   
 
 
 2. I cleaned the data and outlined further steps to make the data perfect for our project. This can be seen in the <ins>backend\modify_data.py</ins> file.
@@ -22,7 +22,7 @@
 
 1. Implemented One-Hot Encoding technique to change categorical variables to numerical. 
 
-    ![hot_encode](images_for-ethans_read_me/hotencoder.png)   
+    ![hot_encode](images_for_ethans_read_me/hotencoder.png)   
 
 
 2. Attempted to get a DT classifier working. Unfortunately I am still running into errors.
@@ -38,3 +38,13 @@
    the other DT classifier has an accuracy of 39%. I know that this seems like a downgrade from part 1 but I still believe 
    that this DT makes more sense.
    
+### <ins>Work Completed for 12/17/23
+
+1. Imported the "mitt" library so that different Vue components can communicate with each other. 
+
+   This is demonstrated in the following images. When a user clicks "PREDICT" in the first image, the "Pitch type" 
+   variable in the second image is changed to "TEST PITCH. This sets the framework for updating the predictions when new
+   data in input. 
+
+   ![select_predict_button](images_for_ethans_read_me/select_predict_button.png)    
+   ![pitch_type_changed](images_for_ethans_read_me/pitch_type_changed.png)    
