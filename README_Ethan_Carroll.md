@@ -48,4 +48,4 @@
 
    ![select_predict_button](images_for_ethans_read_me/select_predict_button.png)    
    ![pitch_type_changed](images_for_ethans_read_me/pitch_type_changed.png)
-2. 
+ff
