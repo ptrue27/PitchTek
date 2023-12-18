@@ -371,6 +371,8 @@
       },
       handlePredictButtonClick() {
         console.log('Predict Button clicked!');
+        this.emitter.emit("callMethodInChild", "TEST PITCH")
+
         //axios
         //  .get('http://your-flask-api-endpoint/get_image', { responseType: 'blob' })
         //  .then((response) => {

@@ -110,5 +110,13 @@ export default {
       this.currentPage = Math.min(this.currentPage + 1, this.data.length - 1);
     },
   },
+    mounted() {
+      //As an instance property
+      this.emitter.on("callMethodInChild", my_var => {
+        console.log('CHILD() called!', my_var);
+        this.data[0].type = my_var
+        //self.
+      });
+    },
 };
 </script>
