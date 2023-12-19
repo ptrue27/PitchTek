@@ -380,7 +380,7 @@
                                               balls: this.ballNumber, home_score: this.homeScore, away_score: this.awayScore}})
                 .then((res) => {
                     console.log("Pitch Prediction Recieved: " + res.data)
-                    this.emitter.emit("ChangePitchType", res.data)
+                    this.emitter.emit("ChangePitch", res.data)
                 })
                 .catch((error) => {
                     console.error(error);

@@ -51,7 +51,8 @@ def get_pitcher():
 def make_prediction():
     my_obj = Predictions_Class()
     pitch_type = my_obj.get_type(request.args)
-    return jsonify(pitch_type)
+    pitch_speed = my_obj.get_speed(pitch_type)
+    return jsonify(pitch_type, pitch_speed)
 
 
 if __name__ == '__main__':

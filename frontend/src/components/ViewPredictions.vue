@@ -111,11 +111,10 @@ export default {
     },
   },
     mounted() {
-      //As an instance property
-      this.emitter.on("ChangePitchType", my_var => {
-        console.log('ChangePitchType() called!');
-        this.data[0].type = my_var
-        //self.
+      this.emitter.on("ChangePitch", my_var => {
+        console.log('ChangePitch() called!');
+        this.data[0].type = my_var[0]
+        this.data[0].speed = my_var[1]
       });
     },
 };
