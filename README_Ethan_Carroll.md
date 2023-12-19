@@ -48,4 +48,11 @@
 
    ![select_predict_button](images_for_ethans_read_me/select_predict_button.png)    
    ![pitch_type_changed](images_for_ethans_read_me/pitch_type_changed.png)
-ffhhh
+
+### <ins>Work Completed for 12/18/23
+
+1. Figured out how to get the front end to communicate with the "Flask" backend.
+2. Created a new DT that to better reflect the front end. Has an accuracy of 46% 
+3. Exported the DT model so that it can be used by get_prediciton.py
+
+   

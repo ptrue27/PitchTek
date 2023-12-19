@@ -336,7 +336,7 @@
 </style>
 
 <script>
-  //import axios from 'axios';
+  import axios from 'axios';
 
   export default {
     data() {
@@ -369,20 +369,24 @@
         console.log('Game Button clicked!');
         // Start or stop game recording
       },
-      handlePredictButtonClick() {
-        console.log('Predict Button clicked!');
-        this.emitter.emit("callMethodInChild", "TEST PITCH")
 
-        //axios
-        //  .get('http://your-flask-api-endpoint/get_image', { responseType: 'blob' })
-        //  .then((response) => {
-        //    const imageUrl = URL.createObjectURL(new Blob([response.data]));
-        //    this.imageSrc = imageUrl;
-        //  })
-        //  .catch((error) => {
-        //    console.error('Error fetching image:', error);
-        //  });
-      },
+        handlePredictButtonClick() {
+
+            console.log('Predict Button clicked!');
+            //this.emitter.emit("callMethodInChild", "TEST PITCH")
+            const path = 'http://localhost:5000/make_prediction';
+
+            axios.get(path, { params: { inning: this.inning, outs: this.outNumber, strikes: this.strikeNumber,
+                                              balls: this.ballNumber, home_score: this.homeScore, away_score: this.awayScore}})
+                .then((res) => {
+                    console.log(res.data)
+
+                })
+                .catch((error) => {
+                    console.error(error);
+
+                });
+        },
       toggleBase(baseNumber) {
         console.log('Toggled base:', baseNumber);
         const i = baseNumber - 1;

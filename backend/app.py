@@ -1,3 +1,4 @@
+from get_prediction import get_prediciton_func
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -46,6 +47,14 @@ def get_pitcher():
     response_data = utils.get_sql_data(PLAYER_DB_FILENAME, 'PITCHERS', id)
     return jsonify(response_data)
 
+@app.route('/make_prediction', methods=['GET'])
+def make_prediction():
+    #result = subprocess.check_output(['python', 'path/to/your/script.py'])
+    #return jsonify({'result': result.decode('utf-8')})
+    get_prediciton_func()
+    my_var = request.args
+    print(my_var)
+    return jsonify(my_var)
 
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)
