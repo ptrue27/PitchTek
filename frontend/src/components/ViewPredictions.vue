@@ -77,8 +77,8 @@ export default {
   data() {
     return {
       data: [
-        {id: 1, confidence: '43.23', type: 'Fastball', speed: 98.21, locationX: 55, locationY: 79},
-        {id: 2, confidence: '25.90', type: 'Curveball', speed: 86.64, locationX: 12, locationY: 24},
+        {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
+        {id: 2, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
         { id: 3, confidence: '7.04', type: 'Slider', speed: 82.27, locationX: 78, locationY: 38},
       ],
       itemsPerPage: 1,
@@ -112,8 +112,8 @@ export default {
   },
     mounted() {
       //As an instance property
-      this.emitter.on("callMethodInChild", my_var => {
-        console.log('CHILD() called!', my_var);
+      this.emitter.on("ChangePitchType", my_var => {
+        console.log('ChangePitchType() called!', my_var);
         this.data[0].type = my_var
         //self.
       });

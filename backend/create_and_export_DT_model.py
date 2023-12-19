@@ -87,7 +87,8 @@ def main():
 
     # All pitches
     create_dt(path='../uploads/savant_data_2.csv',
-              cols=["pitch_type", "outs_when_up", "inning", "home_score", "away_score", "strikes", "balls"],
+              #cols=["pitch_type", "outs_when_up", "inning", "home_score", "away_score", "strikes", "balls"],
+              cols=["pitch_type", "outs_when_up", "strikes", "balls"],
               name="DT")
 
 main()

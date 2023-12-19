@@ -54,5 +54,10 @@
 1. Figured out how to get the front end to communicate with the "Flask" backend.
 2. Created a new DT that to better reflect the front end. Has an accuracy of 46% 
 3. Exported the DT model so that it can be used by get_prediciton.py
+4. The website can now be used to predict Pitch Type! 
+
+   ![PitchTek_predicts_slider](images_for_ethans_read_me/Slider_predicted.png)    
+
+
 
    

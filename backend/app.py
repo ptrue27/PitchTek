@@ -49,12 +49,8 @@ def get_pitcher():
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
-    #result = subprocess.check_output(['python', 'path/to/your/script.py'])
-    #return jsonify({'result': result.decode('utf-8')})
-    get_prediciton_func()
-    my_var = request.args
-    print(my_var)
-    return jsonify(my_var)
+
+    return jsonify(get_prediciton_func(request.args))
 
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)

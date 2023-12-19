@@ -1,7 +1,24 @@
 import joblib
+import pandas as pd
 
-def get_prediciton_func():
+
+my_dict = {'FF': 'Fastball',
+           'SL': 'Slider',
+           'CU': 'Curve',
+           'CH': 'Changeup'}
+
+
+def get_prediciton_func(obj):
+
     # Load the model from the file
     loaded_model = joblib.load("DT.joblib")
 
-    print("heyyyyy")
+    df = pd.DataFrame()
+
+    df['outs_when_up'] = [obj['outs']]
+    df['strikes'] = obj['strikes']
+    df['balls'] = obj['balls']
+
+    predictions = loaded_model.predict(df)
+
+    return my_dict[predictions[0]]

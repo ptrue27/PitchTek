@@ -373,14 +373,14 @@
         handlePredictButtonClick() {
 
             console.log('Predict Button clicked!');
-            //this.emitter.emit("callMethodInChild", "TEST PITCH")
+
             const path = 'http://localhost:5000/make_prediction';
 
             axios.get(path, { params: { inning: this.inning, outs: this.outNumber, strikes: this.strikeNumber,
                                               balls: this.ballNumber, home_score: this.homeScore, away_score: this.awayScore}})
                 .then((res) => {
-                    console.log(res.data)
-
+                    console.log("Pitch Prediction Recieved: " + res.data)
+                    this.emitter.emit("ChangePitchType", res.data)
                 })
                 .catch((error) => {
                     console.error(error);
@@ -428,7 +428,7 @@
         }
       },
       setStrikes(strikeNumber) {
-        this.strikeNumberNumber = strikeNumber;
+        this.strikeNumber = strikeNumber;
         console.log('Changed number of strikes:', strikeNumber)
         if(strikeNumber == 0) {
           this.strikeColors = [this.set0Color, this.unsetColor, this.unsetColor];
