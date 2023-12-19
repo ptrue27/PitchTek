@@ -1,6 +1,8 @@
 # PitchTek
 ## CS 425 Team 23
 
+#### Check <ins>README_Ethan_Carroll.md</ins> to see the work I did after the demo
+
 ## Run the Application
 ### Setup
 1. Download and install node.js

@@ -1,8 +1,7 @@
 ~~# My Contributions to PitchTek
 ## By Ethan Carroll
 
-
-
+### NOTE: My IDE started pushing from my casual GitHub account and not my professional one. I could not figure out how to change it back. Therefor, some of my commits come from <ins>ethancarrollUNR</ins> and half come from <ins>chunkyshrapnel
 
 ### <ins>Work Completed Prior to 12/9/23
 1. I made a breakdown of data variables by usefulness. The Excel doc can be seen in the screenshot below or at the following link: https://docs.google.com/spreadsheets/d/1YPk4Ht_ik9Fv__ZcWwB1SbodhqzvTOse7eczARbWEdk/edit#gid=0
