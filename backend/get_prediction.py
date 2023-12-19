@@ -7,18 +7,18 @@ my_dict = {'FF': 'Fastball',
            'CU': 'Curve',
            'CH': 'Changeup'}
 
+class Predictions_Class:
+    def get_type(self, obj):
 
-def get_prediciton_func(obj):
+        # Load the model from the file
+        loaded_model = joblib.load("DT.joblib")
 
-    # Load the model from the file
-    loaded_model = joblib.load("DT.joblib")
+        df = pd.DataFrame()
 
-    df = pd.DataFrame()
+        df['outs_when_up'] = [obj['outs']]
+        df['strikes'] = obj['strikes']
+        df['balls'] = obj['balls']
 
-    df['outs_when_up'] = [obj['outs']]
-    df['strikes'] = obj['strikes']
-    df['balls'] = obj['balls']
+        predictions = loaded_model.predict(df)
 
-    predictions = loaded_model.predict(df)
-
-    return my_dict[predictions[0]]
+        return my_dict[predictions[0]]

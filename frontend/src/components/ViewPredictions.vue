@@ -113,7 +113,7 @@ export default {
     mounted() {
       //As an instance property
       this.emitter.on("ChangePitchType", my_var => {
-        console.log('ChangePitchType() called!', my_var);
+        console.log('ChangePitchType() called!');
         this.data[0].type = my_var
         //self.
       });

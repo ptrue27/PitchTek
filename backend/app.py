@@ -1,4 +1,4 @@
-from get_prediction import get_prediciton_func
+from get_prediction import Predictions_Class
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -49,8 +49,10 @@ def get_pitcher():
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
+    my_obj = Predictions_Class()
+    pitch_type = my_obj.get_type(request.args)
+    return jsonify(pitch_type)
 
-    return jsonify(get_prediciton_func(request.args))
 
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)
