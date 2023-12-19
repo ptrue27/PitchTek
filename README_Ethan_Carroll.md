@@ -1,4 +1,4 @@
-# My Contributions to PitchTek
+~~# My Contributions to PitchTek
 ## By Ethan Carroll
 
 
@@ -59,5 +59,14 @@
 5. Added backend functionality so that a prediction for speed is made when the user clicks "Predict". NOTE: This is not
 an ML prediction. But a dummy place-holder predictions
 
-
+### <ins>Work Completed for 12/19/23
    
+1. Added create_heatmap.py. This file is used to aggregate Justin Verlander's pitches and create a
+heat map for every type of pitch he throws.
+
+HERE ARE THE CREATED HEATMAPS
+
+   ![FF_heat](images_for_ethans_read_me/FF_heat_map.jpg)    
+   ![SL_heat](images_for_ethans_read_me/SL_heat_map.jpg)
+   ![CU_heat](images_for_ethans_read_me/CU_heat_map.jpg)    
+   ![CH_heat](images_for_ethans_read_me/CH_heat_map.jpg)
