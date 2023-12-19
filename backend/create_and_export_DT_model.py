@@ -3,6 +3,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
+import joblib
 
 def read_in_data(file_path, cols):
 
@@ -48,7 +49,7 @@ def get_accuracy(dt_classifier, X_test, y_test):
     print(f"Accuracy: {accuracy}")
 
 
-def create_dt(path, cols):
+def create_dt(path, cols, name):
 
     # Read in Data to df
     df = read_in_data(path, cols)
@@ -69,16 +70,24 @@ def create_dt(path, cols):
     # Get Predictions
     get_accuracy(dt_classifier, X_test, y_test)
 
+    # Export DT
+    model_filename = name + '.joblib'
+    joblib.dump(dt_classifier, model_filename)
 
 def main():
 
-    # First pitches
+    '''# First pitches
     create_dt(path='../uploads/first_pitch.csv',
               cols=["pitch_type","outs_when_up", "inning", "stand", "away_team", "home_score", "away_score"])
 
-    # following pitches
+    # Following pitches
     create_dt(path='../uploads/subsequent_pitches.csv',
               cols=["pitch_type","outs_when_up", "inning", "stand", "away_team", "home_score", "away_score",
-                    "pitch_number", "previous_pitch_type", "previous_pitch_result"])
+                    "pitch_number", "previous_pitch_type", "previous_pitch_result"])'''
+
+    # All pitches
+    create_dt(path='../uploads/savant_data_2.csv',
+              cols=["pitch_type", "outs_when_up", "inning", "home_score", "away_score", "strikes", "balls"],
+              name="DT")
 
 main()
