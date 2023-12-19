@@ -10,7 +10,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-img
-                            src="@/assets/strikezone.jpg"
+                            src="@/assets/FF_heat_map.jpg"
                         ></v-img>
                     </v-col>
                     <!--Innings and count-->
@@ -76,6 +76,7 @@
 export default {
   data() {
     return {
+      imageURL: "@/assets/FF_heat_map.jpg",
       data: [
         {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
         {id: 2, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},

@@ -69,3 +69,5 @@ HERE ARE THE CREATED HEATMAPS
    ![SL_heat](images_for_ethans_read_me/SL_heat_map.jpg)
    ![CU_heat](images_for_ethans_read_me/CU_heat_map.jpg)    
    ![CH_heat](images_for_ethans_read_me/CH_heat_map.jpg)
+   
+2. I added the FF heat map to the UI, but I have not figured out how to change the image for new predictions.
