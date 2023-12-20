@@ -1,20 +1,19 @@
 <template>
     <v-row>
         <v-col class="text-center">
-            <div>Baseball Statistics</div>
+            <div class="title">Baseball Statistics</div>
         </v-col>
     </v-row>
     <v-row>
         <v-col>
             <UploadButton class="upload-button" />
         </v-col>
-        <v-col>
-            <FlaskPing />
-        </v-col>
     </v-row>
     <v-row>
-        <v-col cols="6"> <!-- Use 'cols' attribute to specify column width -->
-            <v-img img src="@/assets/pitcher.jpg" alt="Pitcher" class="player-image"></v-img>
+        <v-col cols="6">
+            <div class="image-container">
+                <v-img src="@/assets/pitcher.jpg" alt="Pitcher" class="player-image"></v-img>
+            </div>
             <h2>Pitcher Statistics</h2>
             <table>
                 <thead>
@@ -31,8 +30,10 @@
                 </tbody>
             </table>
         </v-col>
-        <v-col cols="6"> <!-- Use 'cols' attribute to specify column width -->
-            <v-img img src="@/assets/batter.jpg" alt="Batter" class="player-image"></v-img>
+        <v-col cols="6">
+            <div class="image-container">
+                <v-img src="@/assets/batter.jpg" alt="Batter" class="player-image"></v-img>
+            </div>
             <h2>Batter Statistics</h2>
             <table>
                 <thead>
@@ -52,29 +53,19 @@
     </v-row>
     <v-row v-if="selectedStat">
         <v-col>
-            <!-- Placeholder for graph. Implement based on your chart library -->
             <div v-if="selectedStat">Graph for {{ selectedStat }}</div>
-        </v-col>
-    </v-row>
-    <v-row v-if="selectedStat">
-        <v-col>
             <canvas id="statChart"></canvas>
         </v-col>
     </v-row>
 </template>
 
-<!-- Your script and style sections remain the same -->
-
-
 <script>
 import Chart from 'chart.js/auto';
 import UploadButton from "@/components/UploadButton.vue";
-import FlaskPing from "@/components/FlaskPing.vue";
 
 export default {
     components: {
-        UploadButton,
-        FlaskPing
+        UploadButton
     },
     data() {
         return {
@@ -103,7 +94,6 @@ export default {
         showGraph(stat) {
             this.selectedStat = stat;
 
-            // Dummy data for the graph
             const data = {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 datasets: [{
@@ -115,12 +105,10 @@ export default {
                 }]
             };
 
-            // Destroy the old chart if it exists
             if (this.chart) {
                 this.chart.destroy();
             }
 
-            // Create a new chart
             this.chart = new Chart(
                 document.getElementById('statChart'),
                 {
@@ -136,64 +124,67 @@ export default {
                 }
             );
         }
-
     }
-
 };
 </script>
 
 <style>
 body {
-    background-color: #d4edda;
-    /* Light green background for the entire page */
+    background-color: #004d40;
+    /* Dark green background for the entire page */
+}
+
+.title {
+    font-size: 2em;
+    color: white;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.image-container {
+    border: 5px solid #96ce8a;
+    /* Light green border for images */
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .player-image {
-  width: 100%;
-  max-width: 300px;
-  height: 200px; /* Adjust the height as needed */
-  object-fit: cover; /* Maintain aspect ratio and cover the container */
-  margin-bottom: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    height: 200px;
+    object-fit: cover;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
-    /* White background for the table */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Adds shadow to the table */
 }
 
 th,
 td {
     border: 1px solid #96ce8a;
-    /* Light green borders for table cells */
     padding: 8px;
     text-align: left;
 }
 
 th {
     background-color: #96ce8a;
-    /* Darker shade of green for header */
     color: white;
-    /* White text for headers */
 }
 
 h2 {
     margin-top: 20px;
     color: #2a6041;
-    /* Dark green color for headings */
 }
 
 tbody tr:hover {
     background-color: #c9e7c9;
-    /* Light green for row hover effect */
     cursor: pointer;
 }
 
-/* Styling for the chart container */
 #statChart {
     background-color: white;
     padding: 10px;
@@ -202,31 +193,20 @@ tbody tr:hover {
     margin-top: 20px;
 }
 
-/* Enhanced styling for UploadButton */
 .upload-button {
-    background-color: #96ce8a;
-    /* Light green background for the button */
+    background-color: #2b8c2a;
     color: white;
-    /* White text */
     padding: 10px 20px;
-    /* Padding for button */
     border: none;
-    /* No border */
     border-radius: 5px;
-    /* Rounded corners */
     font-size: 16px;
-    /* Font size */
     font-weight: bold;
-    /* Font weight */
     cursor: pointer;
-    /* Cursor on hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Shadow effect */
     transition: all 0.3s ease;
-    /* Transition for hover effect */
 }
 
 .upload-button:hover {
-    background-color: #2b8c2a;
-    /* Darker green on hover */
+    background-color: #1b5e20;
+    /* Even darker green on hover */
 }</style>

@@ -1,29 +1,30 @@
 <template>
     <div class="app-container">
-        <div class="pitcher-info-container">
-            <div class="pitcher-info">
-                <h1>{{ pitcher.name }}</h1>
-                <img :src="pitcher.image" alt="Pitcher Image" />
-            </div>
+        <header class="header">
+            <h1>{{ pitcher.name }} - Performance Overview</h1>
+        </header>
+
+        <div class="player-image-container">
+            <img :src="pitcher.image" alt="Pitcher Image" class="player-image" />
         </div>
 
-        <div class="performance-table-container">
-            <div class="performance-table-inner">
-                <h2>Last 20 Games Performance</h2>
-                <table class="performance-table">
+        <section class="stats-section">
+            <h2>Last 20 Games Performance</h2>
+            <div class="stats-table">
+                <table>
                     <thead>
                         <tr>
                             <th>Game</th>
                             <th>ERA</th>
                             <th>Strikeouts</th>
                             <th>Wins</th>
-                            <th>Innings Pitched</th>
+                            <th>Innings</th>
                             <th>Saves</th>
-                            <th>Strikeout Rate</th>
+                            <th>K-Rate</th>
                             <th>Walks</th>
-                            <th>Hits Allowed</th>
-                            <th>Home Runs Allowed</th>
-                            <th>Earned Runs</th>
+                            <th>Hits</th>
+                            <th>HRs</th>
+                            <th>ERs</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,16 +44,16 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </section>
 
-        <div v-for="(data, stat) in chartData" :key="stat" class="performance-chart-container">
-            <div class="performance-chart-inner">
-                <h2>{{ stat.toUpperCase() }} Performance Chart</h2>
-                <div class="chart-wrapper">
-                    <canvas :ref="`chart-${stat}`"></canvas>
+        <section class="charts-section">
+            <div v-for="(data, stat, index) in chartData" :key="stat" class="chart-container">
+                <h3>{{ stat.toUpperCase() }} Chart</h3>
+                <div class="chart">
+                    <canvas :ref="`chart-${index}`"></canvas>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 </template>
 
@@ -109,8 +110,8 @@ export default {
         },
     },
     methods: {
-        createChart(stat, data) {
-            const ctx = this.$refs[`chart-${stat}`].getContext('2d');
+        createChart(ref, data) {
+            const ctx = this.$refs[ref].getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: data,
@@ -126,8 +127,10 @@ export default {
         },
     },
     mounted() {
-        Object.keys(this.chartData).forEach(stat => {
-            this.createChart(stat, this.chartData[stat]);
+        this.$nextTick(() => {
+            Object.keys(this.chartData).forEach((stat, index) => {
+                this.createChart(`chart-${index}`, this.chartData[stat]);
+            });
         });
     },
 };
@@ -135,49 +138,78 @@ export default {
 
 <style scoped>
 .app-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f5f5f5;
+    background-color: #eef2f5;
     padding: 20px;
+    font-family: 'Arial', sans-serif;
 }
 
-.pitcher-info-container,
-.performance-table-container,
-.performance-chart-container {
-    background-color: #fff;
-    padding: 20px;
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #333;
+    font-size: 2.5em;
+}
+
+.player-image-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.player-image {
+    max-width: 300px;
     border-radius: 10px;
-    margin: 20px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.pitcher-info {
-    text-align: center;
-    margin-bottom: 20px;
+.stats-section,
+.charts-section {
+    margin-bottom: 40px;
 }
 
-.performance-table-inner {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.performance-chart-inner {
+.stats-section h2,
+.charts-section h3 {
+    color: #333;
+    margin-bottom: 15px;
     text-align: center;
 }
 
-.performance-table {
+.stats-table table {
     width: 100%;
     border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-th,
-td {
-    padding: 8px;
-    border: 1px solid #ccc;
+.stats-table th,
+.stats-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
 }
 
-.chart-wrapper {
-    max-width: 100%;
-    height: auto;
+.stats-table th {
+    background-color: #4CAF50;
+    color: white;
 }
-</style>
+
+.stats-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.chart-container {
+    margin-bottom: 30px;
+}
+
+.chart-container h3 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.chart {
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}</style>
