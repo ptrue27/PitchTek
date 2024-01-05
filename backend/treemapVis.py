@@ -11,7 +11,7 @@ tqdm.pandas()
 df = pd.read_csv('C:/Users/davis/PitchTek-1/uploads/savant_data_2_with_labels.csv')
 
 # Summarize the data for the treemap
-pitch_counts = df.groupby(['count', 'pitch_type']
+pitch_counts = df.groupby(['pitch_number', 'pitch_type']
                           ).size().reset_index(name='total')
 
 # Get the counts for the largest category to set the scale for the treemap
@@ -19,7 +19,7 @@ max_count = pitch_counts['total'].max()
 
 # Prepare the data
 labels = pitch_counts.apply(lambda x: str(
-    x['pitch_type']) + "\n" + str(x['count']), axis=1)
+    x['pitch_type']) + "\n" + str(x['pitch_number']), axis=1)
 sizes = pitch_counts['total']
 colors = [plt.cm.Spectral(i/float(len(labels))) for i in range(len(labels))]
 
