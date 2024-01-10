@@ -84,7 +84,7 @@ def create_and_save_visualizations(data, features, target_column, file_path_pref
 # Main Script
 if __name__ == "__main__":
     # Load the data
-    file_path = '/path/to/your/test_data.csv'  # Change this to your file path
+    file_path = 'C:/Users/davis/PitchTek-2/uploads/test_data.csv'
     pitch_data = pd.read_csv(file_path)
 
     # Preprocess the data
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     print(class_report)
 
     # Create and save visualizations
-    visualization_file_path_prefix = '/mnt/data/pitch_data_visualization'
+    visualization_file_path_prefix = 'C:/Users/davis/PitchTek-2/uploads'
     create_and_save_visualizations(
         pitch_data, selected_features, target_column, visualization_file_path_prefix)
 
