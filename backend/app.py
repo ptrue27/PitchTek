@@ -3,11 +3,11 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import sqlite3
-import utils
+import sql_utils
 import os
 
 
-PLAYER_DB_FILENAME = 'players.db'
+PLAYERS_DB = 'players.db'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -29,23 +29,31 @@ def file_upload():
         return jsonify({'message': f'File {filename} uploaded successfully'}), 200
 
 
-@app.route('/ping', methods=['GET'])
-def ping_pong():
-    return jsonify('pong!')
+@app.route('/get_table', methods=['GET'])
+def get_teams():
+    teams = sql_utils.get_table('teams.db', 'TEAMS')
+    return jsonify(teams)
+
+
+@app.route('/get_row/<db>', methods=['GET'])
+def get_teams():
+    teams = sql_utils.get_table('teams.db', 'TEAMS')
+    return jsonify(teams)
 
 
 @app.route('/get_batter', methods=['GET'])
 def get_batter():
     id = request.args.get('id')
-    response_data = utils.get_sql_data(PLAYER_DB_FILENAME, 'BATTERS', id)
+    response_data = sql_utils.get_sql_data(PLAYERS_DB, 'BATTERS', id)
     return jsonify(response_data)
 
 
 @app.route('/get_pitcher', methods=['GET'])
 def get_pitcher():
     id = request.args.get('id')
-    response_data = utils.get_sql_data(PLAYER_DB_FILENAME, 'PITCHERS', id)
+    response_data = sql.get_sql_data(PLAYERS_DB, 'PITCHERS', id)
     return jsonify(response_data)
+
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():

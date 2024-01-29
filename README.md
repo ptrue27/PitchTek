@@ -1,13 +1,31 @@
 # PitchTek
 ## CS 425 Team 23
 
-#### Check <ins>README_Ethan_Carroll.md</ins> to see the work I did after the demo
 
-## Run the Application
-### Setup
+## Setup
+
+### Frontend
 1. Download and install node.js
-2. Install the vue command line `npm install -g @vue/cli`
-3. Install the mitt library `npm install --save mitt`
-### Run
-1. `cd frontend`
-2. `npm run serve`
+2. Go to frontend `cd frontend`
+3. Install Vue packages `npm install`
+
+### Backend
+1. Download and install Python
+2. Download and install sqlite3
+3. Go to backend `cd backend`
+4. Create virtual environment `python -m venv env`
+5. Activate virtual environment `.\env\Scripts\activate`
+6. Install packages `pip install -r requirements.txt`
+
+
+## Run
+
+### Frontend
+1. Go to frontend `cd frontend`
+2. Run the frontend `npm run serve`
+
+### Backend
+In a separate terminal...
+1. Go to backend `cd backend`
+2. Activate virtual environment `.\env\Scripts\activate`
+3. Run the backend `flask run --debug`

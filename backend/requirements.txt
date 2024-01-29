@@ -1,0 +1,6 @@
+flask
+flask-cors
+joblib
+matplotlib
+pandas
+python-mlb-statsapi
