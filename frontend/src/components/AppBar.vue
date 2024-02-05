@@ -12,6 +12,14 @@
       <v-app-bar-title>PitchTek</v-app-bar-title>
 
       <v-btn
+        to="/about"
+        prepend-icon="mdi-view-dashboard"
+        variant="tonal" class="mr-5"
+      >
+        About
+      </v-btn>
+
+      <v-btn
         to="/dashboard"
         prepend-icon="mdi-view-dashboard"
         variant="tonal" class="mr-5"
@@ -37,3 +45,5 @@
 
     </v-app-bar>
 </template>
+<script setup>
+</script>
