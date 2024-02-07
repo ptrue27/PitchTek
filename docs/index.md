@@ -24,3 +24,5 @@ Pette, J. (2021, May 17). Baseball and machine learning: A data science approach
 
 This is a research paper on the use of machine learning in baseball. This showed a great example of how to approach the data for data scrubbing and looking at what elements can predict a game on a large scale.
 Huang, M L & Li, Yun-Zhi. (2021). Use of Machine Learning and Deep Learning to Predict the Outcomes of Major League Baseball Matches. Applied Sciences. 11. 4499. 10.3390/app11104499. 
+
+Hello World
