@@ -8,6 +8,8 @@ Team 23: Davis Dunkley, Parker True, Ethan Carroll \
 Instructors: David Feil-Seifer, Devrin Lee, Sara Davis, Zach Estreito, Vinh Le \
 Advisor: Dr. Emily Hand, Assistant Professor, UNR
 
+![select_predict_button](../images_for_ethans_read_me/dashboard.png)    
+
 ## Project Description
 PitchTek is a baseball analytics application that allows users to view player statistics, record a game’s progress, and predict upcoming pitch classifications using a proprietary machine learning model. The main Dashboard displays a high-level overview of the predictions and relevant baseball statistics pertaining to a game’s current state, while the Statistics and History pages allow users to visualize and further explore the data.
 
@@ -19,7 +21,7 @@ Professional teams have their own prediction systems and statistical resources t
 
 ## References and Online Sources
 
-Here is a artcle on the use of data science, machine learning and coding the sport of baseball to take accurate stats and possibly predict the game and some of the outcomes of the smaller parts of it. 
+Here is an artcle on the use of data science, machine learning and coding the sport of baseball to take accurate stats and possibly predict the game and some of the outcomes of the smaller parts of it. 
 Pette, J. (2021, May 17). Baseball and machine learning: A data science approach to 2021 hitting projections. Medium. https://towardsdatascience.com/baseball-and-machine-learning-a-data-science-approach-to-2021-hitting-projections-4d6eeed01ede 
 
 This is a research paper on the use of machine learning in baseball. This showed a great example of how to approach the data for data scrubbing and looking at what elements can predict a game on a large scale.
