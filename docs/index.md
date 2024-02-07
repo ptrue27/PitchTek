@@ -32,3 +32,18 @@ pitches using machine learning. It describes a good strategy to handle sequence 
 expected for using certain models. https://community.fangraphs.com/no-pitch-is-an-island-pitch-prediction-with-sequence-to-sequence-deep-learning/
 
 ## Team Members
+<div style="display:flex; flex-direction: column;">
+    <figure style="display:flex; margin-bottom: 10px;">
+        <img src="default.jpg" alt="Parker" style="width:33.33%; margin-right: 10px;">
+        <figcaption>Parker True</figcaption>
+    </figure>
+    <figure style="display:flex; margin-bottom: 10px;">
+        <img src="default.jpg" alt="Davis" style="width:33.33%; margin-right: 10px;">
+        <figcaption>Davis Dunkley</figcaption>
+    </figure>
+    <figure style="display:flex;">
+        <img src="default.jpg" alt="Ethan" style="width:33.33%; margin-right: 10px;">
+        <figcaption>Ethan Carroll</figcaption>
+    </figure>
+</div>
+
