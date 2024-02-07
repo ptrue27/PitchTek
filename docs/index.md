@@ -9,7 +9,7 @@ Instructors: David Feil-Seifer, Devrin Lee, Sara Davis, Zach Estreito, Vinh Le \
 Advisor: Dr. Emily Hand, Assistant Professor, UNR
 
 ## Dashboard View
-![dashboard](../images_for_ethans_read_me/dashboard.png)    
+![dashboard](dashboard.png)    
 
 ## Project Description
 PitchTek is a baseball analytics application that allows users to view player statistics, record a game’s progress, and predict upcoming pitch classifications using a proprietary machine learning model. The main Dashboard displays a high-level overview of the predictions and relevant baseball statistics pertaining to a game’s current state, while the Statistics and History pages allow users to visualize and further explore the data.
