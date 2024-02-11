@@ -2,30 +2,27 @@ import sqlite3
 import sql_utils
 import mlbstatsapi
 import time
+from random import uniform
 import os
 
 mlb = mlbstatsapi.Mlb()
-REST_TIME = 10
-DATA_DIR = 'databases'
 
-DB_TEAMS = 'teams.db'
-TABLE_TEAMS = 'TEAMS' # (id, name)
-TABLE_ROSTERS = 'ROSTERS' # (id, name, position, team_id)
 
-DB_PLAYERS = 'players.db'
-TABLE_BATTERS = 'BATTERS' # (id, name, img, hr, obp, slg)
-TABLE_PITCHERS = 'PITCHERS' # (id, name, img, era, kper9, bbper9)
+def rest():
+    time.sleep(5 + uniform(0, 2))
 
 
 def get_teams():
     """Populate the TEAMS table of the teams database.
     """
-    conn = sqlite3.connect(os.path.join(DATA_DIR, DB_TEAMS))
+    table_name = 'TEAMS'
+    db_file = sql_utils.db_files[table_name]
+    conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
     # Create TEAMS table if it doesn't exist
     cursor.execute(f'''
-        CREATE TABLE IF NOT EXISTS {TABLE_TEAMS} (
+        CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY,
             name TEXT
         )
@@ -35,11 +32,11 @@ def get_teams():
     teams = mlb.get_teams()
     for team in teams:
         cursor.execute(f'''
-            INSERT INTO {TABLE_TEAMS} (id, name)
+            INSERT OR IGNORE INTO {table_name} (id, name)
             VALUES (?, ?)
         ''', (team.id, team.name))
-    print(f'Scraped {DB_TEAMS} {TABLE_TEAMS}')
 
+    print(f'Updated {table_name}')
     conn.commit()
     conn.close()
 
@@ -47,12 +44,14 @@ def get_teams():
 def get_rosters():
     """Populate the ROSTERS table of the teams database.
     """
-    conn = sqlite3.connect(os.path.join(DATA_DIR, DB_TEAMS))
+    table_name = 'ROSTERS'
+    db_file = sql_utils.db_files[table_name]
+    conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
-    # Create TEAMS table if it doesn't exist
+    # Create ROSTERS table if it doesn't exist
     cursor.execute(f'''
-        CREATE TABLE IF NOT EXISTS {TABLE_ROSTERS} (
+        CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY,
             name TEXT,
             position INTEGER,
@@ -60,17 +59,18 @@ def get_rosters():
         )
     ''')
 
-    # Insert data into the TEAMS table
-    teams = sql_utils.get_table(DB_TEAMS, TABLE_TEAMS)
+    # Insert data into the ROSTERS table
+    teams_table_name = 'TEAMS'
+    teams = sql_utils.get_table(teams_table_name)
     for team_id in teams['id']:
         roster = mlb.get_team_roster(team_id)
         for player in roster:
             cursor.execute(f'''
-                INSERT INTO {TABLE_ROSTERS} (id, name, position, team_id)
+                INSERT OR IGNORE INTO {table_name} (id, name, position, team_id)
                 VALUES (?, ?, ?, ?)
             ''', (player.id, player.fullname, player.primaryposition.code, team_id))
-        print(f'Scraped {DB_TEAMS} {TABLE_ROSTERS} {team_id}')
-        time.sleep(REST_TIME)
+        print(f'Updated {table_name} for team {team_id}')
+        rest()
 
     conn.commit()
     conn.close()

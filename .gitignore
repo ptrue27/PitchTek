@@ -22,8 +22,7 @@ pnpm-debug.log*
 *.sw?
 
 
-__pycache__/
-__pycache__\
-env/
-env\
+__pycache__
+env
 TODO.txt
+scratch.py

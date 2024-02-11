@@ -29,18 +29,25 @@ def file_upload():
         return jsonify({'message': f'File {filename} uploaded successfully'}), 200
 
 
-@app.route('/get_table', methods=['GET'])
-def get_teams():
-    teams = sql_utils.get_table('teams.db', 'TEAMS')
-    return jsonify(teams)
+@app.route('/get_table/<table_name>', methods=['GET'])
+def get_table(table_name):
+    table_dict = sql_utils.get_table(table_name)
+    if table_dict:
+        return jsonify(table_dict)
+    else:
+        return jsonify({"error": "Table not found"}), 404
 
 
-@app.route('/get_row/<db>', methods=['GET'])
-def get_teams():
-    teams = sql_utils.get_table('teams.db', 'TEAMS')
-    return jsonify(teams)
+@app.route('/get_row/<table_name>/<int:row_id>', methods=['GET'])
+def get_row(table_name, row_id):
+    row_dict = sql_utils.get_row(table_name, row_id)
+    if row_dict:
+        return jsonify(row_dict)
+    else:
+        return jsonify({"error": "Row not found"}), 404
 
 
+'''
 @app.route('/get_batter', methods=['GET'])
 def get_batter():
     id = request.args.get('id')
@@ -53,7 +60,7 @@ def get_pitcher():
     id = request.args.get('id')
     response_data = sql.get_sql_data(PLAYERS_DB, 'PITCHERS', id)
     return jsonify(response_data)
-
+'''
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
