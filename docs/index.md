@@ -9,7 +9,7 @@ Instructors: David Feil-Seifer, Devrin Lee, Sara Davis, Zach Estreito, Vinh Le \
 Advisor: Dr. Emily Hand, Assistant Professor, UNR
 
 ## Dashboard View
-![dashboard](dashboard.png)    
+![dashboard](imgs/dashboard.png)    
 
 ## Project Description
 PitchTek is a baseball analytics application that allows users to view player statistics, record a game’s progress, and predict upcoming pitch classifications using a proprietary machine learning model. The main Dashboard displays a high-level overview of the predictions and relevant baseball statistics pertaining to a game’s current state, while the Statistics and History pages allow users to visualize and further explore the data.
@@ -34,15 +34,15 @@ expected for using certain models. https://community.fangraphs.com/no-pitch-is-a
 ## Team Members
 <div style="display:flex; flex-direction: column;">
     <figure style="display:flex; margin-bottom: 10px;">
-        <img src="default.jpg" alt="Parker" style="width:33.33%; margin-right: 10px;">
+        <img src="imgs/default.jpg" alt="Parker" style="width:33.33%; margin-right: 10px;">
         <figcaption>Parker True</figcaption>
     </figure>
     <figure style="display:flex; margin-bottom: 10px;">
-        <img src="default.jpg" alt="Davis" style="width:33.33%; margin-right: 10px;">
+        <img src="imgs/default.jpg" alt="Davis" style="width:33.33%; margin-right: 10px;">
         <figcaption>Davis Dunkley</figcaption>
     </figure>
     <figure style="display:flex;">
-        <img src="default.jpg" alt="Ethan" style="width:33.33%; margin-right: 10px;">
+        <img src="imgs/default.jpg" alt="Ethan" style="width:33.33%; margin-right: 10px;">
         <figcaption>Ethan Carroll</figcaption>
     </figure>
 </div>
