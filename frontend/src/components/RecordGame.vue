@@ -9,17 +9,17 @@
                     <!--Input home team-->
                     <v-col cols="6">
                       <v-select
-                        :items="homeTeams" v-model="homeTeam"
+                        :items="teamNames" v-model="homeTeamName"
                         variant="filled" density="compact"
-                        label="Home Team" class="my-label"
+                        label="Home Team" class="my-label team-name"
                       ></v-select>
                     </v-col>
                     <!--Input away team-->
                     <v-col cols="6">
                         <v-select
-                          :items="awayTeams" v-model="awayTeam"
+                          :items="teamNames" v-model="awayTeamName"
                           variant="filled" density="compact"
-                          label="Away Team" class="my-label"
+                          label="Away Team" class="my-label team-name"
                         ></v-select>
                     </v-col>
                 </v-row>
@@ -289,6 +289,10 @@
   }
   .my-label label {
     font-size: 12px;
+    text-align: center;
+  }
+  .team-name {
+    font-size: 20px;
   }
   .my-font {
     font-size: 12px;
@@ -346,10 +350,12 @@
         set0Color: 'gray',
         setColor: 'cadetblue',
 
-        homeTeams: ['Team1', 'Team2', 'Team3'],
-        awayTeams: ['Team1', 'Team2', 'Team3'],
-        homeTeam: null,
-        awayTeam: null,
+        teamNames: [],
+        teamIds: [],
+        homeTeamName: null,
+        awayTeamName: null,
+
+
         homeScore: '0',
         awayScore: '0',
         onBase: [false, false, false],
@@ -370,23 +376,22 @@
         // Start or stop game recording
       },
 
-        handlePredictButtonClick() {
+      handlePredictButtonClick() {
+        console.log('Predict Button clicked!');
 
-            console.log('Predict Button clicked!');
+        const path = 'http://localhost:5000/make_prediction';
 
-            const path = 'http://localhost:5000/make_prediction';
-
-            axios.get(path, { params: { inning: this.inning, outs: this.outNumber, strikes: this.strikeNumber,
-                                              balls: this.ballNumber, home_score: this.homeScore, away_score: this.awayScore}})
-                .then((res) => {
-                    console.log("Pitch Prediction Recieved: " + res.data)
-                    this.emitter.emit("ChangePitch", res.data)
-                })
-                .catch((error) => {
-                    console.error(error);
-
-                });
-        },
+        axios.get(path, { params: { inning: this.inning, outs: this.outNumber, strikes: this.strikeNumber,
+                                    balls: this.ballNumber, home_score: this.homeScore, away_score: this.awayScore}
+          })
+          .then((res) => {
+            console.log("Pitch Prediction Recieved: " + res.data)
+              this.emitter.emit("ChangePitch", res.data)
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      },
       toggleBase(baseNumber) {
         console.log('Toggled base:', baseNumber);
         const i = baseNumber - 1;
@@ -442,9 +447,22 @@
       },
     },
     created() {
+      // Fill inning selection list
       for (let i = 1; i <= 99; i++) {
         this.innings.push(`${i}∧`, `${i}∨`);
       }
+
+      // Fill team selection lists
+      const path = 'http://localhost:5000/get_table/TEAMS';
+      axios.get(path)
+          .then((res) => {
+              console.log(res.data)
+              this.teamIds = res.data['id']
+              this.teamNames = res.data['name'];
+          })
+          .catch((error) => {
+              console.error(error);
+          });
     },
   };
 </script>
