@@ -10,7 +10,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-img
-                            src="@/assets/FF_heat_map.jpg"
+                            src="imageURL[currentImage]"
                         ></v-img>
                     </v-col>
                     <!--Innings and count-->
@@ -74,13 +74,16 @@
 
 <script>
 export default {
+  name: 'my-component',
   data() {
     return {
-      imageURL: "@/assets/FF_heat_map.jpg",
+      imageURL: ["@/assets/FF_heat_map.jpg",
+                "@/assets/strikezone.jpg"],
+      currentimage : 0,
       data: [
         {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
         {id: 2, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
-        { id: 3, confidence: '7.04', type: 'Slider', speed: 82.27, locationX: 78, locationY: 38},
+        {id: 3, confidence: '7.04', type: 'Slider', speed: 82.27, locationX: 78, locationY: 38},
       ],
       itemsPerPage: 1,
       currentPage: 0,
@@ -110,6 +113,9 @@ export default {
     nextPage() {
       this.currentPage = Math.min(this.currentPage + 1, this.data.length - 1);
     },
+    updateHeatMap(){
+      this.currentimage = 1
+    }
   },
     mounted() {
       this.emitter.on("ChangePitch", my_var => {
