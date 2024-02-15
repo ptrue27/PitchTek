@@ -105,7 +105,7 @@ def get_batters():
         
         if stat.numberofpitches > 0:
             print(id, name, img, stat.gamesplayed, stat.plateappearances, stat.avg, stat.obp, stat.slg, stat.ops, stat.hits, stat.homeruns)
-            cursor.execute('''INSERT INTO BATTERS (id, name, img, games, pa, avg, obp, slg, ops, hits, hr) 
+            cursor.execute('''INSERT OR IGNORE INTO BATTERS (id, name, img, games, pa, avg, obp, slg, ops, hits, hr) 
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
                     (id, name, img, stat.gamesplayed, stat.plateappearances, stat.avg, stat.obp, stat.slg, stat.ops, stat.hits, stat.homeruns))
 
