@@ -2,12 +2,8 @@ from get_prediction import Predictions_Class
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
-import sqlite3
 import sql_utils
 import os
-
-
-PLAYERS_DB = 'players.db'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -46,21 +42,6 @@ def get_row(table_name, row_id):
     else:
         return jsonify({"error": "Row not found"}), 404
 
-
-'''
-@app.route('/get_batter', methods=['GET'])
-def get_batter():
-    id = request.args.get('id')
-    response_data = sql_utils.get_sql_data(PLAYERS_DB, 'BATTERS', id)
-    return jsonify(response_data)
-
-
-@app.route('/get_pitcher', methods=['GET'])
-def get_pitcher():
-    id = request.args.get('id')
-    response_data = sql.get_sql_data(PLAYERS_DB, 'PITCHERS', id)
-    return jsonify(response_data)
-'''
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
