@@ -10,7 +10,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-img
-                            src="imageURL[currentImage]"
+                            src="@/assets/strikezone.jpg"
                         ></v-img>
                     </v-col>
                     <!--Innings and count-->
