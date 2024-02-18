@@ -10,7 +10,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-img
-                            src="@/assets/strikezone.jpg"
+                            :src="imageURL[0]"
                         ></v-img>
                     </v-col>
                     <!--Innings and count-->
@@ -103,7 +103,9 @@ export default {
     },
     predictionImgSrc() {
       //return this.$store.state.predictionImgSrc
-      return "@/assets/strikezone.jpg"
+      //console.log("predictionImgSrc called")
+      return this.imageURL[0]
+
     },
   },
   methods: {
