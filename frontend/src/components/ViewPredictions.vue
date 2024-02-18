@@ -10,7 +10,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-img
-                            :src="imageURL[0]"
+                            :src=imageURL
                         ></v-img>
                     </v-col>
                     <!--Innings and count-->
@@ -77,8 +77,8 @@ export default {
   name: 'my-component',
   data() {
     return {
-      imageURL: ["@/assets/FF_heat_map.jpg",
-                "@/assets/strikezone.jpg"],
+      imageURL: require("@/assets/FF_heat_map.jpg"),
+
       currentimage : 0,
       data: [
         {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
@@ -104,7 +104,7 @@ export default {
     predictionImgSrc() {
       //return this.$store.state.predictionImgSrc
       //console.log("predictionImgSrc called")
-      return this.imageURL[0]
+      return require(this.imageURL[0])
 
     },
   },
