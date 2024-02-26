@@ -1,6 +1,5 @@
 import sqlite3
 
-
 db_files = {
     'TEAMS': 'databases/teams.db',
     'ROSTERS': 'databases/teams.db',
@@ -9,15 +8,29 @@ db_files = {
 }
 
 
-def get_table(table_name):
+def view_database(table_name, rows=None):
+    conn = sqlite3.connect(db_files[table_name])
+    cursor = conn.cursor()
+    cursor.execute(f'SELECT * FROM {table_name}')
+    rows = cursor.fetchmany(rows)
+    for row in rows:
+        print(row)
+    conn.close()
+
+
+def get_table(table_name, where:tuple=None):
     db_file = db_files.get(table_name)
     if not db_file:
         return None
 
     # Select table data using SQL
     connection = sqlite3.connect(db_file)
-    cursor = connection.cursor()
-    cursor.execute(f'SELECT * FROM {table_name}')
+    cursor = connection.cursor()    
+    if where:
+        cursor.execute(f"""SELECT * FROM {table_name} WHERE {where[0]} = ?""",
+                       (where[1],))
+    else:
+        cursor.execute(f"""SELECT * FROM {table_name}""")
     data = cursor.fetchall()
     connection.close()
     
@@ -35,8 +48,9 @@ def get_row(table_name, id):
     
     # Select row data using SQL
     connection = sqlite3.connect(db_file)
-    cursor = connection.cursor()
-    cursor.execute(f'SELECT * FROM {table_name} WHERE id = ?', (id,))
+    cursor = connection.cursor()    
+    cursor.execute(f"""SELECT * FROM {table_name} WHERE id = ?""", 
+                   (id,))
     data = cursor.fetchone()
     connection.close()
 

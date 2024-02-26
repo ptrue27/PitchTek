@@ -11,16 +11,6 @@ def rest():
     time.sleep(5 + uniform(0, 2))
 
 
-def view_database(table_name, rows=None):
-    conn = sqlite3.connect(sql_utils.db_files[table_name])
-    cursor = conn.cursor()
-    cursor.execute(f'SELECT * FROM {table_name}')
-    rows = cursor.fetchmany(rows)
-    for row in rows:
-        print(row)
-    conn.close()
-
-
 def get_teams():
     """Populate the TEAMS table of the teams database.
     """
@@ -85,16 +75,18 @@ def get_rosters():
     conn.close()
 
 
-def get_batters():
-    player_ids = sql_utils.get_table('ROSTERS')['id']
+def get_batters(season=2023, min_id=0):
+    player_ids = sql_utils.get_table('ROSTERS')['id']    
+    player_ids = [id for id in sorted(player_ids) if id >= min_id]
     table_name = 'BATTERS'
     db_file = sql_utils.db_files[table_name]
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
-    i = 0
+    i = 0    
+    print(player_ids[0], player_ids[-1], len(player_ids))
     for id in player_ids:
-        stats = mlb.get_player_stats(id, stats=['season'], groups=['hitting'])
+        stats = mlb.get_player_stats(id, stats=['season'], groups=['hitting'], season=season)
         if len(stats) == 0:
             i += 1
             continue
@@ -110,7 +102,9 @@ def get_batters():
                     (id, name, img, stat.gamesplayed, stat.plateappearances, stat.avg, stat.obp, stat.slg, stat.ops, stat.hits, stat.homeruns))
 
         i += 1
-        if i > 10:
+        if i > 10:            
+            conn.commit()
+            print("Scraped batter data for players through", id)
             rest()
             i = 0
 
@@ -118,6 +112,10 @@ def get_batters():
     conn.close()
 
 if __name__ == '__main__':
-    #get_teams()
-    #get_rosters()
-    get_batters()
+    try:
+        #get_teams()
+        #get_rosters()
+        get_batters(2023, 665742)
+
+    except KeyboardInterrupt:
+        print("Interrupted") 

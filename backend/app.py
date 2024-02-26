@@ -23,24 +23,33 @@ def file_upload():
         filename = secure_filename(file.filename)
         file.save(os.path.join('uploads', filename))
         return jsonify({'message': f'File {filename} uploaded successfully'}), 200
+    
 
-
-@app.route('/get_table/<table_name>', methods=['GET'])
-def get_table(table_name):
-    table_dict = sql_utils.get_table(table_name)
-    if table_dict:
-        return jsonify(table_dict)
+@app.route("/get_teams", methods=["GET"])
+def get_teams():
+    teams_dict = sql_utils.get_table("TEAMS")
+    if teams_dict:
+        return jsonify(teams_dict)
     else:
-        return jsonify({"error": "Table not found"}), 404
+        return jsonify({"error": "Teams not found"}), 404
 
 
-@app.route('/get_row/<table_name>/<int:row_id>', methods=['GET'])
-def get_row(table_name, row_id):
-    row_dict = sql_utils.get_row(table_name, row_id)
-    if row_dict:
-        return jsonify(row_dict)
+@app.route('/get_roster/<int:id>', methods=['GET'])
+def get_roster(id):
+    roster_dict = sql_utils.get_table("ROSTERS", where=("team_id", id))
+    if roster_dict:
+        return jsonify(roster_dict)
     else:
-        return jsonify({"error": "Row not found"}), 404
+        return jsonify({"error": "Roster not found"}), 404
+
+
+@app.route('/get_batter/<int:id>', methods=['GET'])
+def get_batter(id):
+    batter_dict = sql_utils.get_row("BATTERS", id)
+    if batter_dict:
+        return jsonify(batter_dict)
+    else:
+        return jsonify({"error": "Batter not found"}), 404
 
 
 @app.route('/make_prediction', methods=['GET'])
