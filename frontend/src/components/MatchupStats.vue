@@ -5,7 +5,7 @@
     >
         <v-row>
             <v-col class="text-center">
-                <div>{{ pitcher.name }} vs. {{ batter.name }}</div>
+                <div>{{ pitcherName }} vs. {{ batterName }}</div>
             </v-col>
         </v-row>
 
@@ -37,16 +37,29 @@
 </template>
 
 <script>
-export default {
-    data() {
+import { mapState } from 'vuex';
 
-    },
+export default {
     computed: {
-        pitcher() {
-            return this.$store.state.pitcher
+        ...mapState({
+            pitcher: state => state.pitcher,
+            batter: state => state.current.batter,
+        }),
+        pitcherName() {
+            if (this.pitcher.name == "Select Pitcher") {
+                return "--------";
+            }
+            else {
+                return this.pitcher.name;
+            }
         },
-        batter() {
-            return this.$store.state.batter
+        batterName() {
+            if (this.batter.name == "Select Batter") {
+                return "--------";
+            }
+            else {
+                return this.batter.name;
+            }
         },
     }
 };
