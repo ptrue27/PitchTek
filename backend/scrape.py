@@ -5,27 +5,79 @@ import time
 from random import uniform
 
 mlb = mlbstatsapi.Mlb()
+DATE = '10/01/2023'
+SEASON = 2023
 
 
-def rest():
-    time.sleep(5 + uniform(0, 2))
+def rest(rest_time=5):
+    time.sleep(rest_time + uniform(0, 2))
+
+
+def remake_tables():
+    db_file = sql_utils.db_files["TEAMS"]
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+
+    # TEAMS
+    cursor.execute("DROP TABLE IF EXISTS TEAMS")
+    cursor.execute("""
+        CREATE TABLE TEAMS (
+            id INTEGER PRIMARY KEY,
+            name TEXT
+        )
+    """)
+
+    # BATTERS
+    cursor.execute("DROP TABLE IF EXISTS BATTERS")
+    cursor.execute("""
+        CREATE TABLE BATTERS (
+            id INTEGER PRIMARY KEY,
+            team_id INTEGER,
+            position TEXT,
+            name TEXT,
+            img TEXT,
+            games INTEGER,
+            pa INTEGER,
+            avg REAL,
+            obp REAL,
+            slg REAL,
+            ops REAL,
+            hits INTEGER,
+            hr INTEGER
+        )
+    """)
+
+    # PITCHERS
+    cursor.execute("DROP TABLE IF EXISTS PITCHERS")
+    cursor.execute("""
+        CREATE TABLE PITCHERS (
+            id INTEGER PRIMARY KEY,
+            team_id INTEGER,
+            position TEXT,
+            name TEXT,
+            img TEXT,
+            games INTEGER,
+            batters INTEGER,
+            whip REAL,
+            era REAL,
+            kper9 REAL,
+            bbper9 REAL,
+            hits INTEGER,
+            hr INTEGER
+        )
+    """)
+
+    conn.commit()
+    conn.close()
 
 
 def get_teams():
     """Populate the TEAMS table of the teams database.
     """
-    table_name = 'TEAMS'
+    table_name = "TEAMS"
     db_file = sql_utils.db_files[table_name]
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
-
-    # Create TEAMS table if it doesn't exist
-    cursor.execute(f'''
-        CREATE TABLE IF NOT EXISTS {table_name} (
-            id INTEGER PRIMARY KEY,
-            name TEXT
-        )
-    ''')
 
     # Insert data into the TEAMS table
     teams = mlb.get_teams()
@@ -35,87 +87,143 @@ def get_teams():
             VALUES (?, ?)
         ''', (team.id, team.name))
 
-    print(f'Updated {table_name}')
+    print(f'Finished scraping data for {table_name}')
     conn.commit()
     conn.close()
 
 
-def get_rosters():
-    """Populate the ROSTERS table of the teams database.
+def get_rosters(min_team_id=0):
+    """Populate the BATTERS and PITCHERS tables.
     """
-    table_name = 'ROSTERS'
-    db_file = sql_utils.db_files[table_name]
+    db_file = sql_utils.db_files["BATTERS"]
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
-    # Create ROSTERS table if it doesn't exist
-    cursor.execute(f'''
-        CREATE TABLE IF NOT EXISTS {table_name} (
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            position INTEGER,
-            team_id INTEGER
-        )
-    ''')
+    # Get team ids
+    team_ids = sql_utils.get_table("TEAMS")["id"]
+    team_ids = [id for id in sorted(team_ids) if id > min_team_id]
 
-    # Insert data into the ROSTERS table
-    teams_table_name = 'TEAMS'
-    teams = sql_utils.get_table(teams_table_name)
-    for team_id in teams['id']:
-        roster = mlb.get_team_roster(team_id)
-        for player in roster:
-            cursor.execute(f'''
-                INSERT OR IGNORE INTO {table_name} (id, name, position, team_id)
-                VALUES (?, ?, ?, ?)
-            ''', (player.id, player.fullname, player.primaryposition.code, team_id))
-        print(f'Updated {table_name} for team {team_id}')
-        rest()
+    positions = {
+        '1': "P", 
+        '2': "C", 
+        '3': "1B", 
+        '4': "2B", 
+        '5': "3B", 
+        '6': "SS", 
+        '7': "LF", 
+        '8': "CF", 
+        '9': "RF",
+    }
+    for team_id in team_ids:
+        # Get team roster
+        roster = mlb.get_team_roster(team_id, date=DATE)
+        for player in roster: # player(id, fullname, primaryposition.code)
 
-    conn.commit()
-    conn.close()
+            # Get player position
+            position = positions[player.primaryposition.code] if player.primaryposition.code in positions.keys() else "DH"
 
+            # Get batter data
+            if (position != "P") or (player.fullname == "Shohei Ohtani"):
+                stats = mlb.get_player_stats(player.id, stats=["season"], groups=["hitting"], season=SEASON)
+                if len(stats) == 0:
+                    continue
 
-def get_batters(season=2023, min_id=0):
-    player_ids = sql_utils.get_table('ROSTERS')['id']    
-    player_ids = [id for id in sorted(player_ids) if id >= min_id]
-    table_name = 'BATTERS'
-    db_file = sql_utils.db_files[table_name]
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
+                stats = stats["hitting"]["season"].splits[0]
+                stat = stats.stat
+                img = "https://a.espncdn.com/combiner/i?img=/i/headshots/mlb/players/full/30836.png"
 
-    i = 0    
-    print(player_ids[0], player_ids[-1], len(player_ids))
-    for id in player_ids:
-        stats = mlb.get_player_stats(id, stats=['season'], groups=['hitting'], season=season)
-        if len(stats) == 0:
-            i += 1
-            continue
-        stats = stats['hitting']['season'].splits[0]
-        name = stats.player.fullname
-        stat = stats.stat
-        img = 'https://a.espncdn.com/combiner/i?img=/i/headshots/mlb/players/full/30836.png'
+                cursor.execute("""
+                    INSERT OR IGNORE INTO BATTERS (
+                        id, 
+                        team_id, 
+                        position, 
+                        name, 
+                        img, 
+                        games, 
+                        pa, 
+                        avg, 
+                        obp, 
+                        slg, 
+                        ops,
+                        hits, 
+                        hr
+                    ) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        player.id,
+                        team_id, 
+                        position,
+                        player.fullname, 
+                        img, 
+                        stat.gamesplayed, 
+                        stat.plateappearances, 
+                        stat.avg, 
+                        stat.obp, 
+                        stat.slg, 
+                        stat.ops, 
+                        stat.hits, 
+                        stat.homeruns
+                    )
+                )
+
+            # Get pitcher data
+            if position == "P":
+                stats = mlb.get_player_stats(player.id, stats=["season"], groups=["pitching"], season=SEASON)
+                if len(stats) == 0:
+                    continue
+
+                stats = stats["pitching"]["season"].splits[0]
+                stat = stats.stat
+                img = "https://a.espncdn.com/combiner/i?img=/i/headshots/mlb/players/full/30836.png"
+                
+                cursor.execute("""
+                    INSERT OR IGNORE INTO PITCHERS (
+                        id, 
+                        team_id, 
+                        position, 
+                        name, 
+                        img, 
+                        games, 
+                        batters, 
+                        whip, 
+                        era, 
+                        kper9, 
+                        bbper9,
+                        hits, 
+                        hr
+                    ) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        player.id,
+                        team_id, 
+                        position,
+                        player.fullname, 
+                        img, 
+                        stat.gamespitched, 
+                        stat.battersfaced, 
+                        stat.whip, 
+                        stat.era, 
+                        stat.strikeoutsper9inn, 
+                        stat.walksper9inn, 
+                        stat.hits, 
+                        stat.homeruns
+                    )
+                )
+
+        conn.commit()
+        print("Scraped roster data for teams through", team_id)
         
-        if stat.numberofpitches > 0:
-            print(id, name, img, stat.gamesplayed, stat.plateappearances, stat.avg, stat.obp, stat.slg, stat.ops, stat.hits, stat.homeruns)
-            cursor.execute('''INSERT OR IGNORE INTO BATTERS (id, name, img, games, pa, avg, obp, slg, ops, hits, hr) 
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
-                    (id, name, img, stat.gamesplayed, stat.plateappearances, stat.avg, stat.obp, stat.slg, stat.ops, stat.hits, stat.homeruns))
-
-        i += 1
-        if i > 10:            
-            conn.commit()
-            print("Scraped batter data for players through", id)
-            rest()
-            i = 0
+        rest(20)
 
     conn.commit()
     conn.close()
+
 
 if __name__ == '__main__':
     try:
+        #remake_tables()
         #get_teams()
-        #get_rosters()
-        get_batters(2023, 665742)
+        get_rosters(139)
 
     except KeyboardInterrupt:
         print("Interrupted") 

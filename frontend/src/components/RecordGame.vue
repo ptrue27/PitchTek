@@ -366,13 +366,9 @@
 
         home: {
           teamName: null,
-          batterIds: [],
-          batterNames: [],
         },
         away: {
           teamName: null,
-          batterIds: [],
-          batterNames: [],
         },
 
 
@@ -402,12 +398,27 @@
         axios.get(path)
           .then((res) => {
             const roster = res.data;
-            console.log("Loaded roster for " + teamId + ": " + roster["id"].length);
-            const batterInfo = {ids: roster["id"], names: roster["name"]};
-            this.$store.commit("setHome", batterInfo);
+            console.log("Loaded roster for " + teamId + ": " + 
+              roster.batters.id.length + " batters, " +
+              roster.pitchers.id.length + " pitchers"
+            );
+            const newHome = {
+              batterIds: roster.batters.id, 
+              batterNames: roster.batters.name,
+              pitcherIds: roster.pitchers.id,
+              pitcherNames: roster.pitchers.name,
+            };
+            this.$store.commit("setHome", newHome);
           })
           .catch((error) => {
               console.error("Error loading roster for " + teamId + ": " + error);
+              const newHome = {
+                batterIds: [], 
+                batterNames: [], 
+                pitcherIds: [], 
+                pitcherNames: [],
+              };
+              this.$store.commit("setHome", newHome);
           });
       },
       handleAwayTeamChange() {
@@ -418,12 +429,27 @@
         axios.get(path)
           .then((res) => {
             const roster = res.data;
-            console.log("Loaded roster for " + teamId + ": " + roster["id"].length);
-            const batterInfo = {ids: roster["id"], names: roster["name"]};
-            this.$store.commit("setAway", batterInfo);
+            console.log("Loaded roster for " + teamId + ": " + 
+              roster.batters.id.length + " batters, " +
+              roster.pitchers.id.length + " pitchers"
+            );
+            const newAway = {
+              batterIds: roster.batters.id, 
+              batterNames: roster.batters.name,
+              pitcherIds: roster.pitchers.id,
+              pitcherNames: roster.pitchers.name,
+            };
+            this.$store.commit("setAway", newAway);
           })
           .catch((error) => {
               console.error("Error loading roster for " + teamId + ": " + error);
+              const newAway = {
+                batterIds: [], 
+                batterNames: [], 
+                pitcherIds: [], 
+                pitcherNames: [],
+              };
+              this.$store.commit("setAway", newAway);
           });
       },
       handleGameButtonClick() {

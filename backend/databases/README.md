@@ -1,7 +1,37 @@
-## teams.db 
-TEAMS (id, name)
-ROSTERS (id, name, position, team_id)
+## mlb.db 
+TEAMS (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+)
 
-## players.db
-BATTERS (id, name, img, games, pa, avg, obp, slg, ops, hits, hr)
-PITCHERS (id, name, img, era, kper9, bbper9)
+BATTERS (
+    id INTEGER PRIMARY KEY,
+    team_id INTEGER,
+    position TEXT,
+    name TEXT,
+    img TEXT,
+    games INTEGER,
+    pa INTEGER,
+    avg REAL,
+    obp REAL,
+    slg REAL,
+    ops REAL,
+    hits INTEGER,
+    hr INTEGER
+)
+
+PITCHERS (
+    id INTEGER PRIMARY KEY,
+    team_id INTEGER,
+    position TEXT,
+    name TEXT,
+    img TEXT,
+    games INTEGER,
+    batters INTEGER,
+    whip REAL,
+    era REAL,
+    kper9 REAL,
+    bbper9 REAL,
+    hits INTEGER,
+    hr INTEGER
+)

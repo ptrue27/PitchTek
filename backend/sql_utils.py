@@ -1,10 +1,9 @@
 import sqlite3
 
 db_files = {
-    'TEAMS': 'databases/teams.db',
-    'ROSTERS': 'databases/teams.db',
-    'BATTERS': 'databases/players.db',
-    'PITCHERS': 'databases/players.db',
+    'TEAMS': 'databases/mlb.db',
+    'BATTERS': 'databases/mlb.db',
+    'PITCHERS': 'databases/mlb.db',
 }
 
 
@@ -18,15 +17,29 @@ def view_database(table_name, rows=None):
     conn.close()
 
 
-def get_table(table_name, where:tuple=None):
+def view_row_count(table_name):
+    conn = sqlite3.connect(db_files[table_name])
+    cursor = conn.cursor()
+    cursor.execute(f'SELECT COUNT(*) FROM {table_name}')
+    row_count = cursor.fetchone()[0]
+    print(f"{table_name} has {row_count} rows")
+    conn.close()
+
+
+def get_table(table_name, cols=None, where=None):
     db_file = db_files.get(table_name)
     if not db_file:
         return None
 
     # Select table data using SQL
     connection = sqlite3.connect(db_file)
-    cursor = connection.cursor()    
-    if where:
+    cursor = connection.cursor()  
+    if cols and where:
+        cursor.execute(f"""SELECT {', '.join(cols)} FROM {table_name} WHERE {where[0]} = ?""",
+                       (where[1],))
+    elif cols:
+        cursor.execute(f"""SELECT {', '.join(cols)} FROM {table_name}""")
+    elif where:
         cursor.execute(f"""SELECT * FROM {table_name} WHERE {where[0]} = ?""",
                        (where[1],))
     else:

@@ -42,7 +42,7 @@ import { mapState } from 'vuex';
 export default {
     computed: {
         ...mapState({
-            pitcher: state => state.pitcher,
+            pitcher: state => state.current.pitcher,
             batter: state => state.current.batter,
         }),
         pitcherName() {

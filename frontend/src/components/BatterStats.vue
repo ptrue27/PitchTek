@@ -63,6 +63,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error("Error changing batter: " + error);
+                    this.$store.commit("setCurrentBatter", this.$store.state.default.batter);
                 });
         },
     },

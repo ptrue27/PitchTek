@@ -36,8 +36,10 @@ def get_teams():
 
 @app.route('/get_roster/<int:id>', methods=['GET'])
 def get_roster(id):
-    roster_dict = sql_utils.get_table("ROSTERS", where=("team_id", id))
-    if roster_dict:
+    batters_dict = sql_utils.get_table("BATTERS", cols=["id", "name"], where=["team_id", id])
+    pitchers_dict = sql_utils.get_table("PITCHERS", cols=["id", "name"], where=["team_id", id])
+    roster_dict = {"batters": batters_dict, "pitchers": pitchers_dict}
+    if batters_dict and pitchers_dict:
         return jsonify(roster_dict)
     else:
         return jsonify({"error": "Roster not found"}), 404
@@ -50,6 +52,15 @@ def get_batter(id):
         return jsonify(batter_dict)
     else:
         return jsonify({"error": "Batter not found"}), 404
+
+
+@app.route('/get_pitcher/<int:id>', methods=['GET'])
+def get_pitcher(id):
+    pitcher_dict = sql_utils.get_row("PITCHERS", id)
+    if pitcher_dict:
+        return jsonify(pitcher_dict)
+    else:
+        return jsonify({"error": "Pitcher not found"}), 404
 
 
 @app.route('/make_prediction', methods=['GET'])
