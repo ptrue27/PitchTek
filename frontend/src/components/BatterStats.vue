@@ -5,7 +5,7 @@
             <v-col>
                 <v-select
                     :items="batterNames" 
-                    v-model="batter.name" 
+                    v-model="batter.name"
                     @update:modelValue="handleBatterChange"
                     density="compact" 
                 ></v-select>

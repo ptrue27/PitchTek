@@ -12,7 +12,6 @@
                         :items="homeTeamNames" 
                         v-model="home.teamName"
                         @update:modelValue="handleHomeTeamChange"
-                        label="Home Team" 
                         variant="filled" 
                         density="compact"
                         class="my-label team-name"
@@ -24,7 +23,6 @@
                           :items="awayTeamNames" 
                           v-model="away.teamName"
                           @update:modelValue="handleAwayTeamChange"
-                          label="Away Team" 
                           variant="filled" 
                           density="compact"
                           class="my-label team-name"
@@ -365,10 +363,10 @@
         teamNames: [],
 
         home: {
-          teamName: null,
+          teamName: "Home",
         },
         away: {
-          teamName: null,
+          teamName: "Away",
         },
 
 
