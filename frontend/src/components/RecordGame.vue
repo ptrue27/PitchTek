@@ -9,17 +9,23 @@
                     <!--Input home team-->
                     <v-col cols="6">
                       <v-select
-                        :items="teamNames" v-model="homeTeamName"
-                        variant="filled" density="compact"
-                        label="Home Team" class="my-label team-name"
+                        :items="homeTeamNames" 
+                        v-model="home.teamName"
+                        @update:modelValue="handleHomeTeamChange"
+                        variant="filled" 
+                        density="compact"
+                        class="my-label team-name"
                       ></v-select>
                     </v-col>
                     <!--Input away team-->
                     <v-col cols="6">
                         <v-select
-                          :items="teamNames" v-model="awayTeamName"
-                          variant="filled" density="compact"
-                          label="Away Team" class="my-label team-name"
+                          :items="awayTeamNames" 
+                          v-model="away.teamName"
+                          @update:modelValue="handleAwayTeamChange"
+                          variant="filled" 
+                          density="compact"
+                          class="my-label team-name"
                         ></v-select>
                     </v-col>
                 </v-row>
@@ -121,8 +127,11 @@
                         </v-col>
                         <v-col>
                           <v-select
-                            :items="innings" v-model="inning"
-                            density="compact" class="inning-v-select"
+                            :items="innings" 
+                            v-model="inning"
+                            @update:modelValue="handleInningChange"
+                            density="compact" 
+                            class="inning-v-select"
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -350,10 +359,15 @@
         set0Color: 'gray',
         setColor: 'cadetblue',
 
-        teamNames: [],
         teamIds: [],
-        homeTeamName: null,
-        awayTeamName: null,
+        teamNames: [],
+
+        home: {
+          teamName: "Home",
+        },
+        away: {
+          teamName: "Away",
+        },
 
 
         homeScore: '0',
@@ -361,7 +375,7 @@
         onBase: [false, false, false],
         baseColors: [this.unsetColor, this.unsetColor, this.unsetColor],
         innings: [],
-        inning: '1∧',
+        inning: "1∧",
         outNumber: 0,
         outColors: [this.set0Color, this.unsetColor, this.unsetColor],
         ballNumber: 0,
@@ -371,11 +385,75 @@
       };
     },
     methods: {
+      handleInningChange() {
+        this.$store.commit("setInning", this.inning);
+      },
+      handleHomeTeamChange() {
+        const index = this.teamNames.indexOf(this.home.teamName);
+        const teamId = this.teamIds[index];
+        const path = 'http://localhost:5000/get_roster/' + teamId;
+
+        axios.get(path)
+          .then((res) => {
+            const roster = res.data;
+            console.log("Loaded roster for " + teamId + ": " + 
+              roster.batters.id.length + " batters, " +
+              roster.pitchers.id.length + " pitchers"
+            );
+            const newHome = {
+              batterIds: roster.batters.id, 
+              batterNames: roster.batters.name,
+              pitcherIds: roster.pitchers.id,
+              pitcherNames: roster.pitchers.name,
+            };
+            this.$store.commit("setHome", newHome);
+          })
+          .catch((error) => {
+              console.error("Error loading roster for " + teamId + ": " + error);
+              const newHome = {
+                batterIds: [], 
+                batterNames: [], 
+                pitcherIds: [], 
+                pitcherNames: [],
+              };
+              this.$store.commit("setHome", newHome);
+          });
+      },
+      handleAwayTeamChange() {
+        const index = this.teamNames.indexOf(this.away.teamName);
+        const teamId = this.teamIds[index];
+        const path = 'http://localhost:5000/get_roster/' + teamId;
+
+        axios.get(path)
+          .then((res) => {
+            const roster = res.data;
+            console.log("Loaded roster for " + teamId + ": " + 
+              roster.batters.id.length + " batters, " +
+              roster.pitchers.id.length + " pitchers"
+            );
+            const newAway = {
+              batterIds: roster.batters.id, 
+              batterNames: roster.batters.name,
+              pitcherIds: roster.pitchers.id,
+              pitcherNames: roster.pitchers.name,
+            };
+            this.$store.commit("setAway", newAway);
+          })
+          .catch((error) => {
+              console.error("Error loading roster for " + teamId + ": " + error);
+              const newAway = {
+                batterIds: [], 
+                batterNames: [], 
+                pitcherIds: [], 
+                pitcherNames: [],
+              };
+              this.$store.commit("setAway", newAway);
+          });
+      },
       handleGameButtonClick() {
         console.log('Game Button clicked!');
         // Start or stop game recording
       },
-
       handlePredictButtonClick() {
         console.log('Predict Button clicked!');
 
@@ -453,16 +531,25 @@
       }
 
       // Fill team selection lists
-      const path = 'http://localhost:5000/get_table/TEAMS';
+      const path = "http://localhost:5000/get_teams";
       axios.get(path)
           .then((res) => {
-              console.log(res.data)
-              this.teamIds = res.data['id']
-              this.teamNames = res.data['name'];
+              const teams = res.data;
+              console.log("Loaded teams: " + teams["id"].length)
+              this.teamIds = teams["id"]
+              this.teamNames = teams["name"];
           })
           .catch((error) => {
-              console.error(error);
+              console.error("Error loading teams: " + error);
           });
+    },
+    computed: {
+      homeTeamNames(){
+        return this.teamNames.filter(team => team !== this.away.teamName);
+      },
+      awayTeamNames(){
+        return this.teamNames.filter(team => team !== this.home.teamName);
+      },
     },
   };
 </script>

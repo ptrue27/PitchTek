@@ -26,3 +26,4 @@ __pycache__
 env
 TODO.txt
 scratch.py
+*.db-journal

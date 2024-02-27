@@ -2,12 +2,8 @@ from get_prediction import Predictions_Class
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
-import sqlite3
 import sql_utils
 import os
-
-
-PLAYERS_DB = 'players.db'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -27,40 +23,45 @@ def file_upload():
         filename = secure_filename(file.filename)
         file.save(os.path.join('uploads', filename))
         return jsonify({'message': f'File {filename} uploaded successfully'}), 200
+    
 
-
-@app.route('/get_table/<table_name>', methods=['GET'])
-def get_table(table_name):
-    table_dict = sql_utils.get_table(table_name)
-    if table_dict:
-        return jsonify(table_dict)
+@app.route("/get_teams", methods=["GET"])
+def get_teams():
+    teams_dict = sql_utils.get_table("TEAMS")
+    if teams_dict:
+        return jsonify(teams_dict)
     else:
-        return jsonify({"error": "Table not found"}), 404
+        return jsonify({"error": "Teams not found"}), 404
 
 
-@app.route('/get_row/<table_name>/<int:row_id>', methods=['GET'])
-def get_row(table_name, row_id):
-    row_dict = sql_utils.get_row(table_name, row_id)
-    if row_dict:
-        return jsonify(row_dict)
+@app.route('/get_roster/<int:id>', methods=['GET'])
+def get_roster(id):
+    batters_dict = sql_utils.get_table("BATTERS", cols=["id", "name"], where=["team_id", id])
+    pitchers_dict = sql_utils.get_table("PITCHERS", cols=["id", "name"], where=["team_id", id])
+    roster_dict = {"batters": batters_dict, "pitchers": pitchers_dict}
+    if batters_dict and pitchers_dict:
+        return jsonify(roster_dict)
     else:
-        return jsonify({"error": "Row not found"}), 404
+        return jsonify({"error": "Roster not found"}), 404
 
 
-'''
-@app.route('/get_batter', methods=['GET'])
-def get_batter():
-    id = request.args.get('id')
-    response_data = sql_utils.get_sql_data(PLAYERS_DB, 'BATTERS', id)
-    return jsonify(response_data)
+@app.route('/get_batter/<int:id>', methods=['GET'])
+def get_batter(id):
+    batter_dict = sql_utils.get_row("BATTERS", id)
+    if batter_dict:
+        return jsonify(batter_dict)
+    else:
+        return jsonify({"error": "Batter not found"}), 404
 
 
-@app.route('/get_pitcher', methods=['GET'])
-def get_pitcher():
-    id = request.args.get('id')
-    response_data = sql.get_sql_data(PLAYERS_DB, 'PITCHERS', id)
-    return jsonify(response_data)
-'''
+@app.route('/get_pitcher/<int:id>', methods=['GET'])
+def get_pitcher(id):
+    pitcher_dict = sql_utils.get_row("PITCHERS", id)
+    if pitcher_dict:
+        return jsonify(pitcher_dict)
+    else:
+        return jsonify({"error": "Pitcher not found"}), 404
+
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
