@@ -46,7 +46,7 @@ export default {
             batter: state => state.current.batter,
         }),
         pitcherName() {
-            if (this.pitcher.name == "Pitcher") {
+            if (this.pitcher.name == "Select Pitcher") {
                 return "--------";
             }
             else {
@@ -54,7 +54,7 @@ export default {
             }
         },
         batterName() {
-            if (this.batter.name == "Batter") {
+            if (this.batter.name == "Select Batter") {
                 return "--------";
             }
             else {
