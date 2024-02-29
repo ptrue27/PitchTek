@@ -20,6 +20,7 @@
       </v-btn>
 
       <v-btn
+        v-if="$store.state.isLoggedIn"
         to="/dashboard"
         prepend-icon="mdi-view-dashboard"
         variant="tonal" class="mr-5"
@@ -28,6 +29,7 @@
       </v-btn>
 
       <v-btn
+        v-if="$store.state.isLoggedIn"
         to="/statistics"
         prepend-icon="mdi-magnify"
         variant="tonal" class="mr-5"
@@ -36,11 +38,21 @@
       </v-btn>
 
       <v-btn
+        v-if="$store.state.isLoggedIn"
         to="/history"
         prepend-icon="mdi-history"
-        variant="tonal" class="mr-2"
+        variant="tonal" class="mr-5"
       >
         History
+      </v-btn>
+
+      <v-btn
+        v-if="$store.state.isLoggedIn"
+        @click="logout"
+        prepend-icon="mdi-logout"
+        variant="tonal" class="mr-2"
+      >
+        Logout
       </v-btn>
 
     </v-app-bar>

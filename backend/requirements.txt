@@ -1,7 +1,11 @@
 flask
 flask-cors
+flask-login
+flask-sqlalchemy
+flask-wtf
 joblib
 matplotlib
 pandas
+python-dotenv
 python-mlb-statsapi
 sklearn

@@ -1,13 +1,24 @@
-from get_prediction import Predictions_Class
+from app.get_prediction import Predictions_Class
+from app.models import User
+from app import app, db, login, sql_utils
+
 from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
 from flask_cors import CORS
-import sql_utils
+from flask_login import current_user, login_user
+
+import sqlalchemy as sa
+from werkzeug.utils import secure_filename
 import os
 
-app = Flask(__name__)
-app.config.from_object(__name__)
-CORS(app, resources={r'/*': {'origins': '*'}})
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    pass
 
 
 @app.route('/upload', methods=['POST'])

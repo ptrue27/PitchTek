@@ -10,13 +10,3 @@
     </v-row>
   </v-container>
 </template>
-
-<style>
-.landing-page-container {
-  background-image: url("@/assets/landing-page.png");
-  background-size: cover; /* or 'contain', depending on your preference */
-  background-position: center center; /* or any other position */
-  background-repeat: no-repeat;
-  margin-top: 10px;
-}
-</style>
