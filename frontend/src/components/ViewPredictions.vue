@@ -10,7 +10,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-img
-                            :src=imageURL
+                            :src=imageURL[currentimage]
                         ></v-img>
                     </v-col>
                     <!--Innings and count-->
@@ -77,8 +77,12 @@ export default {
   name: 'my-component',
   data() {
     return {
-      imageURL: require("@/assets/FF_heat_map.jpg"),
-
+      imageURL:[require("@/assets/strikezone.jpg"),
+                require("@/assets/FF_heat_map.jpg"),
+                require("@/assets/SL_heat_map.jpg"),
+                require("@/assets/CU_heat_map.jpg"),
+                require("@/assets/CH_heat_map.jpg")]
+,
       currentimage : 0,
       data: [
         {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
@@ -121,9 +125,27 @@ export default {
   },
     mounted() {
       this.emitter.on("ChangePitch", my_var => {
-        console.log('ChangePitch() called!');
+        console.log('ChangePitch() called, with pitch:', my_var[0]);
         this.data[0].type = my_var[0]
         this.data[0].speed = my_var[1]
+
+        if(my_var[0] == "Fastball"){
+          this.currentimage = 1
+
+        } else if(my_var[0] == "Slider"){
+          this.currentimage = 2
+
+        } else if(my_var[0] == "Curve"){
+          this.currentimage = 3
+
+        } else if (my_var[0] == "Changeup"){
+          this.currentimage = 4
+
+        } else {
+          this.currentimage = 0
+
+        }
+
       });
     },
 };
