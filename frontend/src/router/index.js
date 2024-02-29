@@ -4,6 +4,7 @@ import AboutView from "./../views/AboutView.vue";
 import DashboardView from "./../views/DashboardView.vue";
 import StatisticsView from "./../views/StatisticsView.vue";
 import HistoryView from "./../views/HistoryView.vue";
+import store from './../store';
 
 const routes = [
   {
@@ -20,22 +21,37 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: DashboardView,
+    meta: { requiresAuth: true },
   },
   {
     path: "/statistics",
     name: "Statistics",
     component: StatisticsView,
+    meta: { requiresAuth: true },
   },
   {
     path: "/history",
     name: "History",
     component: HistoryView,
+    meta: { requiresAuth: true },
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!store.state.isLoggedIn) {
+      next({ name: 'LandingPage' });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

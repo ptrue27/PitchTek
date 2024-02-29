@@ -14,7 +14,7 @@ row = sql_utils.get_row('BATTERS', 1)
 row['img'] = 'PLACEHOLDER'
 print(row)
 '''
-import sql_utils
+from app import sql_utils
 import unittest
 
 class TestSqlUtils(unittest.TestCase):

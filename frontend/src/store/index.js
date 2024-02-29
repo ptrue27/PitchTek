@@ -34,6 +34,8 @@ const defaultPitcher = {
 const store = createStore({
     state() {
         return {
+            //isLoggedIn: !!localStorage.getItem("token"),
+            isLoggedIn: true,
             inning: "1∧",
             default: {
                 batter: { ...defaultBatter },
@@ -67,6 +69,12 @@ const store = createStore({
         }
     },
     mutations: {
+        login(state) {
+            state.isLoggedIn = true;
+        },
+        logout(state) {
+            state.isLoggedIn = false
+        },
         setInning(state, inning) {
             state.inning = inning;
             if (inning.includes('∨')) {
