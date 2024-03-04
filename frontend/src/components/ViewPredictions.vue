@@ -12,6 +12,7 @@
                         <v-img
                             :src=imageURL[currentimage]
                         ></v-img>
+                        <v-card-title>{{ curr_pitcher }}</v-card-title>
                     </v-col>
                     <!--Innings and count-->
                     <v-col cols="7">
@@ -77,6 +78,7 @@ export default {
   name: 'my-component',
   data() {
     return {
+      curr_pitcher: "",
       imageURL:[require("@/assets/strikezone.jpg"),
                 require("@/assets/FF_heat_map.jpg"),
                 require("@/assets/SL_heat_map.jpg"),
@@ -146,6 +148,9 @@ export default {
 
         }
 
+      });
+      this.emitter.on("ChangePitcher", pitcher_obj => {
+        this.curr_pitcher = pitcher_obj.name
       });
     },
 };

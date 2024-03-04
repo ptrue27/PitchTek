@@ -58,7 +58,8 @@ export default {
             axios.get(path)
                 .then((res) => {
                     const newPitcher = res.data;
-                    console.log("Changed pitcher: " + newPitcher);
+                    this.emitter.emit("ChangePitcher", newPitcher)
+                    console.log("Changed pitcher: " + newPitcher.name + ", " + newPitcher.id);
                     this.$store.commit("setCurrentPitcher", newPitcher);
                 })
                 .catch((error) => {
