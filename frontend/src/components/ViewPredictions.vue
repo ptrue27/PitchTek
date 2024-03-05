@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       curr_pitcher: "",
-      imageURL:[require("@/assets/strikezone.jpg"),
+      imageURL:[require("@/assets/default_heat_map.jpg"),
                 require("@/assets/FF_heat_map.jpg"),
                 require("@/assets/SL_heat_map.jpg"),
                 require("@/assets/CU_heat_map.jpg"),

@@ -19,7 +19,7 @@ def make_heat_map(pitch_type):
     heatmap, xedges, yedges = np.histogram2d(df["plate_x"], df["plate_z"], bins=20)
 
     # Change the backround color
-    #plt.figure(facecolor="gray")
+    # plt.figure(facecolor="gray")
 
     # Plot the heat map
     plt.imshow(heatmap.T, extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap='Reds')
@@ -54,16 +54,54 @@ def make_heat_map(pitch_type):
     # file_name = pitch_type + "_heat_map.jpg"
     plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
-    return file_name
+    #return file_name
+
+
+# This function is used to create the default strike zone
+def create_default_strike_zone():
+    path='../uploads/savant_data_2.csv'
+    df = pd.read_csv(path)
+
+    # Extract values
+    df = df[df['pitch_type'] == ""]
+
+    # Create a 2D histogram
+    heatmap, xedges, yedges = np.histogram2d(df["plate_x"], df["plate_z"], bins=20)
+
+    # Change the backround color
+    # plt.figure(facecolor="gray")
+
+    # Plot the heat map
+    plt.imshow(heatmap.T, extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap="Greys")
+
+    # Set custom limits for the x and y-axis
+    plt.xlim(-2., 2)
+    plt.ylim(.3, 4.7)
+
+    # Add a custom box or rectangle
+    custom_box = patches.Rectangle((-.9, 1.2), 1.8, 2.6, linewidth=2, edgecolor='black', facecolor='none', label='Custom Box')
+    plt.gca().add_patch(custom_box)
+
+    # Remove tics
+    plt.xticks([])
+    plt.yticks([])
+
+    # Display the plot
+    # plt.show()
+
+    #Export the plot
+    file_name = r"..\frontend\src\assets\default_heat_map.jpg"
+    plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+
 
 def main():
 
+    create_default_strike_zone()
     make_heat_map("FF")
-    make_heat_map("SL")
+    '''make_heat_map("SL")
     make_heat_map("CU")
-    make_heat_map("CH")
+    make_heat_map("CH")'''
 
 
-if __name__ == '__main__':
-    unittest.main()
+main()
 
