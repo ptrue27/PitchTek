@@ -2,6 +2,7 @@
 # Dimensions of dummy heat map, strikezone.jpg: 195 x 258
 #
 # NOTE: The heat map is from the catchers perspective
+import unittest
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -46,12 +47,14 @@ def make_heat_map(pitch_type):
     plt.yticks([])
 
     # Display the plot
-    plt.show()
+    # plt.show()
 
     #Export the plot
-    #file_name = r"..\frontend\src\assets\\" + pitch_type + "_heat_map.jpg"
-    #file_name = pitch_type + "_heat_map.jpg"
-    #plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+    file_name = r"..\frontend\src\assets\\" + pitch_type + "_heat_map.jpg"
+    # file_name = pitch_type + "_heat_map.jpg"
+    plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+
+    return file_name
 
 def main():
 
@@ -61,4 +64,6 @@ def main():
     make_heat_map("CH")
 
 
-main()
+if __name__ == '__main__':
+    unittest.main()
+
