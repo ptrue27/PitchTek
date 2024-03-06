@@ -11,11 +11,11 @@ db_files = {
 }
 
 
-def view_database(table_name, rows=None):
+def view_database(table_name, num_rows=None):
     conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
     cursor = conn.cursor()
     cursor.execute(f'SELECT * FROM {table_name}')
-    rows = cursor.fetchmany(rows)
+    rows = cursor.fetchall() if num_rows is None else cursor.fetchmany(num_rows)
     for row in rows:
         print(row)
     conn.close()

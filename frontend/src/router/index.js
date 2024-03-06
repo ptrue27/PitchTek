@@ -4,6 +4,7 @@ import AboutView from "./../views/AboutView.vue";
 import DashboardView from "./../views/DashboardView.vue";
 import StatisticsView from "./../views/StatisticsView.vue";
 import HistoryView from "./../views/HistoryView.vue";
+import PageNotFound from "@/views/PageNotFound.vue";
 import store from './../store';
 
 const routes = [
@@ -35,6 +36,11 @@ const routes = [
     component: HistoryView,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/:catchAll(.*)*',
+    name: "PageNotFound",
+    component: PageNotFound,
+  }
 ];
 
 const router = createRouter({

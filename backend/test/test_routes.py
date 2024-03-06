@@ -20,8 +20,8 @@ class TestApp(unittest.TestCase):
         self.assertIn('batters', data)
         self.assertIn('pitchers', data)
 
-    def test_get_roster_nonexisting(self):
-        # Test the route to get roster list for nonexisting roster
+    def test_get_roster_nonexistent(self):
+        # Test the route to get roster list for nonexistent roster
         response = self.app.get('/get_roster/0')
         data = response.get_json()
         self.assertEqual(response.status_code, 404)
@@ -34,8 +34,8 @@ class TestApp(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["name"], "Justin Turner")
 
-    def test_get_batter_nonexisting(self):
-        # Test the route to get batters stats for nonexisting player
+    def test_get_batter_nonexistent(self):
+        # Test the route to get batters stats for nonexistent player
         response = self.app.get('/get_batter/0')
         data = response.get_json()
         self.assertEqual(response.status_code, 404)
@@ -48,8 +48,8 @@ class TestApp(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["name"], "Zack Greinke")
 
-    def test_get_pitcher_nonexisting(self):
-        # Test the route to get pitcher stats for nonexisting player
+    def test_get_pitcher_nonexistent(self):
+        # Test the route to get pitcher stats for nonexistent player
         response = self.app.get('/get_pitcher/0')
         data = response.get_json()
         self.assertEqual(response.status_code, 404)

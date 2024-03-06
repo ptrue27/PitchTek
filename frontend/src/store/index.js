@@ -35,7 +35,7 @@ const store = createStore({
     state() {
         return {
             //isLoggedIn: !!localStorage.getItem("token"),
-            isLoggedIn: true,
+            isLoggedIn: false,
             inning: "1∧",
             default: {
                 batter: { ...defaultBatter },

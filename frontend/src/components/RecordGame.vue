@@ -273,7 +273,7 @@
               >Predict</v-btn>   
 
               <!--Start/stop game record button-->
-              <v-btn style="background-color: ;"
+              <v-btn
                   prepend-icon="mdi-record-circle"
                   @click="handleGameButtonClick"
                   class="start-stop-game-btn my-font mx-auto"
