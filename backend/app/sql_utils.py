@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from config import DB_DIR
+from config import Config
 
 
 db_files = {
@@ -12,7 +12,8 @@ db_files = {
 
 
 def view_database(table_name, num_rows=None):
-    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
+    # Print rows from a table
+    conn = sqlite3.connect(os.path.join(Config.DB_DIR, db_files[table_name]))
     cursor = conn.cursor()
     cursor.execute(f'SELECT * FROM {table_name}')
     rows = cursor.fetchall() if num_rows is None else cursor.fetchmany(num_rows)
@@ -22,7 +23,8 @@ def view_database(table_name, num_rows=None):
 
 
 def view_row_count(table_name):
-    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
+    # Print the number of rows in a table
+    conn = sqlite3.connect(os.path.join(Config.DB_DIR, db_files[table_name]))
     cursor = conn.cursor()
     cursor.execute(f'SELECT COUNT(*) FROM {table_name}')
     row_count = cursor.fetchone()[0]
@@ -36,7 +38,7 @@ def get_table(table_name, cols=None, where=None):
         return None
 
     # Select table data using SQL
-    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
+    conn = sqlite3.connect(os.path.join(Config.DB_DIR, db_files[table_name]))
     cursor = conn.cursor()  
     if cols and where:
         cursor.execute(f"""SELECT {', '.join(cols)} FROM {table_name} WHERE {where[0]} = ?""",
@@ -64,7 +66,7 @@ def get_row(table_name, id):
         return None
     
     # Select row data using SQL
-    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
+    conn = sqlite3.connect(os.path.join(Config.DB_DIR, db_files[table_name]))
     cursor = conn.cursor()    
     cursor.execute(f"""SELECT * FROM {table_name} WHERE id = ?""", 
                    (id,))
