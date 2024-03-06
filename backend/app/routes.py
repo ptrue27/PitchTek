@@ -1,13 +1,36 @@
-from get_prediction import Predictions_Class
+from app.get_prediction import Predictions_Class
+from app import app, sql_utils, user_manager
+
 from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
 from flask_cors import CORS
-import sql_utils
+from werkzeug.utils import secure_filename
 import os
 
-app = Flask(__name__)
-app.config.from_object(__name__)
-CORS(app, resources={r'/*': {'origins': '*'}})
+
+@app.route('/sign_up', methods=['POST'])
+def sign_up():
+    data = request.get_json()
+    result = user_manager.user_sign_up(data["username"], data["password"])
+    if result == "success":
+        return jsonify({'message': 'User signed up successfully'}), 201
+    elif result == "exists":
+        return jsonify({'message': 'Username is unavailable'}), 400
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    result = user_manager.user_login(data["username"], data["password"])
+    if result:
+        return jsonify({'message': 'User logged in successfully'}), 200
+    else:
+        return jsonify({'message': 'Invalid username or password'}), 401
+
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    user_manager.user_logout()
+    return jsonify({'message': 'User logged out successfully'}), 200
 
 
 @app.route('/upload', methods=['POST'])

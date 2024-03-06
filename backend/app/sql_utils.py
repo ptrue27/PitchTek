@@ -1,24 +1,28 @@
 import sqlite3
+import os
+from config import DB_DIR
+
 
 db_files = {
-    'TEAMS': 'databases/mlb.db',
-    'BATTERS': 'databases/mlb.db',
-    'PITCHERS': 'databases/mlb.db',
+    "TEAMS": "mlb.db",
+    "BATTERS": "mlb.db",
+    "PITCHERS": "mlb.db",
+    "USER": "app.db",
 }
 
 
-def view_database(table_name, rows=None):
-    conn = sqlite3.connect(db_files[table_name])
+def view_database(table_name, num_rows=None):
+    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
     cursor = conn.cursor()
     cursor.execute(f'SELECT * FROM {table_name}')
-    rows = cursor.fetchmany(rows)
+    rows = cursor.fetchall() if num_rows is None else cursor.fetchmany(num_rows)
     for row in rows:
         print(row)
     conn.close()
 
 
 def view_row_count(table_name):
-    conn = sqlite3.connect(db_files[table_name])
+    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
     cursor = conn.cursor()
     cursor.execute(f'SELECT COUNT(*) FROM {table_name}')
     row_count = cursor.fetchone()[0]
@@ -32,8 +36,8 @@ def get_table(table_name, cols=None, where=None):
         return None
 
     # Select table data using SQL
-    connection = sqlite3.connect(db_file)
-    cursor = connection.cursor()  
+    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
+    cursor = conn.cursor()  
     if cols and where:
         cursor.execute(f"""SELECT {', '.join(cols)} FROM {table_name} WHERE {where[0]} = ?""",
                        (where[1],))
@@ -45,7 +49,7 @@ def get_table(table_name, cols=None, where=None):
     else:
         cursor.execute(f"""SELECT * FROM {table_name}""")
     data = cursor.fetchall()
-    connection.close()
+    conn.close()
     
     # Return table as JSON
     col_names = [col[0] for col in cursor.description]
@@ -60,12 +64,12 @@ def get_row(table_name, id):
         return None
     
     # Select row data using SQL
-    connection = sqlite3.connect(db_file)
-    cursor = connection.cursor()    
+    conn = sqlite3.connect(os.path.join(DB_DIR, db_files[table_name]))
+    cursor = conn.cursor()    
     cursor.execute(f"""SELECT * FROM {table_name} WHERE id = ?""", 
                    (id,))
     data = cursor.fetchone()
-    connection.close()
+    conn.close()
 
     # Return row as JSON
     if not data:

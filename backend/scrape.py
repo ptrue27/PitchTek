@@ -1,5 +1,5 @@
 import sqlite3
-import sql_utils
+from app import sql_utils
 import mlbstatsapi
 import time
 from random import uniform

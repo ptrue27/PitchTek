@@ -1,14 +1,14 @@
 ## mlb.db 
 TEAMS (
     id INTEGER PRIMARY KEY,
-    name TEXT
+    name TEXT(32)
 )
 
 BATTERS (
     id INTEGER PRIMARY KEY,
     team_id INTEGER,
-    position TEXT,
-    name TEXT,
+    position TEXT(2),
+    name TEXT(64),
     img TEXT,
     games INTEGER,
     pa INTEGER,
@@ -23,8 +23,8 @@ BATTERS (
 PITCHERS (
     id INTEGER PRIMARY KEY,
     team_id INTEGER,
-    position TEXT,
-    name TEXT,
+    position TEXT(1),
+    name TEXT(64),
     img TEXT,
     games INTEGER,
     batters INTEGER,
@@ -34,4 +34,11 @@ PITCHERS (
     bbper9 REAL,
     hits INTEGER,
     hr INTEGER
+)
+
+## app.db
+USER (
+    id INTEGER PRIMARY KEY,
+    username TEXT(32),
+    password_hash TEXT(256),
 )

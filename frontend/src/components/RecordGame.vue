@@ -5,7 +5,7 @@
           <!--Game state column-->
           <v-col cols="8">
             <v-container fluid>
-                <v-row class="text-center">
+                <v-row class="text-center" style="margin-bottom: -40px;">
                     <!--Input home team-->
                     <v-col cols="6">
                       <v-select
@@ -31,36 +31,37 @@
                 </v-row>
                 
                 <!--Score input-->
-                <v-row>
+                <v-row class="score-row">
                           <!--Home Score and "-"-->
-                          <v-col align="right" cols="5">
-                                <v-text-field
-                                  v-model="homeScore"
-                                  :rules="scoreRules"
-                                  label="Score"
+                          <v-col cols="3" style="margin-top: 10px;" align="right">
+                            <p style="margin-right: 10px;">Home</p>
+                          </v-col>
+                          <v-col cols="2">
+                                <v-select
+                                  :items="scores"
+                                  v-model="home.score"
                                   density="compact"
-                                  class="score-v-text-field my-label"
-                                  hide-details
                                   variant="solo-filled"
-                                ></v-text-field>
+                                ></v-select>
                           </v-col>
                           <v-col 
                             cols="2"
+                            style="margin-top: -2px; margin-left: -10px; margin-right: -10px;"
                             class="score-spacer text-center"
                           >
                             <p>-</p>
                           </v-col>
                           <!--Away Score-->
-                          <v-col align="left" cols="5">
-                              <v-text-field
-                                v-model="awayScore"
-                                :rules="scoreRules"
-                                label="Score"
-                                density="compact"
-                                class="score-v-text-field my-label"
-                                variant="solo-filled"
-                                hide-details
-                              ></v-text-field>
+                          <v-col cols="2">
+                                <v-select
+                                  :items="scores"
+                                  v-model="away.score"
+                                  density="compact"
+                                  variant="solo-filled"
+                                ></v-select>
+                          </v-col>
+                          <v-col cols="3" style="margin-top: 10px;" align="left">
+                            <p style="margin-left: 10px;">Away</p>
                           </v-col>
                 </v-row>
 
@@ -130,6 +131,7 @@
                             :items="innings" 
                             v-model="inning"
                             @update:modelValue="handleInningChange"
+                            variant="solo-filled"
                             density="compact" 
                             class="inning-v-select"
                           ></v-select>
@@ -271,7 +273,7 @@
               >Predict</v-btn>   
 
               <!--Start/stop game record button-->
-              <v-btn style="background-color: ;"
+              <v-btn
                   prepend-icon="mdi-record-circle"
                   @click="handleGameButtonClick"
                   class="start-stop-game-btn my-font mx-auto"
@@ -361,27 +363,28 @@
 
         teamIds: [],
         teamNames: [],
+        scores: [],
 
         home: {
-          teamName: "Home",
+          teamName: "Select Team",
+          score: 0,
         },
         away: {
-          teamName: "Away",
+          teamName: "Select Team",
+          score: 0,
         },
 
 
-        homeScore: '0',
-        awayScore: '0',
         onBase: [false, false, false],
-        baseColors: [this.unsetColor, this.unsetColor, this.unsetColor],
+        baseColors: [],
         innings: [],
         inning: "1∧",
         outNumber: 0,
-        outColors: [this.set0Color, this.unsetColor, this.unsetColor],
+        outColors: [],
         ballNumber: 0,
-        ballColors: [this.set0Color, this.unsetColor, this.unsetColor, this.unsetColor],
+        ballColors: [],
         strikeNumber: 0,
-        strikeColors: [this.set0Color, this.unsetColor, this.unsetColor],
+        strikeColors: [],
       };
     },
     methods: {
@@ -459,9 +462,7 @@
 
         const path = 'http://localhost:5000/make_prediction';
 
-        axios.get(path, { params: { inning: this.inning, outs: this.outNumber, strikes: this.strikeNumber,
-                                    balls: this.ballNumber, home_score: this.homeScore, away_score: this.awayScore}
-          })
+        axios.get(path, { params: this.gameState})
           .then((res) => {
             console.log("Pitch Prediction Recieved: " + res.data)
               this.emitter.emit("ChangePitch", res.data)
@@ -525,10 +526,18 @@
       },
     },
     created() {
-      // Fill inning selection list
+      // Fill inning and score selection lists
+      this.scores.push(0);
       for (let i = 1; i <= 99; i++) {
         this.innings.push(`${i}∧`, `${i}∨`);
+        this.scores.push(i);
       }
+
+      // Set game state button colors
+      this.baseColors = [this.unsetColor, this.unsetColor, this.unsetColor];
+      this.outColors = [this.set0Color, this.unsetColor, this.unsetColor];
+      this.ballColors = [this.set0Color, this.unsetColor, this.unsetColor, this.unsetColor];
+      this.strikeColors = [this.set0Color, this.unsetColor, this.unsetColor];
 
       // Fill team selection lists
       const path = "http://localhost:5000/get_teams";
@@ -544,12 +553,22 @@
           });
     },
     computed: {
-      homeTeamNames(){
+      homeTeamNames() {
         return this.teamNames.filter(team => team !== this.away.teamName);
       },
-      awayTeamNames(){
+      awayTeamNames() {
         return this.teamNames.filter(team => team !== this.home.teamName);
       },
+      gameState() {
+        return {
+          inning: this.inning, 
+          outs: this.outNumber, 
+          strikes: this.strikeNumber,
+          balls: this.ballNumber, 
+          home_score: this.home.score, 
+          away_score: this.away.score
+        };
+      }
     },
   };
 </script>

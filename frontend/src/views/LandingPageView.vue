@@ -1,22 +1,36 @@
 <template>
   <v-container fluid>
+    <!--Title-->
     <v-row>
         <v-col class="text-center">
-            <div style="margin-top: 250px;">
+            <div style="margin-top: 150px;">
                 <h1>PitchTek</h1>
                 <h3>Bringing machine learning to the diamond.</h3>
             </div> 
         </v-col>
     </v-row>
+
+    <!--User form-->
+    <v-row 
+      style="margin-top: 20px;"
+    >
+      <v-col 
+        cols="12"
+        class="d-flex justify-center"
+      >
+        <LoginUser />
+      </v-col>
+    </v-row>
+
   </v-container>
 </template>
 
-<style>
-.landing-page-container {
-  background-image: url("@/assets/landing-page.png");
-  background-size: cover; /* or 'contain', depending on your preference */
-  background-position: center center; /* or any other position */
-  background-repeat: no-repeat;
-  margin-top: 10px;
+<script>
+import LoginUser from "@/components/LoginUser.vue"
+
+export default {
+  components: {
+    LoginUser,
+  },
 }
-</style>
+</script>
