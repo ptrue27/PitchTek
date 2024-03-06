@@ -32,6 +32,14 @@ def make_heat_map(pitch_type):
     custom_box = patches.Rectangle((-.9, 1.2), 1.8, 2.6, linewidth=2, edgecolor='black', facecolor='none', label='Custom Box')
     plt.gca().add_patch(custom_box)
 
+    # Create horizontal lines
+    for i in range(1, 3):
+        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.73, color='black', linestyle='-')
+
+    # Create vertical lines
+    for i in range(1, 3):
+        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
+
     # Remove the x and y-axis
     #plt.axis('off')
 
@@ -47,7 +55,7 @@ def make_heat_map(pitch_type):
     plt.yticks([])
 
     # Display the plot
-    # plt.show()
+    #plt.show()
 
     #Export the plot
     file_name = r"..\frontend\src\assets\\" + pitch_type + "_heat_map.jpg"
@@ -59,7 +67,7 @@ def make_heat_map(pitch_type):
 
 # This function is used to create the default strike zone
 def create_default_strike_zone():
-    path='../uploads/savant_data_2.csv'
+    path = '../uploads/savant_data_2.csv'
     df = pd.read_csv(path)
 
     # Extract values
@@ -82,6 +90,14 @@ def create_default_strike_zone():
     custom_box = patches.Rectangle((-.9, 1.2), 1.8, 2.6, linewidth=2, edgecolor='black', facecolor='none', label='Custom Box')
     plt.gca().add_patch(custom_box)
 
+    # Create horizontal lines
+    for i in range(1, 3):
+        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.73, color='black', linestyle='-')
+
+    # Create vertical lines
+    for i in range(1, 3):
+        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
+
     # Remove tics
     plt.xticks([])
     plt.yticks([])
@@ -89,7 +105,7 @@ def create_default_strike_zone():
     # Display the plot
     # plt.show()
 
-    #Export the plot
+    # Export the plot
     file_name = r"..\frontend\src\assets\default_heat_map.jpg"
     plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
@@ -98,9 +114,9 @@ def main():
 
     create_default_strike_zone()
     make_heat_map("FF")
-    '''make_heat_map("SL")
+    make_heat_map("SL")
     make_heat_map("CU")
-    make_heat_map("CH")'''
+    make_heat_map("CH")
 
 
 main()
