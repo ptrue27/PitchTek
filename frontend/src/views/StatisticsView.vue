@@ -1,5 +1,26 @@
 <template>
     <v-row>
+    <v-col class="text-center">
+      <div class="title">Baseball Statistics</div>
+    </v-col>
+  </v-row>
+  <v-row>
+    <v-col cols="6">
+      <div class="player-id-input-container">
+        <v-text-field v-model="pitcherId" label="Pitcher ID" outlined dense class="player-id-input"></v-text-field>
+        <v-btn @click="updatePitcherStats" class="update-button">Update</v-btn>
+        <v-alert v-if="pitcherError" type="error" class="error-alert">{{ pitcherError }}</v-alert>
+      </div>
+    </v-col>
+    <v-col cols="6">
+      <div class="player-id-input-container">
+        <v-text-field v-model="batterId" label="Batter ID" outlined dense class="player-id-input"></v-text-field>
+        <v-btn @click="updateBatterStats" class="update-button">Update</v-btn>
+        <v-alert v-if="batterError" type="error" class="error-alert">{{ batterError }}</v-alert>
+      </div>
+    </v-col>
+  </v-row>
+    <v-row>
         <v-col class="text-center">
             <div class="title">Baseball Statistics</div>
         </v-col>
@@ -62,35 +83,78 @@
 <script>
 import Chart from 'chart.js/auto';
 import UploadButton from "@/components/UploadButton.vue";
+import axios from 'axios';
 
 export default {
   components: {
     UploadButton
   },
   data() {
+    
     return {
+      pitcherId: '',
+      batterId: '',
       pitcherStats: {
-        'ERA': 3.60,
-        'WHIP': 1.15,
-        'Strikeouts': 150,
-        'Walks': 50,
-        'Innings Pitched': 200,
-        'Wins': 18,
-        'Losses': 6,
-        'Strikeout-to-Walk Ratio': 3.0
+        'ERA': 0.0,
+        'WHIP': 0,
+        'Strikeouts': 0,
+        'Walks': 0,
+        'Innings Pitched': 0,
+        'Wins': 0,
+        'Losses': 0,
+        'Strikeout-to-Walk Ratio': 0
       },
       batterStats: {
-        'Batting Average': '.320',
-        'On-Base Percentage': '.380',
-        'Slugging Percentage': '.550',
-        'Home Runs': 30,
-        'Runs Batted In': 100,
-        'Hits': 180
+        'Batting Average': 0,
+        'On-Base Percentage': 0,
+        'Slugging Percentage': 0,
+        'Home Runs': 0,
+        'Runs Batted In': 0,
+        'Hits': 0
       },
       selectedStat: null
     };
   },
-  methods: {
+  
+   methods: {
+    updatePitcherStats() {
+      if (!this.pitcherId.trim()) {
+        this.pitcherError = 'Please enter a Pitcher ID';
+        return;
+      }
+
+      axios.get(`http://localhost:5000/api/mlb_player_stats`, { params: { player_name: this.pitcherId } })
+        .then(response => {
+          if (!response.data || Object.keys(response.data).length === 0) {
+            this.pitcherError = 'Player does not exist or error';
+          } else {
+            this.pitcherStats = response.data;
+            this.pitcherError = '';
+          }
+        })
+        .catch(() => {
+          this.pitcherError = 'Player does not exist or error';
+        });
+    },
+    updateBatterStats() {
+      if (!this.batterId.trim()) {
+        this.batterError = 'Please enter a Batter ID';
+        return;
+      }
+
+      axios.get(`http://localhost:5000/api/mlb_player_stats`, { params: { player_name: this.batterId } })
+        .then(response => {
+          if (!response.data || Object.keys(response.data).length === 0) {
+            this.batterError = 'Player does not exist';
+          } else {
+            this.batterStats = response.data;
+            this.batterError = '';
+          }
+        })
+        .catch(() => {
+          this.batterError = 'Player does not exist or error';
+        });
+    },
     showGraph(stat) {
       this.selectedStat = stat;
 
@@ -140,7 +204,11 @@ body {
   margin: 20px 0;
   font-weight: bold;
 }
-
+.player-id-input {
+  max-width: 200px;
+  margin-right: 10px;
+  background-color: rgba(144, 238, 144, 0.3);
+}
 .image-container {
   border: 5px solid #96ce8a;
   /* Light green border for images */
@@ -209,4 +277,38 @@ tbody tr:hover {
 .upload-button:hover {
   background-color: #1b5e20;
   /* Even darker green on hover */
-}</style>
+}
+.player-id-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px; /* Adjust the margin to bring the text box closer to the picture */
+}
+
+.player-id-input .v-input__control .v-input__slot {
+  border-radius: 25px; /* Rounded edges for the text box */
+}
+
+/* Ensure the text box aligns well with other components */
+.player-id-input {
+  width: 80%; /* Adjust the width as needed to align with other components */
+  margin-top: -20px; /* Adjust the margin to move the text box closer to the picture */
+  background-color: rgba(144, 238, 144, 0.3); /* Optional: Adjust the background color to enhance appearance */
+}
+
+/* Adjust the update button to align with the text box styling */
+.update-button {
+  margin-top: 10px;
+  border-radius: 25px; /* Match the rounded edges of the text box */
+}
+
+/* Optional: Add additional styling to enhance the overall look */
+.image-container {
+  margin-bottom: 1px; /* Reduce the space between the image and the text box */
+}
+
+.update-button:hover {
+  background-color: #1b5e20;
+}
+
+</style>
