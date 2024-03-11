@@ -9,3 +9,5 @@ pandas
 python-dotenv
 python-mlb-statsapi
 sklearn
+scikit-learn
+Flask plotly
