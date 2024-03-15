@@ -5,7 +5,7 @@
 
 ### Frontend
 1. Download and install node.js
-2. Current working directory is `PitchTek/frontend`
+2. Current working directory is `PitchTek\frontend`
 3. Install Vue packages 
     ```npm install```
 
