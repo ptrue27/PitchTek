@@ -8,8 +8,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.patches as patches
 
-def make_heat_map(pitch_type):
-    path='../uploads/savant_data_2.csv'
+def make_heat_map(pitch_type, player_id):
+    path= '../uploads/434378_pitch_data.csv'
     df = pd.read_csv(path)
 
     # Extract values
@@ -67,7 +67,7 @@ def make_heat_map(pitch_type):
 
 # This function is used to create the default strike zone
 def create_default_strike_zone():
-    path = '../uploads/savant_data_2.csv'
+    path = '../uploads/434378_pitch_data.csv'
     df = pd.read_csv(path)
 
     # Extract values
@@ -112,7 +112,7 @@ def create_default_strike_zone():
 
 def main():
 
-    create_default_strike_zone()
+    #create_default_strike_zone()
     make_heat_map("FF")
     make_heat_map("SL")
     make_heat_map("CU")
