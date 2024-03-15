@@ -5,14 +5,14 @@
 
 ### Frontend
 1. Download and install node.js
-2. Current working directory is `PitchTek\frontend`
+2. Current working directory is `PitchTek/frontend`
 3. Install Vue packages 
     ```npm install```
 
 ### Backend
 1. Download and install Python
 2. Download and install sqlite3
-3. Current working directory is `PitchTek\backend`
+3. Current working directory is `PitchTek/backend`
 4. Create virtual environment 
     ```python -m venv env```
 5. Activate virtual environment (Windows)

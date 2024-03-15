@@ -86,7 +86,7 @@ def main():
                     "pitch_number", "previous_pitch_type", "previous_pitch_result"])'''
 
     # All pitches
-    create_dt(path='../uploads/434378_pitch_data.csv',
+    create_dt(path='../uploads/savant_data_2.csv',
               #cols=["pitch_type", "outs_when_up", "inning", "home_score", "away_score", "strikes", "balls"],
               cols=["pitch_type", "outs_when_up", "strikes", "balls"],
               name="DT")

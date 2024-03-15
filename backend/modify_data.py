@@ -20,7 +20,7 @@ import pandas as pd
 
 def handle_first_pitch():
 
-    file_path = '../uploads/434378_pitch_data.csv'
+    file_path = '../uploads/savant_data_2.csv'
     df = pd.read_csv(file_path)
 
     df = df[df["pitch_number"] == 1]
@@ -31,7 +31,7 @@ def handle_first_pitch():
 #
 def handle_subsequent_pitches():
 
-    file_path = '../uploads/434378_pitch_data.csv'
+    file_path = '../uploads/savant_data_2.csv'
     df = pd.read_csv(file_path)
 
     # Shift data down

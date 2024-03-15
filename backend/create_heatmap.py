@@ -8,8 +8,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.patches as patches
 
-def make_heat_map(pitcher_id, pitch_type):
-    path= '../uploads/554430_pitch_data.csv'
+def make_heat_map(pitch_type):
+    path='../uploads/savant_data_2.csv'
     df = pd.read_csv(path)
 
     # Extract values
@@ -55,22 +55,19 @@ def make_heat_map(pitcher_id, pitch_type):
     plt.yticks([])
 
     # Display the plot
-    plt.show()
-
-    print("Created Heatmap for pitch: ", pitch_type, ", with ", len(df), " pitches")
-
+    #plt.show()
 
     #Export the plot
-    file_name = r"..\frontend\src\assets\\" + pitcher_id + "_" + pitch_type + "_heat_map.jpg"
+    file_name = r"..\frontend\src\assets\\" + pitch_type + "_heat_map.jpg"
     # file_name = pitch_type + "_heat_map.jpg"
-    # plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+    plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
     #return file_name
 
 
 # This function is used to create the default strike zone
 def create_default_strike_zone():
-    path = '../uploads/434378_pitch_data.csv'
+    path = '../uploads/savant_data_2.csv'
     df = pd.read_csv(path)
 
     # Extract values
@@ -106,24 +103,20 @@ def create_default_strike_zone():
     plt.yticks([])
 
     # Display the plot
-    plt.show()
+    # plt.show()
 
     # Export the plot
     file_name = r"..\frontend\src\assets\default_heat_map.jpg"
-    #plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+    plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
 
 def main():
 
-    #create_default_strike_zone()
-    make_heat_map(554430, "FF")
-    make_heat_map(554430, "SL")
-    make_heat_map(554430, "CU")
-    make_heat_map(554430, "CH")
-
-    make_heat_map(554430, "ST")
-    make_heat_map(554430, "SI")
-    make_heat_map(554430, "FC")
+    create_default_strike_zone()
+    make_heat_map("FF")
+    make_heat_map("SL")
+    make_heat_map("CU")
+    make_heat_map("CH")
 
 
 main()
