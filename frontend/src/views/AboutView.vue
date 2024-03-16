@@ -19,13 +19,13 @@
 export default {
   data() {
     return {
-      imageSrc: require("@/assets/FF_heat_map.jpg") // Default image source
+      imageSrc: require("@/assets/heat_maps/default_heat_map.jpg") // Default image source
     };
   },
   methods: {
     changeImage() {
       // Simulate changing image dynamically
-      this.imageSrc = require("@/assets/strikezone.jpg");
+      this.imageSrc = require("@/assets/heat_maps/default_heat_map.jpg");
     }
   }
 };

@@ -8,8 +8,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.patches as patches
 
+# Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
 def make_heat_map(pitch_type, player_id):
-    path= '../uploads/434378_pitch_data.csv'
+
+    path = '../uploads/' + player_id + '_pitch_data.csv'
     df = pd.read_csv(path)
 
     # Extract values
@@ -58,8 +60,7 @@ def make_heat_map(pitch_type, player_id):
     #plt.show()
 
     #Export the plot
-    file_name = r"..\frontend\src\assets\\" + pitch_type + "_heat_map.jpg"
-    # file_name = pitch_type + "_heat_map.jpg"
+    file_name = r"..\frontend\src\assets\heat_maps\\" + player_id + "_" + pitch_type + "_heat_map.jpg"
     plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
     #return file_name
@@ -106,17 +107,19 @@ def create_default_strike_zone():
     # plt.show()
 
     # Export the plot
-    file_name = r"..\frontend\src\assets\default_heat_map.jpg"
+    file_name = r"..\frontend\src\assets\heat_maps\default_heat_map.jpg"
     plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
 
 def main():
 
-    #create_default_strike_zone()
-    make_heat_map("FF")
-    make_heat_map("SL")
-    make_heat_map("CU")
-    make_heat_map("CH")
+    id = "554430"
+
+    create_default_strike_zone()
+    make_heat_map("FF", id)
+    make_heat_map("SL", id)
+    #make_heat_map("CU", id)
+    #make_heat_map("CH", id)
 
 
 main()

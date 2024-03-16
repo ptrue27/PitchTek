@@ -11,4 +11,4 @@ python-mlb-statsapi
 scikit-learn==1.3.0
 Flask
 plotly
-streamlit
+

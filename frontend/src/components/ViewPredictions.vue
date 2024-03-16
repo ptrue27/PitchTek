@@ -12,7 +12,7 @@
                         <v-img
                             :src=imageURL[currentimage]
                         ></v-img>
-                        <v-card-title>{{ curr_pitcher }}</v-card-title>
+                        <v-card-title>{{curr_pitcher_name}}</v-card-title>
                     </v-col>
                     <!--Innings and count-->
                     <v-col cols="7">
@@ -78,13 +78,8 @@ export default {
   name: 'my-component',
   data() {
     return {
-      curr_pitcher: "",
-      imageURL:[require("@/assets/default_heat_map.jpg"),
-                require("@/assets/FF_heat_map.jpg"),
-                require("@/assets/SL_heat_map.jpg"),
-                require("@/assets/CU_heat_map.jpg"),
-                require("@/assets/CH_heat_map.jpg")]
-,
+      curr_pitcher_name: "",
+      curr_pitcher_id: "NA",
       currentimage : 0,
       data: [
         {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
@@ -111,7 +106,13 @@ export default {
       //return this.$store.state.predictionImgSrc
       //console.log("predictionImgSrc called")
       return require(this.imageURL[0])
-
+    },
+    imageURL(){
+      return [require("@/assets/heat_maps/default_heat_map.jpg"),
+                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_FF_heat_map.jpg"),
+                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_SL_heat_map.jpg"),
+                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_CU_heat_map.jpg"),
+                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_CH_heat_map.jpg")]
     },
   },
   methods: {
@@ -121,9 +122,20 @@ export default {
     nextPage() {
       this.currentPage = Math.min(this.currentPage + 1, this.data.length - 1);
     },
-    updateHeatMap(){
-      this.currentimage = 1
-    }
+    /*checkFileExists(my_URL) {
+      fetch(my_URL)
+        .then(response => {
+          if (response.ok) {
+            console.log("this.fileExists = true; URL: ", my_URL)
+          } else {
+            console.log("this.fileExists = false; URL: ", my_URL)
+          }
+        })
+        .catch(error => {
+          console.error('Error checking file existence:', error);
+          console.log("this.fileExists = false; URL: ", my_URL)
+        });
+    }*/
   },
     mounted() {
       this.emitter.on("ChangePitch", my_var => {
@@ -149,8 +161,16 @@ export default {
         }
 
       });
+
+      // Sets current pitcher name/id and resets image
       this.emitter.on("ChangePitcher", pitcher_obj => {
-        this.curr_pitcher = pitcher_obj.name
+
+        // If heat maps for pitcher does not exist, make images
+        // this.checkFileExists("@/assets/heat_maps/default_heat_map.jpg")
+
+        this.curr_pitcher_name = pitcher_obj.name
+        this.curr_pitcher_id = pitcher_obj.id
+        this.currentimage = 0
       });
     },
 };
