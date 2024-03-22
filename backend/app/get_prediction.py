@@ -2,10 +2,7 @@ import joblib
 import pandas as pd
 import random
 
-my_dict = {'FF': 'Fastball',
-           'SL': 'Slider',
-           'CU': 'Curve',
-           'CH': 'Changeup'}
+
 
 class Predictions_Class:
     def get_type(self, obj):
@@ -21,14 +18,14 @@ class Predictions_Class:
 
         predictions = loaded_model.predict(df)
 
-        return my_dict[predictions[0]]
+        return predictions[0]
 
 
     # Right now there is zero ML in this function.
     # It just randomly changes to demonstrate functionality
     def get_speed(self, pitch_type):
 
-        margin =  random.uniform(-5, 5)
+        margin = random.uniform(-5, 5)
         margin = round(margin, 1)
 
         if pitch_type == "Fastball":

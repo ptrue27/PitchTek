@@ -10,7 +10,7 @@
                 <v-row>
                     <v-col cols="5">
                         <v-img
-                            :src=imageURL[currentimage]
+                            :src=imageURL
                         ></v-img>
                         <v-card-title>{{curr_pitcher_name}}</v-card-title>
                     </v-col>
@@ -33,7 +33,7 @@
                             <v-col>Location:</v-col>
                             <v-col>({{item.locationX}}, {{item.locationY}})</v-col>
                         </v-row>
-                    </v-col>    
+                    </v-col>
                 </v-row>
             </v-list-item-content>
           </v-list-item>
@@ -43,8 +43,8 @@
       <!-- Pagination Controls -->
       <v-card-actions class="text-center">
         <v-container class="pb-0">
-            <v-btn 
-                @click="prevPage" 
+            <v-btn
+                @click="prevPage"
                 :disabled="currentPage === 0"
             >
                 <v-icon>mdi-chevron-left</v-icon>
@@ -78,6 +78,7 @@ export default {
   name: 'my-component',
   data() {
     return {
+      image_path: "default_heat_map.jpg",
       curr_pitcher_name: "",
       curr_pitcher_id: "NA",
       currentimage : 0,
@@ -105,14 +106,10 @@ export default {
     predictionImgSrc() {
       //return this.$store.state.predictionImgSrc
       //console.log("predictionImgSrc called")
-      return require(this.imageURL[0])
+      return require(this.imageURL)
     },
     imageURL(){
-      return [require("@/assets/heat_maps/default_heat_map.jpg"),
-                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_FF_heat_map.jpg"),
-                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_SL_heat_map.jpg"),
-                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_CU_heat_map.jpg"),
-                require("@/assets/heat_maps/" + this.curr_pitcher_id + "_CH_heat_map.jpg")]
+      return require("@/assets/heat_maps/" + this.image_path)
     },
   },
   methods: {
@@ -143,23 +140,8 @@ export default {
         this.data[0].type = my_var[0]
         this.data[0].speed = my_var[1]
 
-        if(my_var[0] == "Fastball"){
-          this.currentimage = 1
-
-        } else if(my_var[0] == "Slider"){
-          this.currentimage = 2
-
-        } else if(my_var[0] == "Curve"){
-          this.currentimage = 3
-
-        } else if (my_var[0] == "Changeup"){
-          this.currentimage = 4
-
-        } else {
-          this.currentimage = 0
-
-        }
-
+        this.image_path = this.curr_pitcher_id + "_" + my_var[0] + "_heat_map.jpg"
+        console.log("this image: " + this.imageURL)
       });
 
       // Sets current pitcher name/id and resets image
@@ -170,7 +152,12 @@ export default {
 
         this.curr_pitcher_name = pitcher_obj.name
         this.curr_pitcher_id = pitcher_obj.id
-        this.currentimage = 0
+
+        // Set values to default
+        this.image_path = "default_heat_map.jpg"
+        this.data[0].type = ""
+        this.data[0].speed = ""
+
       });
     },
 };

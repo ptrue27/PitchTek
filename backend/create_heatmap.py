@@ -1,21 +1,53 @@
-# This file is used for creating heatmaps for the 4 types of pitches
 # Dimensions of dummy heat map, strikezone.jpg: 195 x 258
 #
 # NOTE: The heat map is from the catchers perspective
+#
+# Pitchers with heatmaps that look the same: 543056
 import unittest
+import sqlite3
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import matplotlib.patches as patches
 
+
+def get_dataframe(id):
+    # Connect to SQLite database
+    conn = sqlite3.connect('databases/pitches.db')
+
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+
+    # Execute a SQL query to fetch data from the table
+    query = f"SELECT * FROM \"{id}\";"
+    cursor.execute(query)
+
+    # Fetch all rows from the executed query
+    rows = cursor.fetchall()
+
+    # Get the column names from the cursor description
+    columns = [col[0] for col in cursor.description]
+
+    # Create a pandas DataFrame with fetched data and column names
+    df = pd.DataFrame(rows, columns=columns)
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    return df
+
 # Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
 def make_heat_map(pitch_type, player_id):
 
     path = '../uploads/' + player_id + '_pitch_data.csv'
-    df = pd.read_csv(path)
+    df = get_dataframe(player_id)
 
     # Extract values
     df = df[df['pitch_type'] == pitch_type]
+
+    # Remove rows with NaN values
+    df.dropna(subset=["plate_x", "plate_z"], inplace=True)
 
     # Create a 2D histogram
     heatmap, xedges, yedges = np.histogram2d(df["plate_x"], df["plate_z"], bins=20)
@@ -113,11 +145,11 @@ def create_default_strike_zone():
 
 def main():
 
-    id = "554430"
+    id = "608665"
 
-    create_default_strike_zone()
-    make_heat_map("FF", id)
-    make_heat_map("SL", id)
+    #create_default_strike_zone()
+    make_heat_map("SI", id)
+   # make_heat_map("SL", id)
     #make_heat_map("CU", id)
     #make_heat_map("CH", id)
 
