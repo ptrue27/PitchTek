@@ -1,5 +1,6 @@
 # PitchTek
 ## CS 425 Team 23
+## Spring 2024
 
 ## Setup
 
