@@ -8,7 +8,7 @@ class Predictions_Class:
     def get_type(self, obj):
 
         # Load the model from the file
-        loaded_model = joblib.load("DT.joblib")
+        loaded_model = joblib.load("decision_tree_models/DT.joblib")
 
         df = pd.DataFrame()
 
