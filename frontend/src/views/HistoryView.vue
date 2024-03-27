@@ -1,5 +1,6 @@
 <template>
   <div class="player-stats-container">
+    <!-- Player Statistics Section -->
     <v-row>
       <v-col class="text-center">
         <div class="title">Player Statistics</div>
@@ -34,67 +35,47 @@
       </v-col>
     </v-row>
 
-    <!-- HTML Graphs Section -->
-    <v-row v-if="showGraphs">
-      <v-col class="text-center">
-        <div id="playerGraphs" ref="playerGraphs">Graphs will be loaded here...</div>
+    <!-- Images Section -->
+    <v-row>
+      <v-col cols="12" class="text-center" v-for="(imageUrl, index) in imageUrls" :key="index">
+        <img :src="imageUrl" class="player-image" :alt="'Image ' + index">
       </v-col>
     </v-row>
-    <div class="player-stats-container"></div>
-    <div ref="graphContainer"></div>
-
   </div>
 </template>
+
 <script>
 import axios from 'axios';
+import image1 from 'C:/Users/davis/PitchTek-2/uploads/uploads_pitch_type_distribution.png';
+import image2 from 'C:/Users/davis/PitchTek-2/uploads/uploads_pitch_type_distribution.png';
+import image3 from 'C:/Users/davis/PitchTek-2/uploads/uploads_pitch_type_distribution.png';
 
 export default {
   data() {
     return {
       playerName: '',
       playerStats: {},
-      showGraphs: false,
+      imageUrls: [image1, image2, image3],
     };
   },
-  mounted() {
-     this.loadGraph();
-  },
   methods: {
-    
     fetchPlayerStats() {
       if (!this.playerName.trim()) {
         alert('Please enter a player name');
         return;
       }
- 
-      axios.get(`http://localhost:5000/api/mlb_player_stats`, { params: { player_name: this.playerName } })
+
+      // Example API call
+      axios.get(`http://yourapi/players/${this.playerName}`)
         .then(response => {
           this.playerStats = response.data.stats;
-          this.showGraphs = true;
-          // After fetching the stats, load the corresponding Plotly graph
-          this.loadGraph();
         })
         .catch(error => {
           console.error('Error fetching player stats:', error);
           alert('Failed to fetch player stats');
-          this.showGraphs = false;
         });
     },
-    loadGraph() {
-  axios.get(`http://localhost:5000/show-history`)
-    .then(response => {
-      // Update imageUrls with the response data
-      this.imageUrls = response.data.imageUrls;
-      this.showImages = true; // Assuming you have a showImages data property to control the visibility of the image section
-    })
-    .catch(error => {
-      console.error('Error loading images:', error);
-      this.showImages = false;
-    });
-},
-
-    
-  }
+  },
 };
 </script>
 
@@ -116,11 +97,6 @@ table {
   border-collapse: collapse;
   margin-top: 20px;
 }
-.plotly-graph-container {
-  width: 100%; /* Adjust the width as needed */
-  height: 500px; /* Adjust the height as needed */
-  /* Additional styling as needed */
-}
 
 th, td {
   border: 1px solid #96ce8a;
@@ -133,5 +109,8 @@ th {
   color: white;
 }
 
-/* Additional styles as needed */
+.player-image {
+  max-width: 100%;
+  margin-top: 20px;
+}
 </style>

@@ -1,9 +1,9 @@
-#from get_prediction import Predictions_Class
-#from PitchDataProcessor import PitchDataProcessor
+from get_prediction import Predictions_Class
+from PitchDataProcessor import PitchDataProcessor
 from flask import Flask, request, jsonify, render_template_string
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
-#import sql_utils
+import sql_utils
 import os
 import statsapi
 import plotly.express as px
