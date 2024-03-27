@@ -1,9 +1,9 @@
-from get_prediction import Predictions_Class
-from PitchDataProcessor import PitchDataProcessor
+#from get_prediction import Predictions_Class
+#from PitchDataProcessor import PitchDataProcessor
 from flask import Flask, request, jsonify, render_template_string
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
-import sql_utils
+#import sql_utils
 import os
 import statsapi
 import plotly.express as px
@@ -78,18 +78,18 @@ def make_prediction():
 @app.route('/show-history')
 def show_history():
     processor = PitchDataProcessor(
-        input_file='C:/Users/davis/PitchTek-3/uploads/first_pitch.csv', output_dir='C:/Users/davis/PitchTek-3/tests')
+        input_file='C:/Users/davis/PitchTek-2/uploads/first_pitch.csv', output_dir='C:/Users/davis/PitchTek-2/tests')
     processor.process_data()
 
     # Assuming images are saved in 'static/images' directory under your Flask app
-    image_files = os.listdir('C:/Users/davis/PitchTek-3/tests')
+    image_files = os.listdir('C:/Users/davis/PitchTek-2/tests')
     image_urls = [
-        f'C:/Users/davis/PitchTek-3/tests/{filename}' for filename in image_files if filename.endswith('.png')]
+        f'C:/Users/davis/PitchTek-2/tests/{filename}' for filename in image_files if filename.endswith('.png')]
 
     # Return the image URLs in JSON format
     return jsonify(imageUrls=image_urls)
 
-@app.route('/api/mlb_player_stats', methods=['GET'])
+@app.route("/api/mlb_player_stats", methods=['GET'])
 def get_mlb_player_stats():
     # Assuming you're using the player's name to fetch stats
     player_name = request.args.get('player_name')
