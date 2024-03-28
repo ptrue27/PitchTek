@@ -37,8 +37,16 @@
 
     <!-- Images Section -->
     <v-row>
-      <v-col cols="12" class="text-center" v-for="(imageUrl, index) in imageUrls" :key="index">
-        <img :src="imageUrl" class="player-image" :alt="'Image ' + index">
+      <v-col cols="12">
+        <v-row>
+          <!-- Dynamically create a column for each image -->
+          <v-col cols="12" md="4" v-for="(imageUrl, index) in imageUrls" :key="index" class="mb-4">
+            <div class="text-center">
+              <div class="image-title">Stat {{ index + 1 }} </div>
+              <img :src="imageUrl" class="player-image" :alt="'Image ' + index">
+            </div>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </div>
@@ -46,6 +54,7 @@
 
 <script>
 import axios from 'axios';
+// Import images (consider moving them to the src/assets directory)
 import image1 from 'C:/Users/davis/PitchTek-2/uploads/uploads_pitch_type_distribution.png';
 import image2 from 'C:/Users/davis/PitchTek-2/uploads/uploads_pitch_type_distribution.png';
 import image3 from 'C:/Users/davis/PitchTek-2/uploads/uploads_pitch_type_distribution.png';
@@ -65,8 +74,8 @@ export default {
         return;
       }
 
-      // Example API call
-      axios.get(`http://yourapi/players/${this.playerName}`)
+      // Replace the URL with your actual API endpoint
+      axios.get(`http://localhost:5000/api/mlb_player_stats`, { params: { player_name: this.playerName } })
         .then(response => {
           this.playerStats = response.data.stats;
         })
@@ -112,5 +121,12 @@ th {
 .player-image {
   max-width: 100%;
   margin-top: 20px;
+  height: auto; /* Maintain aspect ratio */
+}
+
+.image-title {
+  margin-bottom: 10px; /* Adjust space between title and image */
+  font-size: 1.2em; /* Adjust title size */
+  color: #333; /* Adjust title color */
 }
 </style>

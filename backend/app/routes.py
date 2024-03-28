@@ -113,6 +113,40 @@ def get_mlb_player_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     pass
+@app.route("/api/player_pitching_stats", methods=['GET'])
+def get_player_pitching_stats():
+    player_name = request.args.get('player_name')
+
+    if not player_name:
+        return jsonify({"error": "Please specify a player name"}), 400
+
+    try:
+        players = statsapi.lookup_player(player_name)
+        if players:
+            player_id = players[0]['id']
+            # Fetching career pitching stats for the player
+            stats = statsapi.player_stat_data(player_id, group="[pitching]", type='career')
+
+            if 'stats' in stats and stats['stats']:
+                # Assuming the first item in 'stats' contains the relevant data
+                pitching_stats_raw = stats['stats'][0]
+
+                # Now, we structure the stats meaningfully
+                structured_stats = {
+                    "player_id": player_id,
+                    "name": players[0]['fullName'],
+                    "team": players[0].get('currentTeam', {}).get('currentTeam', 'N/A'),
+                    "stats": pitching_stats_raw.get('avg')  # Get the 'stat' dictionary directly
+                }
+
+                return jsonify(structured_stats)
+            else:
+                return jsonify({"error": "Pitching stats not found for this player"}), 404
+        else:
+            return jsonify({"error": "Player not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)
     app.run(debug=True)

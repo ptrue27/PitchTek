@@ -123,7 +123,7 @@ export default {
         return;
       }
 
-      axios.get(`http://localhost:5000/api/mlb_player_stats`, { params: { player_name: this.pitcherId } })
+      axios.get(`http://localhost:5000/api/player_pitching_stats`, { params: { player_name: this.pitcherId } })
         .then(response => {
           if (!response.data || Object.keys(response.data).length === 0) {
             this.pitcherError = 'Player does not exist or error';
