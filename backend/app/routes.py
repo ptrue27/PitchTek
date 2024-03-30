@@ -92,7 +92,8 @@ def make_prediction():
     pitch_type = my_obj.get_type(request.args)
     pitch_speed = my_obj.get_speed(pitch_type)
     return jsonify(pitch_type, pitch_speed)
-
+import logging
+logging.basicConfig(level=logging.INFO)
 @app.route("/api/mlb_player_stats", methods=['GET'])
 def get_mlb_player_stats():
     # Assuming you're using the player's name to fetch stats
@@ -103,16 +104,18 @@ def get_mlb_player_stats():
     try:
         # Example: Fetching player info. You may need to adjust the query based on what info you need
         player_info = statsapi.lookup_player(player_name)
+        logging.info(player_name)
         if player_info:
             # Assuming the first result is the desired player
             player_id = player_info[0]['id']
             stats = statsapi.player_stat_data(player_id, type='career')  # Adjust season as needed
+            logging.info(stats)
             return jsonify(stats)
         else:
             return jsonify({"error": "Player not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    pass
+
 @app.route("/api/player_pitching_stats", methods=['GET'])
 def get_player_pitching_stats():
     player_name = request.args.get('player_name')
@@ -146,7 +149,7 @@ def get_player_pitching_stats():
             return jsonify({"error": "Player not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+    pass
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)
     app.run(debug=True)
