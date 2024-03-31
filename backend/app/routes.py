@@ -102,7 +102,7 @@ def get_mlb_player_stats():
 
     # Fetch player stats using statsapi
     try:
-        # Example: Fetching player info. You may need to adjust the query based on what info you need
+        # Example: Fetching player info. You may need to adjust the query based on what info   you need
         player_info = statsapi.lookup_player(player_name)
         logging.info(player_name)
         if player_info:
