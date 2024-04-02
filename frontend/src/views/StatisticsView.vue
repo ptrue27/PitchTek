@@ -1,94 +1,103 @@
 <template>
-    <v-row>
-    <v-col class="text-center">
-      <div class="title">Baseball Statistics</div>
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col cols="6">
-      <div class="player-id-input-container">
-        <v-text-field v-model="pitcherId" label="Pitcher ID" outlined dense class="player-id-input"></v-text-field>
-        <v-btn @click="updatePitcherStats" class="update-button">Update</v-btn>
-        <v-alert v-if="pitcherError" type="error" class="error-alert">{{ pitcherError }}</v-alert>
-      </div>
-    </v-col>
-    <v-col cols="6">
-      <div class="player-id-input-container">
-        <v-text-field v-model="batterId" label="Batter ID" outlined dense class="player-id-input"></v-text-field>
-        <v-btn @click="updateBatterStats" class="update-button">Update</v-btn>
-        <v-alert v-if="batterError" type="error" class="error-alert">{{ batterError }}</v-alert>
-      </div>
-    </v-col>
-  </v-row>
-    <v-row>
-        <v-col class="text-center">
-            <div class="title">Baseball Statistics</div>
-        </v-col>
+  <v-container fluid>
+    <v-row justify="center">
+      <v-col cols="12" class="text-center">
+        <div class="display-2 font-weight-bold mb-6">Baseball Statistics</div>
+      </v-col>
     </v-row>
+    
     <v-row>
-        <v-col>
-            <UploadButton class="upload-button" />
-        </v-col>
+      <v-col cols="12" md="6">
+        <v-card class="pa-4 mx-auto elevation-6" outlined>
+          <v-text-field v-model="pitcherId" label="Pitcher ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
+          <v-btn color="green darken-1" dark @click="updatePitcherStats">Update</v-btn>
+          <v-alert v-if="pitcherError" type="error" class="mt-2">{{ pitcherError }}</v-alert>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card class="pa-4 mx-auto elevation-6" outlined>
+          <v-text-field v-model="batterId" label="Batter ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
+          <v-btn color="green darken-1" dark @click="updateBatterStats">Update</v-btn>
+          <v-alert v-if="batterError" type="error" class="mt-2">{{ batterError }}</v-alert>
+        </v-card>
+      </v-col>
     </v-row>
-  <v-row>
-    <v-col cols="6">
-      <div class="image-container">
-        <v-img src="@/assets/pitcher.jpg" alt="Pitcher" class="player-image"></v-img>
-      </div>
-      <h2>Pitcher Statistics</h2>
-      <table>
-        <thead>
-        <tr>
-          <th>Statistic</th>
-          <th>Value</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(value, stat) in pitcherStats" :key="stat" @click="showGraph(stat)">
-          <td>{{ stat }}</td>
-          <td>{{ value }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </v-col>
-    <v-col cols="6">
-      <div class="image-container">
-        <v-img src="@/assets/batter.jpg" alt="Batter" class="player-image"></v-img>
-      </div>
-      <h2>Batter Statistics</h2>
-      <table>
-        <thead>
-        <tr>
-          <th>Statistic</th>
-          <th>Value</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(value, stat) in batterStats" :key="stat" @click="showGraph(stat)">
-          <td>{{ stat }}</td>
-          <td>{{ value }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </v-col>
-  </v-row>
-  <v-row v-if="selectedStat">
-    <v-col>
-      <div v-if="selectedStat">Graph for {{ selectedStat }}</div>
-      <canvas id="statChart"></canvas>
-    </v-col>
-  </v-row>
+
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card class="mx-auto" flat>
+          <v-img src="@/assets/pitcher.jpg" class="white--text align-end" height="200px" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
+            <v-card-title>Pitcher Statistics</v-card-title>
+          </v-img>
+          <v-card-text>
+            <v-simple-table fixed-header>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Stat</th>
+                    <th class="text-left">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(value, key) in pitcherStats.stats" :key="key">
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-card class="mx-auto" flat>
+          <v-img src="@/assets/batter.jpg" class="white--text align-end" height="200px" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
+            <v-card-title>Batter Statistics</v-card-title>
+          </v-img>
+          <v-card-text>
+            <v-simple-table fixed-header>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Stat</th>
+                    <th class="text-left">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(value, key) in batterStats.stats" :key="key">
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="selectedStat">
+      <v-col>
+        <v-card class="mx-auto" flat>
+          <v-card-title class="headline">{{ selectedStat }}</v-card-title>
+          <v-card-text>
+            <canvas id="statChart"></canvas>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import Chart from 'chart.js/auto';
-import UploadButton from "@/components/UploadButton.vue";
+
 import axios from 'axios';
 
 export default {
-  components: {
-    UploadButton
-  },
+
   data() {
     
     return {
@@ -137,24 +146,24 @@ export default {
         });
     },
     updateBatterStats() {
-      if (!this.batterId.trim()) {
-        this.batterError = 'Please enter a Batter ID';
-        return;
-      }
+    if (!this.batterId.trim()) {
+      this.batterError = 'Please enter a Batter ID';
+      return;
+    }
 
-      axios.get(`http://localhost:5000/api/mlb_player_stats`, { params: { player_name: this.batterId } })
-        .then(response => {
-          if (!response.data || Object.keys(response.data).length === 0) {
-            this.batterError = 'Player does not exist';
-          } else {
-            this.batterStats = response.data;
-            this.batterError = '';
-          }
-        })
-        .catch(() => {
-          this.batterError = 'Player does not exist or error';
-        });
-    },
+    axios.get(`http://localhost:5000/api/player_batting_stats`, { params: { player_name: this.batterId } })
+      .then(response => {
+        if (!response.data || Object.keys(response.data).length === 0) {
+          this.batterError = 'Player does not exist';
+        } else {
+          this.batterStats = response.data;
+          this.batterError = '';
+        }
+      })
+      .catch(() => {
+        this.batterError = 'Player does not exist or error';
+      });
+  },
     showGraph(stat) {
       this.selectedStat = stat;
 

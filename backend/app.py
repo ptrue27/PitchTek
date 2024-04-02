@@ -89,27 +89,6 @@ def show_history():
     # Return the image URLs in JSON format
     return jsonify(imageUrls=image_urls)
 
-@app.route("/api/mlb_player_stats", methods=['GET'])
-def get_mlb_player_stats():
-    # Assuming you're using the player's name to fetch stats
-    player_name = request.args.get('player_name')
-    # You might need to implement a way to resolve the player's name to an ID statsapi can use, as statsapi often requires player IDs for specific queries.
-
-    # Fetch player stats using statsapi
-    try:
-        # Example: Fetching player info. You may need to adjust the query based on what info you need
-        player_info = statsapi.lookup_player(player_name)
-        if player_info:
-            # Assuming the first result is the desired player
-            player_id = player_info[0]['id']
-            stats = statsapi.player_stat_data(player_id, type='career')  # Adjust season as needed
-            return jsonify(stats)
-        else:
-            return jsonify({"error": "Player not found"}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    pass
-
 
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)

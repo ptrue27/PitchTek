@@ -96,26 +96,25 @@ import logging
 logging.basicConfig(level=logging.INFO)
 @app.route("/api/mlb_player_stats", methods=['GET'])
 def get_mlb_player_stats():
-    # Assuming you're using the player's name to fetch stats
-    player_name = request.args.get('player_name')
-    # You might need to implement a way to resolve the player's name to an ID statsapi can use, as statsapi often requires player IDs for specific queries.
-
-    # Fetch player stats using statsapi
+    player_name = request.args.get('player_name').lower().strip()
     try:
-        # Example: Fetching player info. You may need to adjust the query based on what info   you need
         player_info = statsapi.lookup_player(player_name)
-        logging.info(player_name)
-        if player_info:
-            # Assuming the first result is the desired player
-            player_id = player_info[0]['id']
-            stats = statsapi.player_stat_data(player_id, type='career')  # Adjust season as needed
-            logging.info(stats)
+        matched_player = None
+        for player in player_info:
+            # Compare lowercased and stripped names for a basic match
+            if player_name == player['fullName'].lower().strip():
+                matched_player = player
+                break
+        
+        if matched_player:
+            player_id = matched_player['id']
+            stats = statsapi.player_stat_data(player_id, type='career')  # Adjust the type or season as needed
             return jsonify(stats)
         else:
             return jsonify({"error": "Player not found"}), 404
     except Exception as e:
+        logging.error("Failed to fetch player stats: %s", str(e))
         return jsonify({"error": str(e)}), 500
-
 @app.route("/api/player_pitching_stats", methods=['GET'])
 def get_player_pitching_stats():
     player_name = request.args.get('player_name')
@@ -124,32 +123,144 @@ def get_player_pitching_stats():
         return jsonify({"error": "Please specify a player name"}), 400
 
     try:
-        players = statsapi.lookup_player(player_name)
-        if players:
-            player_id = players[0]['id']
-            # Fetching career pitching stats for the player
-            stats = statsapi.player_stat_data(player_id, group="[pitching]", type='career')
+        player_search = statsapi.lookup_player(player_name)
+        if not player_search:
+            return jsonify({"error": f"No players found with the name '{player_name}'."}), 404
 
-            if 'stats' in stats and stats['stats']:
-                # Assuming the first item in 'stats' contains the relevant data
-                pitching_stats_raw = stats['stats'][0]
+        player_id = player_search[0]['id']
+        player_data = statsapi.player_stat_data(player_id, group="pitching", type='career')
 
-                # Now, we structure the stats meaningfully
-                structured_stats = {
-                    "player_id": player_id,
-                    "name": players[0]['fullName'],
-                    "team": players[0].get('currentTeam', {}).get('currentTeam', 'N/A'),
-                    "stats": pitching_stats_raw.get('avg')  # Get the 'stat' dictionary directly
-                }
+        if 'stats' in player_data and player_data['stats']:
+            pitching_stats = player_data['stats'][0].get('stats', {})
 
-                return jsonify(structured_stats)
-            else:
-                return jsonify({"error": "Pitching stats not found for this player"}), 404
+            # List of desired stats keys
+            desired_stats_keys = [
+                'gamesPlayed', 'gamesStarted', 'groundOuts', 'airOuts', 'runs', 'doubles', 'triples',
+                'homeRuns', 'strikeOuts', 'baseOnBalls', 'intentionalWalks', 'hits', 'hitByPitch',
+                'avg', 'atBats', 'obp', 'slg', 'ops', 'caughtStealing', 'stolenBases',
+                'stolenBasePercentage', 'groundIntoDoublePlay', 'numberOfPitches', 'era',
+                'inningsPitched', 'wins', 'losses', 'saves', 'saveOpportunities', 'holds',
+                'blownSaves', 'earnedRuns', 'whip', 'battersFaced', 'outs', 'gamesPitched',
+                'completeGames', 'shutouts', 'strikes', 'strikePercentage', 'hitBatsmen', 'balks',
+                'wildPitches', 'pickoffs', 'totalBases', 'groundOutsToAirouts', 'winPercentage',
+                'pitchesPerInning', 'gamesFinished', 'strikeoutWalkRatio', 'strikeoutsPer9Inn',
+                'walksPer9Inn', 'hitsPer9Inn', 'runsScoredPer9', 'homeRunsPer9', 'inheritedRunners',
+                'inheritedRunnersScored', 'catchersInterference', 'sacBunts', 'sacFlies'
+            ]
+
+            # Constructing the structured_stats dictionary
+            structured_stats = {stat: pitching_stats.get(stat, 'Stat not available') for stat in desired_stats_keys}
+
+            return jsonify({
+                "player_id": player_id,
+                "name": player_search[0]['fullName'],
+                "team": player_search[0].get('currentTeam', {}).get('name', 'N/A'),
+                "stats": structured_stats
+            })
+
         else:
-            return jsonify({"error": "Player not found"}), 404
+            return jsonify({"error": "Pitching stats not found for this player"}), 404
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    pass
+    
+    
+@app.route("/api/player_fielding_stats", methods=['GET'])
+def get_player_fielding_stats():
+    player_name = request.args.get('player_name')
+
+    if not player_name:
+        return jsonify({"error": "Please specify a player name"}), 400
+
+    try:
+        player_search = statsapi.lookup_player(player_name)
+        if not player_search:
+            return jsonify({"error": f"No players found with the name '{player_name}'."}), 404
+
+        player_id = player_search[0]['id']
+        player_data = statsapi.player_stat_data(player_id, group="fielding", type='career')
+
+        if 'stats' in player_data and player_data['stats']:
+            fielding_stats = player_data['stats'][0].get('stats', {})
+
+            # Specified fielding stats keys
+            desired_stats_keys = [
+                'gamesPlayed', 'gamesStarted', 'assists', 'putOuts', 'errors', 'chances', 
+                'fielding', 'rangeFactorPerGame', 'rangeFactorPer9Inn', 'innings', 'games', 
+                'doublePlays', 'triplePlays', 'throwingErrors'
+            ]
+
+            # Position info might need special handling if it's nested
+            position_info = fielding_stats.get('position', {})
+            position = {
+                'code': position_info.get('code', 'N/A'),
+                'name': position_info.get('name', 'N/A'),
+                'type': position_info.get('type', 'N/A'),
+                'abbreviation': position_info.get('abbreviation', 'N/A')
+            }
+
+            # Constructing the structured_stats dictionary
+            structured_stats = {stat: fielding_stats.get(stat, 'Stat not available') for stat in desired_stats_keys}
+            structured_stats['position'] = position  # Add position info
+
+            return jsonify({
+                "player_id": player_id,
+                "name": player_search[0]['fullName'],
+                "team": player_search[0].get('currentTeam', {}).get('name', 'N/A'),
+                "stats": structured_stats
+            })
+
+        else:
+            return jsonify({"error": "Fielding stats not found for this player"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/api/player_batting_stats", methods=['GET'])
+def get_player_batting_stats():
+    player_name = request.args.get('player_name')
+
+    if not player_name:
+        return jsonify({"error": "Please specify a player name"}), 400
+
+    try:
+        player_search = statsapi.lookup_player(player_name)
+        if not player_search:
+            return jsonify({"error": f"No players found with the name '{player_name}'."}), 404
+
+        player_id = player_search[0]['id']
+        player_data = statsapi.player_stat_data(player_id, group="hitting", type='career')
+
+        if 'stats' in player_data and player_data['stats']:
+            batting_stats = player_data['stats'][0].get('stats', {})
+
+            # Specified batting stats
+            desired_stats_keys = [
+                'gamesPlayed', 'groundOuts', 'airOuts', 'runs', 'doubles', 'triples',
+                'homeRuns', 'strikeOuts', 'baseOnBalls', 'intentionalWalks', 'hits',
+                'hitByPitch', 'avg', 'atBats', 'obp', 'slg', 'ops', 'caughtStealing',
+                'stolenBases', 'stolenBasePercentage', 'groundIntoDoublePlay',
+                'numberOfPitches', 'plateAppearances', 'totalBases', 'rbi', 'leftOnBase',
+                'sacBunts', 'sacFlies', 'babip', 'groundOutsToAirouts', 'catchersInterference',
+                'atBatsPerHomeRun'
+            ]
+
+            # Constructing the structured_stats dictionary
+            structured_stats = {stat: batting_stats.get(stat, 'Stat not available') for stat in desired_stats_keys}
+
+            return jsonify({
+                "player_id": player_id,
+                "name": player_search[0]['fullName'],
+                "team": player_search[0].get('currentTeam', {}).get('name', 'N/A'),
+                "stats": structured_stats
+            })
+
+        else:
+            return jsonify({"error": "Batting stats not found for this player"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     os.makedirs('uploads', exist_ok=True)
     app.run(debug=True)
