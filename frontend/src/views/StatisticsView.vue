@@ -97,6 +97,7 @@ import Chart from 'chart.js/auto';
 import axios from 'axios';
 
 export default {
+  
 
   data() {
     

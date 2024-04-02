@@ -32,21 +32,24 @@ def logout():
     user_manager.user_logout()
     return jsonify({'message': 'User logged out successfully'}), 200
 
+UPLOAD_FOLDER = 'C:/Users/davis/PitchTek-2/backend/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/upload', methods=['POST'])
-def file_upload():
+# Ensure the upload folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
     if 'file' not in request.files:
-        return jsonify({'message': 'No file part'}), 400
-
+        return jsonify({'error': 'No file part'}), 401
     file = request.files['file']
     if file.filename == '':
-        return jsonify({'message': 'No selected file'}), 400
-
+        return jsonify({'error': 'No selected file'}), 400
     if file:
         filename = secure_filename(file.filename)
-        file.save(os.path.join('uploads', filename))
-        return jsonify({'message': f'File {filename} uploaded successfully'}), 200
-    
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(save_path)
+        return jsonify({'message': 'File uploaded successfully'}), 200
 
 @app.route("/get_teams", methods=["GET"])
 def get_teams():

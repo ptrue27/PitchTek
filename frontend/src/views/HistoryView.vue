@@ -7,35 +7,23 @@
       </v-col>
     </v-row>
     <v-row align="center" justify="center" class="my-5">
-  <v-col cols="12" md="6">
-    <v-file-input 
-      v-model="selectedFile" 
-      label="Upload File" 
-      outlined 
-      dense 
-      solo 
-      color="success" 
-      @change="onFileChange" 
-      prepend-icon="mdi-paperclip"
-    ></v-file-input>
-  </v-col>
-  <v-col cols="12" md="2"> 
-    <v-btn 
-      color="success" 
-      dark 
-      small 
-      @click="uploadFile" 
-      :disabled="!selectedFile" 
-      block
-      rounded
-      class="mx-auto"
-    >
-      Upload
-      <v-icon right dark>
-        mdi-upload
-      </v-icon>
-    </v-btn>
-  </v-col>
+      <v-row justify="center" class="my-5">
+      <v-col cols="12" md="8">
+        <v-card class="pa-5" outlined tile>
+          <v-card-title class="justify-center">
+            <v-icon large color="success">mdi-cloud-upload</v-icon>
+            <span class="headline ml-3">Upload Player Data</span>
+          </v-card-title>
+          <v-card-text class="text-center mb-4">
+            Select a file containing player statistics to upload and analyze.
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <UploadButton></UploadButton>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+
 </v-row>
 
     <!-- Input and Fetch Button -->
@@ -115,8 +103,12 @@
 
 <script>
 import axios from 'axios';
-
+import UploadButton from "@/components/UploadButton.vue"
 export default {
+  components: {
+    UploadButton, 
+  },
+
   data() {
     return {
       playerName: '',
@@ -166,6 +158,7 @@ export default {
           this.battingStats = { 'Data': 'Not Available' };
         });
     },
+   
   },
 };
 </script>
