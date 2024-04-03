@@ -7,7 +7,7 @@
       </v-col>
     </v-row>
     <v-row align="center" justify="center" class="my-5">
-      <v-row justify="center" class="my-5">
+  <v-row justify="center" class="my-5">
       <v-col cols="12" md="8">
         <v-card class="pa-5" outlined tile>
           <v-card-title class="justify-center">
@@ -18,8 +18,8 @@
             Select a file containing player statistics to upload and analyze.
           </v-card-text>
           <v-card-actions class="justify-center">
-            <UploadButton></UploadButton>
-          </v-card-actions>
+         <input type="file" @change="file => uploadFile(file.target.files[0])" />
+        </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -103,10 +103,10 @@
 
 <script>
 import axios from 'axios';
-import UploadButton from "@/components/UploadButton.vue"
+
 export default {
   components: {
-    UploadButton, 
+     
   },
 
   data() {
@@ -118,6 +118,23 @@ export default {
     };
   },
   methods: {
+    uploadFile(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        console.log(response.data.message);
+        // Additional actions based on successful upload, if needed
+      })
+      .catch(error => {
+        console.error('Error during file upload:', error);
+      });
+    },
     fetchPlayerStats() {
       if (!this.playerName.trim()) {
         alert('Please enter a player name');

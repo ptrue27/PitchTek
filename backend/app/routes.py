@@ -32,24 +32,26 @@ def logout():
     user_manager.user_logout()
     return jsonify({'message': 'User logged out successfully'}), 200
 
-UPLOAD_FOLDER = 'C:/Users/davis/PitchTek-2/backend/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Ensure the upload folder exists
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = 'C:/Users/davis/PitchTek-2/backend/uploads'
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
+    # Ensure there's a file part in the request
     if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 401
+        return jsonify({'error': 'No file part in the request. Please ensure the form has an input with name="file".'}), 401
+    
     file = request.files['file']
+
+    # Ensure a file is selected
     if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    if file:
-        filename = secure_filename(file.filename)
-        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(save_path)
-        return jsonify({'message': 'File uploaded successfully'}), 200
+        return jsonify({'error': 'No file selected. Please select a file to upload.'}), 400
+
+    # Save the file
+    filename = secure_filename(file.filename)
+    save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(save_path)
+
+    return jsonify({'message': 'File uploaded successfully', 'filename': filename}), 200
 
 @app.route("/get_teams", methods=["GET"])
 def get_teams():
@@ -97,6 +99,7 @@ def make_prediction():
     return jsonify(pitch_type, pitch_speed)
 import logging
 logging.basicConfig(level=logging.INFO)
+
 @app.route("/api/mlb_player_stats", methods=['GET'])
 def get_mlb_player_stats():
     player_name = request.args.get('player_name').lower().strip()
@@ -118,6 +121,7 @@ def get_mlb_player_stats():
     except Exception as e:
         logging.error("Failed to fetch player stats: %s", str(e))
         return jsonify({"error": str(e)}), 500
+    
 @app.route("/api/player_pitching_stats", methods=['GET'])
 def get_player_pitching_stats():
     player_name = request.args.get('player_name')
