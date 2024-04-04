@@ -212,9 +212,6 @@
       handleInningChange() {
         this.$store.commit("setInning", this.inning);
       },
-      handlePitchTypeChange() {
-        console.log('Changed Pitch Type');
-      },
       handleGameButtonClick() {
         console.log('Game Button clicked!');
         if (this.recording) {
