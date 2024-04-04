@@ -179,7 +179,6 @@
 </template>
 
 <script>
-  import axios from 'axios';
   import InputPitch from "@/components/InputPitch.vue";
   import SelectTeams from "@/components/SelectTeams.vue";
 
