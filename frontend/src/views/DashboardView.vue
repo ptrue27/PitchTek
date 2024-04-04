@@ -30,7 +30,7 @@
 
 <style>
 .dashboard-container {
-  background-color: rgb(98, 189, 98);
+  background-color: #C8E6C9;
 }
 </style>
 
@@ -43,7 +43,7 @@ import BatterStats from "@/components/BatterStats.vue"
 
 
 export default {
-    components: {
+  components: {
     RecordGame,
     ViewPredictions,
     PitcherStats,

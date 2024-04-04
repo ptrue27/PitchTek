@@ -1,5 +1,7 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px;">
+    <v-card style="width: 100%; margin: 10px 10px;" 
+        elevation="3"
+    >
         <!--Player select-->
         <v-row>
             <v-col>
@@ -53,7 +55,7 @@ export default {
         handleBatterChange() {
             const index = this.batterNames.indexOf(this.batter.name);
             const batterId = this.batterIds[index];
-            const path = 'http://localhost:5000/get_batter/' + batterId;
+            const path = 'http://localhost:5000/api/get_batter/' + batterId;
 
             axios.get(path)
                 .then((res) => {

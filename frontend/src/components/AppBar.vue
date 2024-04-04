@@ -1,16 +1,24 @@
 <template>
     <v-app-bar>
-      <!--Logo Icon and Title-->
-      <v-img
-        src="@/assets/baseball-icon.png"
-        alt="PitchTek logo"
-        max-height="50"
-        max-width="50"
-        class="ml-5"
-        contain
-      ></v-img>
+      <router-link to="/" class="text-decoration-none d-flex align-center" 
+        style="width: 170px;"
+      >
+        <!--Logo Icon and Title-->
+        <v-img
+          src="@/assets/baseball-icon.png"
+          alt="PitchTek logo"
+          max-height="50"
+          max-width="50"
+          class="ml-5"
+          contain
+        ></v-img>
 
-      <v-app-bar-title>PitchTek</v-app-bar-title>
+        <v-app-bar-title class="ml-3 text-decoration-none" style="color: black;">
+          PitchTek
+        </v-app-bar-title>
+      </router-link>
+
+      <v-spacer></v-spacer>
 
       <!--About button-->
       <v-btn
@@ -72,7 +80,7 @@ export default {
     async logoutUser() {
       try {
         // Make POST request
-        const path = 'http://localhost:5000/logout'
+        const path = 'http://localhost:5000/api/logout'
         const response = await axios.post(path);
         console.log(response.data);
         

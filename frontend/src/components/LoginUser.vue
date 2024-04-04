@@ -1,5 +1,5 @@
 <template>
-    <v-card class="my-card" color="blue-grey-lighten-4">
+    <v-card class="login-card">
         <!--Title-->
         <v-card-title class="text-center">
           {{ mode }}
@@ -45,7 +45,7 @@
         <!--Submit Button-->
         <v-row>
           <v-col class="text-center">
-            <v-btn @click="loginUser">Submit</v-btn>
+            <v-btn @click="loginUser" color="green-darken-1">Submit</v-btn>
           </v-col>
         </v-row>
 
@@ -103,7 +103,7 @@
           if (this.mode == "Login") {
             endpoint = "login"
           }
-          const path = "http://localhost:5000/" + endpoint
+          const path = "http://localhost:5000/api/" + endpoint
           const response = await axios.post(path, {
             username: this.username,
             password: this.password
@@ -136,8 +136,7 @@
   .error-message {
     color: rgb(196, 46, 46);
   }
-  .my-card {
-    color: cadetblue;
+  .login-card {
     padding: 20px;
     width: 300px;
   }

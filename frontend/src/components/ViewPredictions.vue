@@ -1,6 +1,7 @@
 <template>
-  <v-container fluid>
-    <v-card>
+    <v-card style="width: 100%; margin: 10px 10px;" 
+      elevation="3"
+    >
       <!-- Displaying Paginated Data -->
       <v-list>
         <v-list-item-group>
@@ -57,7 +58,6 @@
       </v-card-actions>
 
     </v-card>
-  </v-container>
 </template>
 
 <style>

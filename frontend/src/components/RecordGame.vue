@@ -1,70 +1,13 @@
 <template>
-    <v-container fluid>
-      <v-card>
+      <v-card style="width: 100%; margin: 10px 10px;" 
+        elevation="3"
+      >
         <v-row>
           <!--Game state column-->
           <v-col cols="8">
             <v-container fluid>
-                <v-row class="text-center" style="margin-bottom: -40px;">
-                    <!--Input home team-->
-                    <v-col cols="6">
-                      <v-select
-                        :items="homeTeamNames" 
-                        v-model="home.teamName"
-                        @update:modelValue="handleHomeTeamChange"
-                        variant="filled" 
-                        density="compact"
-                        class="my-label team-name"
-                      ></v-select>
-                    </v-col>
-                    <!--Input away team-->
-                    <v-col cols="6">
-                        <v-select
-                          :items="awayTeamNames" 
-                          v-model="away.teamName"
-                          @update:modelValue="handleAwayTeamChange"
-                          variant="filled" 
-                          density="compact"
-                          class="my-label team-name"
-                        ></v-select>
-                    </v-col>
-                </v-row>
-                
-                <!--Score input-->
-                <v-row class="score-row">
-                          <!--Home Score and "-"-->
-                          <v-col cols="3" style="margin-top: 10px;" align="right">
-                            <p style="margin-right: 10px;">Home</p>
-                          </v-col>
-                          <v-col cols="2">
-                                <v-select
-                                  :items="scores"
-                                  v-model="home.score"
-                                  density="compact"
-                                  variant="solo-filled"
-                                ></v-select>
-                          </v-col>
-                          <v-col 
-                            cols="2"
-                            style="margin-top: -2px; margin-left: -10px; margin-right: -10px;"
-                            class="score-spacer text-center"
-                          >
-                            <p>-</p>
-                          </v-col>
-                          <!--Away Score-->
-                          <v-col cols="2">
-                                <v-select
-                                  :items="scores"
-                                  v-model="away.score"
-                                  density="compact"
-                                  variant="solo-filled"
-                                ></v-select>
-                          </v-col>
-                          <v-col cols="3" style="margin-top: 10px;" align="left">
-                            <p style="margin-left: 10px;">Away</p>
-                          </v-col>
-                </v-row>
-
+                <!--Team selection and score-->
+                <SelectTeams/>
 
                 <!--Count and Inning Row-->
                 <v-row>
@@ -72,7 +15,9 @@
                     <v-col cols="5" class="d-flex flex-column justify-center">
                       <v-div>
                         <v-row class="no-wrap my-font text-center">
-                          <v-col style="padding-bottom: 0;">On Base</v-col>
+                          <v-col style="padding-bottom: 0;">
+                            <p>On Base</p>
+                          </v-col>
                         </v-row>
                         <!--Second base-->
                         <v-row class="no-wrap">
@@ -122,9 +67,11 @@
                     <!--Innings and count-->
                     <v-col cols="7">
                       <!--Inning-->
-                      <v-row style="margin-bottom: 0px;">
+                      <v-row style="margin-bottom: 2px;">
                         <v-col align="right" cols="4" class="no-wrap my-font">
-                          <p class="inning-text"> Inning</p>
+                          <p class="inning-text" style="font-weight: bold;">
+                            Inning
+                          </p>
                         </v-col>
                         <v-col>
                           <v-select
@@ -140,92 +87,55 @@
 
                       <!--Outs-->
                       <v-row no-gutters class="no-wrap mt-0">
-                        <v-col align="right" cols="4" class="my-font">
-                          <p class="out-ball-strike-text"> Outs</p>
+                        <v-col align="right" cols="4">
+                          <p class="out-ball-strike-text my-font">
+                            Outs
+                          </p>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col v-for="out in 3" :key="out" cols="2">
                           <v-chip 
-                            @click="setOuts(0)" 
-                            :style="{backgroundColor: outColors[0]}" 
+                            @click="setOuts(out - 1)" 
+                            :style="{backgroundColor: outColors[out - 1]}" 
                             size="x-small" class="mr-1"
-                          >0</v-chip>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip 
-                            @click="setOuts(1)" 
-                            :style="{backgroundColor: outColors[1]}"
-                            size="x-small" class="mr-1"
-                          >1</v-chip>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip
-                              @click="setOuts(2)" 
-                              :style="{backgroundColor: outColors[2]}"
-                              size="x-small" class="mr-1"
-                          >2</v-chip>
+                          >
+                            {{ out - 1 }}
+                          </v-chip>
                         </v-col>
                       </v-row>
                       
                       <!--Balls-->
                       <v-row no-gutters class="no-wrap mt-2">
                         <v-col align="right" cols="4" class="my-font">
-                          <p class="out-ball-strike-text">Balls</p>
+                          <p class="out-ball-strike-text">
+                            Balls
+                          </p>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col v-for="ball in 4" :key="ball" cols="2">
                           <v-chip 
-                            @click="setBalls(0)" 
-                            :style="{backgroundColor: ballColors[0]}"
+                            @click="setBalls(ball - 1)" 
+                            :style="{backgroundColor: ballColors[ball - 1]}"
                             size="x-small" class="mr-1"
-                          >0</v-chip>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip 
-                            @click="setBalls(1)" 
-                            :style="{backgroundColor: ballColors[1]}"
-                            size="x-small" class="mr-1"
-                          >1</v-chip>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip 
-                            @click="setBalls(2)" 
-                            :style="{backgroundColor: ballColors[2]}"
-                            size="x-small" class="mr-1"
-                          >2</v-chip>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip 
-                            @click="setBalls(3)" 
-                            :style="{backgroundColor: ballColors[3]}"
-                            size="x-small" class="mr-1"
-                          >3</v-chip>
+                          >
+                            {{ ball - 1 }}
+                          </v-chip>
                         </v-col>
                       </v-row>
 
                       <!--Strikes-->
                       <v-row no-gutters class="no-wrap mt-2">
                         <v-col align="right" cols="4" class="my-font">
-                          <p class="out-ball-strike-text">Strikes</p>
+                          <p class="out-ball-strike-text">
+                            Strikes
+                          </p>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col v-for="strike in 3" :key="strike" cols="2">
                           <v-chip 
-                            @click="setStrikes(0)" 
-                            :style="{backgroundColor: strikeColors[0]}"
+                            @click="setStrikes(strike - 1)" 
+                            :style="{backgroundColor: strikeColors[strike - 1]}"
                             size="x-small" class="mr-1"
-                          >0</v-chip>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip 
-                            @click="setStrikes(1)" 
-                            :style="{backgroundColor: strikeColors[1]}"
-                            size="x-small" class="mr-1"
-                          >1</v-chip>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip 
-                            @click="setStrikes(2)" 
-                            :style="{backgroundColor: strikeColors[2]}"
-                            size="x-small" class="mr-1"
-                          >2</v-chip>
+                          >
+                            {{ strike - 1 }}
+                          </v-chip>
                         </v-col>
                       </v-row>
 
@@ -235,150 +145,61 @@
           </v-col>
   
           <!--Input pitch column-->
-          <v-col cols="4" class="d-flex flex-column justify-center pr-5">
-              <!--Input pitch dialog-->
-              <div>
-                  <v-dialog width="500">
-                      <template v-slot:activator="{ props }">
-                          <v-img
-                              src="@/assets/strikezone.png"
-                              v-bind="props"
-                              class="input-pitch-v-dialog mx-auto"
-                          ></v-img>
-                      </template>
+          <v-col cols="4" class="d-flex flex-column justify-center text-center pr-5">
+            <!--Input pitch dialog-->
+            <v-row>
+              <v-col>
+                <InputPitch class="record-btn"/>
+              </v-col>
+            </v-row>
 
-                      <template v-slot:default="{ isActive }">
-                          <v-card title="Input Pitch">
-                            <v-card-text>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </v-card-text>
-
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                    text="Close"
-                                    @click="isActive.value = false"
-                                ></v-btn>
-                            </v-card-actions>
-                          </v-card>
-                      </template>
-                  </v-dialog>
-              </div>
-
-              <!--Predict button-->
-              <v-btn
-                  prepend-icon="mdi-arrow-right-bold-box"
-                  class="predict-btn my-font mx-auto"
-                  @click="handlePredictButtonClick"
-              >Predict</v-btn>   
-
-              <!--Start/stop game record button-->
-              <v-btn
-                  prepend-icon="mdi-record-circle"
-                  @click="handleGameButtonClick"
-                  class="start-stop-game-btn my-font mx-auto"
-              >Start<br>Game</v-btn>
+            <!--Start/stop game record button-->
+            <v-row>
+              <v-col>
+                <v-btn
+                    @click="handleGameButtonClick"
+                    class="record-btn my-font mx-auto"
+                    :color="recording ? 'red' : 'green-darken-1'"
+                >
+                  <template v-if="recording">
+                      <v-icon left>mdi-stop-circle</v-icon>
+                      <p style="margin-left: 8px;">Stop Game</p>
+                  </template>
+                  <template v-else>
+                      <v-icon left>mdi-play-circle</v-icon>
+                      <p style="margin-left: 8px;">Start Game</p>
+                  </template>
+                </v-btn>
+              </v-col>
+            </v-row>
 
           </v-col>
         </v-row>
       </v-card>
-    </v-container>
 </template>
-  
-<style>
-  .inning-v-select {
-    margin-top: -10px;
-    margin-bottom: -25px;
-    max-width: 90px;
-    margin-left: -5px;
-  }
-  .score-v-text-field {
-    margin-top: -37px;
-    min-width: 0;
-    max-width: 75px;
-    padding: 0;
-  }
-  .my-label label {
-    font-size: 12px;
-    text-align: center;
-  }
-  .team-name {
-    font-size: 20px;
-  }
-  .my-font {
-    font-size: 12px;
-  }
-  .score-spacer {
-    margin-top: -37px;
-    font-size: 30px;
-  }
-  .no-wrap {
-    white-space: nowrap;
-  }
-  .input-pitch-v-dialog {
-    width: 95%;
-    max-height: 175px;
-    margin-top: 2px;
-    margin-bottom: 5px;
-  }
-  .start-stop-game-btn {
-    width: 75%;
-    min-width: 90px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-  .predict-btn {
-    min-width: 90px;
-    width: 75%;
-    margin-top: 5px;
-    margin-bottom: 2px;
-  }
-  .square-chip {
-    width: 25px;
-    height: 25px;
-    border-radius: 3px;
-    border: 2px solid rgb(64, 64, 64);
-    justify-content: center;
-  }
-  .inning-text {
-    margin-top: 3px;
-    margin-right: 3px;
-  }
-  .out-ball-strike-text {
-    margin-top: 3px;
-    margin-right: 20px;
-  }
-</style>
 
 <script>
   import axios from 'axios';
+  import InputPitch from "@/components/InputPitch.vue";
+  import SelectTeams from "@/components/SelectTeams.vue";
 
   export default {
+    components: {
+      InputPitch,
+      SelectTeams,
+    },
     data() {
       return {
-        unsetColor: 'white',
-        setBaseColor: 'cadetblue',
-        set0Color: 'gray',
-        setColor: 'cadetblue',
-
-        teamIds: [],
-        teamNames: [],
-        scores: [],
-
-        home: {
-          teamName: "Select Team",
-          score: 0,
+        colors: {
+          unset: '#EEEEEE',
+          set: '#43A047',
+          set0: 'gray',
         },
-        away: {
-          teamName: "Select Team",
-          score: 0,
-        },
-
-
+        recording: false,
+        inning: "1∧",
+        innings: [],
         onBase: [false, false, false],
         baseColors: [],
-        innings: [],
-        inning: "1∧",
         outNumber: 0,
         outColors: [],
         ballNumber: 0,
@@ -391,71 +212,17 @@
       handleInningChange() {
         this.$store.commit("setInning", this.inning);
       },
-      handleHomeTeamChange() {
-        const index = this.teamNames.indexOf(this.home.teamName);
-        const teamId = this.teamIds[index];
-        const path = 'http://localhost:5000/get_roster/' + teamId;
-
-        axios.get(path)
-          .then((res) => {
-            const roster = res.data;
-            console.log("Loaded roster for " + teamId + ": " + 
-              roster.batters.id.length + " batters, " +
-              roster.pitchers.id.length + " pitchers"
-            );
-            const newHome = {
-              batterIds: roster.batters.id, 
-              batterNames: roster.batters.name,
-              pitcherIds: roster.pitchers.id,
-              pitcherNames: roster.pitchers.name,
-            };
-            this.$store.commit("setHome", newHome);
-          })
-          .catch((error) => {
-              console.error("Error loading roster for " + teamId + ": " + error);
-              const newHome = {
-                batterIds: [], 
-                batterNames: [], 
-                pitcherIds: [], 
-                pitcherNames: [],
-              };
-              this.$store.commit("setHome", newHome);
-          });
-      },
-      handleAwayTeamChange() {
-        const index = this.teamNames.indexOf(this.away.teamName);
-        const teamId = this.teamIds[index];
-        const path = 'http://localhost:5000/get_roster/' + teamId;
-
-        axios.get(path)
-          .then((res) => {
-            const roster = res.data;
-            console.log("Loaded roster for " + teamId + ": " + 
-              roster.batters.id.length + " batters, " +
-              roster.pitchers.id.length + " pitchers"
-            );
-            const newAway = {
-              batterIds: roster.batters.id, 
-              batterNames: roster.batters.name,
-              pitcherIds: roster.pitchers.id,
-              pitcherNames: roster.pitchers.name,
-            };
-            this.$store.commit("setAway", newAway);
-          })
-          .catch((error) => {
-              console.error("Error loading roster for " + teamId + ": " + error);
-              const newAway = {
-                batterIds: [], 
-                batterNames: [], 
-                pitcherIds: [], 
-                pitcherNames: [],
-              };
-              this.$store.commit("setAway", newAway);
-          });
+      handlePitchTypeChange() {
+        console.log('Changed Pitch Type');
       },
       handleGameButtonClick() {
         console.log('Game Button clicked!');
-        // Start or stop game recording
+        if (this.recording) {
+          this.recording = false;
+        }
+        else {
+          this.recording = true;
+        }
       },
       handlePredictButtonClick() {
         console.log('Predict Button clicked!');
@@ -476,89 +243,67 @@
         const i = baseNumber - 1;
         this.onBase[i] = !this.onBase[i];
         if(!this.onBase[i]){
-          this.baseColors[i] = this.unsetColor;
+          this.baseColors[i] = this.colors.unset;
         }
         else{
-          this.baseColors[i] = this.setBaseColor;
+          this.baseColors[i] = this.colors.set;
         }
       },
       setOuts(outNumber) {
         this.outNumber = outNumber;
         console.log('Changed number of outs:', outNumber)
         if(outNumber == 0) {
-          this.outColors = [this.set0Color, this.unsetColor, this.unsetColor];
+          this.outColors = [this.colors.set0, this.colors.unset, this.colors.unset];
         }
         if(outNumber == 1) {
-          this.outColors = [this.unsetColor, this.setColor, this.unsetColor];
+          this.outColors = [this.colors.unset, this.colors.set, this.colors.unset];
         }
         if(outNumber == 2) {
-          this.outColors = [this.unsetColor, this.setColor, this.setColor];
+          this.outColors = [this.colors.unset, this.colors.set, this.colors.set];
         }
       },
       setBalls(ballNumber) {
         this.ballNumber = ballNumber;
         console.log('Changed number of balls:', ballNumber)
         if(ballNumber == 0) {
-          this.ballColors = [this.set0Color, this.unsetColor, this.unsetColor, this.unsetColor];
+          this.ballColors = [this.colors.set0, this.colors.unset, this.colors.unset, this.colors.unset];
         }
         if(ballNumber == 1) {
-          this.ballColors = [this.unsetColor, this.setColor, this.unsetColor, this.unsetColor];
+          this.ballColors = [this.colors.unset, this.colors.set, this.colors.unset, this.colors.unset];
         }
         if(ballNumber == 2) {
-          this.ballColors = [this.unsetColor, this.setColor, this.setColor, this.unsetColor];
+          this.ballColors = [this.colors.unset, this.colors.set, this.colors.set, this.colors.unset];
         }
         if(ballNumber == 3) {
-          this.ballColors = [this.unsetColor, this.setColor, this.setColor, this.setColor];
+          this.ballColors = [this.colors.unset, this.colors.set, this.colors.set, this.colors.set];
         }
       },
       setStrikes(strikeNumber) {
         this.strikeNumber = strikeNumber;
         console.log('Changed number of strikes:', strikeNumber)
         if(strikeNumber == 0) {
-          this.strikeColors = [this.set0Color, this.unsetColor, this.unsetColor];
+          this.strikeColors = [this.colors.set0, this.colors.unset, this.colors.unset];
         }
         if(strikeNumber == 1) {
-          this.strikeColors = [this.unsetColor, this.setColor, this.unsetColor];
+          this.strikeColors = [this.colors.unset, this.colors.set, this.colors.unset];
         }
         if(strikeNumber == 2) {
-          this.strikeColors = [this.unsetColor, this.setColor, this.setColor];
+          this.strikeColors = [this.colors.unset, this.colors.set, this.colors.set];
         }
       },
     },
     created() {
-      // Fill inning and score selection lists
-      this.scores.push(0);
+      // Fill inning selection list
       for (let i = 1; i <= 99; i++) {
         this.innings.push(`${i}∧`, `${i}∨`);
-        this.scores.push(i);
       }
-
       // Set game state button colors
-      this.baseColors = [this.unsetColor, this.unsetColor, this.unsetColor];
-      this.outColors = [this.set0Color, this.unsetColor, this.unsetColor];
-      this.ballColors = [this.set0Color, this.unsetColor, this.unsetColor, this.unsetColor];
-      this.strikeColors = [this.set0Color, this.unsetColor, this.unsetColor];
-
-      // Fill team selection lists
-      const path = "http://localhost:5000/get_teams";
-      axios.get(path)
-          .then((res) => {
-              const teams = res.data;
-              console.log("Loaded teams: " + teams["id"].length)
-              this.teamIds = teams["id"]
-              this.teamNames = teams["name"];
-          })
-          .catch((error) => {
-              console.error("Error loading teams: " + error);
-          });
+      this.baseColors = [this.colors.unset, this.colors.unset, this.colors.unset];
+      this.outColors = [this.colors.set0, this.colors.unset, this.colors.unset];
+      this.ballColors = [this.colors.set0, this.colors.unset, this.colors.unset, this.colors.unset];
+      this.strikeColors = [this.colors.set0, this.colors.unset, this.colors.unset];
     },
     computed: {
-      homeTeamNames() {
-        return this.teamNames.filter(team => team !== this.away.teamName);
-      },
-      awayTeamNames() {
-        return this.teamNames.filter(team => team !== this.home.teamName);
-      },
       gameState() {
         return {
           inning: this.inning, 
@@ -573,3 +318,36 @@
   };
 </script>
   
+<style>
+  .inning-v-select {
+    margin-top: -10px;
+    margin-bottom: -25px;
+    max-width: 90px;
+    margin-left: -5px;
+  }
+  .my-font {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .record-btn {
+    width: 75%;
+    min-width: 90px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .square-chip {
+    width: 25px;
+    height: 25px;
+    border-radius: 3px;
+    border: 2px solid rgb(64, 64, 64);
+    justify-content: center;
+  }
+  .inning-text {
+    margin-top: 3px;
+    margin-right: 3px;
+  }
+  .out-ball-strike-text {
+    margin-top: 3px;
+    margin-right: 20px;
+  }
+</style>
