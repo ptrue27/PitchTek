@@ -221,20 +221,6 @@
           this.recording = true;
         }
       },
-      handlePredictButtonClick() {
-        console.log('Predict Button clicked!');
-
-        const path = 'http://localhost:5000/make_prediction';
-
-        axios.get(path, { params: this.gameState})
-          .then((res) => {
-            console.log("Pitch Prediction Recieved: " + res.data)
-              this.emitter.emit("ChangePitch", res.data)
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      },
       toggleBase(baseNumber) {
         console.log('Toggled base:', baseNumber);
         const i = baseNumber - 1;
