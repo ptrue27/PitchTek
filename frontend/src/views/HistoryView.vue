@@ -19,11 +19,15 @@
           </v-card-text>
           <v-card-actions class="justify-center">
          <input type="file" @change="file => uploadFile(file.target.files[0])" />
+         <v-btn color="success" @click="generateImages">Generate Images</v-btn>
         </v-card-actions>
         </v-card>
       </v-col>
+      <v-col v-for="image in images" :key="image">
+        <img :src="image" alt="Generated Image">
+      </v-col>
     </v-row>
-
+    
 </v-row>
 
     <!-- Input and Fetch Button -->
@@ -133,6 +137,19 @@ export default {
       })
       .catch(error => {
         console.error('Error during file upload:', error);
+      });
+    },
+    generateImages() {
+      // Send a request to the server to process the uploaded file and generate images
+      axios.post('http://localhost:5000/api/generate-images', {
+        // You might need to send additional data, such as the filename
+      })
+      .then(response => {
+        // Assuming the response contains URLs or paths to the generated images
+        this.images = response.data.images; // Update the images array to display them
+      })
+      .catch(error => {
+        console.error('Error generating images:', error);
       });
     },
     fetchPlayerStats() {

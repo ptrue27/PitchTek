@@ -4,6 +4,7 @@ import statsapi
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from DataVisualizer import DataVisualizer
 import os
 
 
@@ -32,26 +33,44 @@ def logout():
     user_manager.user_logout()
     return jsonify({'message': 'User logged out successfully'}), 200
 
-app.config['UPLOAD_FOLDER'] = 'C:/Users/davis/PitchTek-2/backend/uploads'
+# Directory where uploaded files are stored
+UPLOAD_FOLDER = 'C:/Users/davis/PitchTek-2/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Variable to keep track of the latest uploaded file
+latest_uploaded_file = None
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
-    # Ensure there's a file part in the request
+    global latest_uploaded_file
+    
     if 'file' not in request.files:
-        return jsonify({'error': 'No file part in the request. Please ensure the form has an input with name="file".'}), 401
+        return jsonify({'error': 'No file part'}), 400
     
     file = request.files['file']
-
-    # Ensure a file is selected
+    
     if file.filename == '':
-        return jsonify({'error': 'No file selected. Please select a file to upload.'}), 400
-
-    # Save the file
+        return jsonify({'error': 'No selected file'}), 400
+    
     filename = secure_filename(file.filename)
     save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(save_path)
+    
+    # Update the path of the latest uploaded file
+    latest_uploaded_file = save_path
+    print(latest_uploaded_file)
+    return jsonify({'message': 'File uploaded successfully'}), 200
 
-    return jsonify({'message': 'File uploaded successfully', 'filename': filename}), 200
+@app.route('/api/generate-images', methods=['POST'])  # Allow POST requests
+
+def generate_images_route():
+    print(" test: ", latest_uploaded_file)
+    if latest_uploaded_file is None:
+        return jsonify({'error': 'No file has been uploaded yet'}), 400
+
+    visualizer = DataVisualizer(latest_uploaded_file)
+    
+    return jsonify({'message': 'Images generated successfully'})
 
 @app.route("/get_teams", methods=["GET"])
 def get_teams():
