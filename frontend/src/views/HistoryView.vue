@@ -6,8 +6,9 @@
         <h1 class="display-1">Player Statistics</h1>
       </v-col>
     </v-row>
+
+    <!-- Upload and Generate Images Section -->
     <v-row align="center" justify="center" class="my-5">
-  <v-row justify="center" class="my-5">
       <v-col cols="12" md="8">
         <v-card class="pa-5" outlined tile>
           <v-card-title class="justify-center">
@@ -18,19 +19,21 @@
             Select a file containing player statistics to upload and analyze.
           </v-card-text>
           <v-card-actions class="justify-center">
-         <input type="file" @change="file => uploadFile(file.target.files[0])" />
-         <v-btn color="success" @click="generateImages">Generate Images</v-btn>
-        </v-card-actions>
+            <input type="file" @change="file => uploadFile(file.target.files[0])" />
+            <v-btn color="success" @click="generateImages">Generate Images</v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
-      <v-col v-for="image in images" :key="image">
-        <img :src="image" alt="Generated Image">
+    </v-row>
+
+    <!-- Images Display Section -->
+    <v-row justify="center" class="my-5">
+      <v-col v-for="image in images" :key="image" cols="12" sm="6" md="4">
+        <v-img :src="image" :alt="'Generated Image ' + image" class="my-2" contain></v-img>
       </v-col>
     </v-row>
-    
-</v-row>
 
-    <!-- Input and Fetch Button -->
+    <!-- Player Name Input and Fetch Stats Button -->
     <v-row align="center" justify="center">
       <v-col cols="12" md="8">
         <v-text-field v-model="playerName" label="Enter Player Name" outlined dense solo color="success"></v-text-field>
@@ -119,6 +122,7 @@ export default {
       fieldingStats: {},
       pitchingStats: {},
       battingStats: {},
+      images : []
     };
   },
   methods: {
@@ -140,18 +144,18 @@ export default {
       });
     },
     generateImages() {
-      // Send a request to the server to process the uploaded file and generate images
-      axios.post('http://localhost:5000/api/generate-images', {
-        // You might need to send additional data, such as the filename
-      })
-      .then(response => {
-        // Assuming the response contains URLs or paths to the generated images
-        this.images = response.data.images; // Update the images array to display them
-      })
-      .catch(error => {
-        console.error('Error generating images:', error);
-      });
-    },
+  axios.post('http://localhost:5000/api/generate-images', {
+    // Additional data might be needed here, depending on your backend API
+  })
+  .then(response => {
+    // Update the images array with the newly generated image URLs
+    // This example assumes the response contains an array of image URLs
+    this.images = response.data.images;
+  })
+  .catch(error => {
+    console.error('Error generating images:', error);
+  });
+},
     fetchPlayerStats() {
       if (!this.playerName.trim()) {
         alert('Please enter a player name');

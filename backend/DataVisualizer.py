@@ -42,7 +42,7 @@ class DataVisualizer:
         plt.xlabel('Pitch Outcome')
         plt.ylabel('Count (Balls-Strikes)')
         plt.xticks(rotation=45, ha='right')
-        plt.show()
+        
         save_path = 'C:/Users/davis/PitchTek-2/frontend/src/assets/count_vs_description_heatmap.png'
         plt.savefig(save_path)
         plt.close()
@@ -73,6 +73,6 @@ class DataVisualizer:
 
         save_path = 'C:/Users/davis/PitchTek-2/frontend/src/assets/pitchVeloLastGame.png'
         plt.savefig(save_path)
-        plt.show()
+        
         
 
