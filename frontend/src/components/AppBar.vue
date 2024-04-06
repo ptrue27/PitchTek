@@ -23,7 +23,7 @@
       <!--About button-->
       <v-btn
         to="/about"
-        prepend-icon="mdi-view-dashboard"
+        prepend-icon="mdi-information"
         variant="tonal" class="mr-5"
       >
         About

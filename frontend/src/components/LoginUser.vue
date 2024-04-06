@@ -113,7 +113,8 @@
           // Check if request was successful
           if (response.status == 200 || response.status == 201) {
             this.errorMessage = '';
-            this.$store.commit("login")
+            let seasons = ["UNR (2023)", "TMCC (2023)", "MLB (2024)"];
+            this.$store.commit("login", seasons);
             this.$router.push({ name: 'Dashboard' });
           } 
           // Handle request failure

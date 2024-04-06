@@ -1,20 +1,20 @@
 <template>
-    <v-dialog width="500">
+    <v-dialog width="500" v-model="dialog">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
-                color="green-darken-1"
                 prepend-icon="mdi-baseball"
                 text="Record Pitch"
+                color="green-darken-1"
                 variant="outlined"
             ></v-btn>
         </template>
 
-        <template v-slot:default="{ isActive }">
-            <v-card class="text-center" title="Record Pitch">
+            <v-card class="text-center">
+                <v-card-title class="pb-2 border-bottom">Record Pitch</v-card-title>
                 <v-row style="margin-top: 3px;">
                     <!--Input Pitch Location-->
-                    <v-col>
+                    <v-col style="margin-left: 5px;">
                         <v-row>
                             <v-col class="justify-center text-center">
                                 <InputPitchLocation style="margin-left: 20px;" />
@@ -76,7 +76,7 @@
 
                         <!--Predict button-->
                         <v-row>
-                            <v-col class="d-flex justify-center">
+                            <v-col class="d-flex justify-center" style="margin-top: -10px; margin-left: -50px;">
                                 <v-btn
                                     prepend-icon="mdi-arrow-right-bold-box"
                                     class="mx-auto"
@@ -94,11 +94,11 @@
                     <v-spacer></v-spacer>
                     <v-btn
                         text="Close"
-                        @click="isActive.value = false"
+                        @click="dialog = false"
+                        color="green-darken-1"
                     ></v-btn>
                 </v-card-actions>
             </v-card>
-        </template>
     </v-dialog> 
 </template>
 
@@ -112,14 +112,22 @@
         },
         data() {
             return {
-                grid: [
-                [false, false, false],
-                [false, false, false],
-                [false, false, false]
-                ],
+                dialog: false,
                 type: "Select Pitch",
-                types: ["4-Seam Fastball", "2-Seam Fastball", "Curveball", 
-                        "Slider", "Change Up", "Cutter"],
+                types: ["Changeup (CH)",
+                        "Curveball (CU)",
+                        "Cutter (FC)",
+                        "Eephus (EP)",
+                        "Forkball (FO)",
+                        "Four-Seam Fastball (FF)",
+                        "Knuckleball (KN)",
+                        "Knuckle-curve (KC)",
+                        "Screwball (SC)",
+                        "Sinker (SI)",
+                        "Slider (SL)",
+                        "Slurve (SV)",
+                        "Splitter (FS)",
+                        "Sweeper (ST)"],
                 speed: 0.0,
             };
         },
@@ -137,10 +145,18 @@
                 .catch((error) => {
                     console.error(error);
                 });
+                this.dialog = false;
             },
             handlePitchTypeChange() {
                 console.log('Changed Pitch Type');
             },
+        },
+        computed: {
+            gameState() {
+                return {
+                    inning: this.$store.state.inning,
+                };
+            }
         },
     };
 </script>
@@ -150,5 +166,9 @@
     font-weight: bold;
     margin-left: -48px;
     margin-top: -18px;
+  }
+  .border-bottom {
+    border-bottom: 1px solid black;
+    background-color: #FAFAFA;
   }
 </style>

@@ -145,13 +145,20 @@
           </v-col>
   
           <!--Input pitch column-->
-          <v-col cols="4" class="d-flex flex-column justify-center text-center pr-5">
-            <!--Input pitch dialog-->
+          <v-col cols="4" class="text-center" style="margin-top: 50px;">
+            <!--Game Select-->
             <v-row>
               <v-col>
-                <InputPitch class="record-btn"/>
+                <v-select
+                  :items="this.$store.state.seasons" 
+                  v-model="season"
+                  variant="solo-filled"
+                  density="compact" 
+                  style="width: 185px; margin-top: 30px;"
+                ></v-select>
               </v-col>
             </v-row>
+
 
             <!--Start/stop game record button-->
             <v-row>
@@ -170,6 +177,13 @@
                       <p style="margin-left: 8px;">Start Game</p>
                   </template>
                 </v-btn>
+              </v-col>
+            </v-row>
+            
+            <!--Input pitch dialog-->
+            <v-row v-if="recording" style="margin-top: 0px;">
+              <v-col>
+                <InputPitch class="record-btn"/>
               </v-col>
             </v-row>
 
@@ -194,6 +208,7 @@
           set: '#43A047',
           set0: 'gray',
         },
+        season: "Select Season",
         recording: false,
         inning: "1∧",
         innings: [],
@@ -279,23 +294,12 @@
       for (let i = 1; i <= 99; i++) {
         this.innings.push(`${i}∧`, `${i}∨`);
       }
+
       // Set game state button colors
       this.baseColors = [this.colors.unset, this.colors.unset, this.colors.unset];
       this.outColors = [this.colors.set0, this.colors.unset, this.colors.unset];
       this.ballColors = [this.colors.set0, this.colors.unset, this.colors.unset, this.colors.unset];
       this.strikeColors = [this.colors.set0, this.colors.unset, this.colors.unset];
-    },
-    computed: {
-      gameState() {
-        return {
-          inning: this.inning, 
-          outs: this.outNumber, 
-          strikes: this.strikeNumber,
-          balls: this.ballNumber, 
-          home_score: this.home.score, 
-          away_score: this.away.score
-        };
-      }
     },
   };
 </script>
