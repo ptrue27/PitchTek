@@ -59,6 +59,7 @@ export default {
                 .then((res) => {
                     const newPitcher = res.data;
                     this.emitter.emit("ChangePitcher", newPitcher)
+                    this.emitter.emit("ChangePitcher2", newPitcher)
                     console.log("Changed pitcher: " + newPitcher.name + ", " + newPitcher.id);
                     this.$store.commit("setCurrentPitcher", newPitcher);
                 })

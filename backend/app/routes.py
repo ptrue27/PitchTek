@@ -1,12 +1,12 @@
 from app.get_prediction import Predictions_Class
 from app import app, sql_utils, user_manager
-import statsapi 
+#import statsapi
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from DataVisualizer import DataVisualizer
 import os
-
+import json
 
 @app.route('/sign_up', methods=['POST'])
 def sign_up():
@@ -112,10 +112,18 @@ def get_pitcher(id):
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
+
     my_obj = Predictions_Class()
-    pitch_type = my_obj.get_type(request.args)
+
+    # Extract keys associated with 'param1'
+    param1_keys = [key for key in request.args.keys() if key.startswith('param1')]
+    param1_dict = {key.split('[', 1)[1][:-1]: request.args[key] for key in param1_keys}
+
+    pitch_type = my_obj.get_type(param1_dict, request.args.get("param2"))
     pitch_speed = my_obj.get_speed(pitch_type)
     return jsonify(pitch_type, pitch_speed)
+
+
 import logging
 logging.basicConfig(level=logging.INFO)
 

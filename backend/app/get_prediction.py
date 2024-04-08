@@ -2,13 +2,11 @@ import joblib
 import pandas as pd
 import random
 
-
-
 class Predictions_Class:
-    def get_type(self, obj):
+    def get_type(self, obj, pitcher_id):
 
         # Load the model from the file
-        loaded_model = joblib.load("decision_tree_models/DT.joblib")
+        loaded_model = joblib.load("decision_tree_models/" + pitcher_id + ".joblib")
 
         df = pd.DataFrame()
 

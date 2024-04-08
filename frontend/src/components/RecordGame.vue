@@ -356,6 +356,7 @@
   export default {
     data() {
       return {
+        curr_pitcher_id: "NA",
         unsetColor: 'white',
         setBaseColor: 'cadetblue',
         set0Color: 'gray',
@@ -462,7 +463,7 @@
 
         const path = 'http://localhost:5000/make_prediction';
 
-        axios.get(path, { params: this.gameState})
+        axios.get(path, {params: { param1: this.gameState, param2: this.curr_pitcher_id}})
           .then((res) => {
             console.log("Pitch Prediction Recieved: " + res.data)
               this.emitter.emit("ChangePitch", res.data)
@@ -569,6 +570,15 @@
           away_score: this.away.score
         };
       }
+    },
+    mounted() {
+
+      // Sets current pitcher name/id and resets image
+      this.emitter.on("ChangePitcher2", pitcher_obj => {
+
+        this.curr_pitcher_id = pitcher_obj.id
+
+      });
     },
   };
 </script>
