@@ -16,7 +16,12 @@ class Predictions_Class:
 
         predictions = loaded_model.predict(df)
 
-        return predictions[0]
+        #print("\n\n\n",unique_labels)
+        #return predictions[0]
+
+        unique_labels = loaded_model.classes_
+        return random.choice(unique_labels)
+
 
 
     # Right now there is zero ML in this function.
