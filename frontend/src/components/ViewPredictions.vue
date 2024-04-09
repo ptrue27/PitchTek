@@ -23,7 +23,7 @@
                         <!--Pitch info-->
                         <v-row>
                             <v-col>Pitch type:</v-col>
-                            <v-col>{{item.type}}</v-col>
+                            <v-col>{{pitchDict[item.type]}}</v-col>
                         </v-row>
                         <v-row>
                             <v-col>Speed:</v-col>
@@ -78,13 +78,33 @@ export default {
   name: 'my-component',
   data() {
     return {
+      pitchDict: {
+        FA:   "Fastball",
+        FF:   "Fastball",
+        FT:   "Fastball",
+        FC:   "Fastball (Cutter)",
+        FS:   "Splitter",
+        CH:   "Changeup",
+        CU:   "Curveball",
+        EP:   "Eephus",
+        FO:   "Forkball",
+        KN:   "Knuckleball",
+        KC:   "Knuckle-curve",
+        SC:   "Screwball",
+        SI:   "Sinker",
+        SL:   "Slider",
+        SV:   "Slurve",
+        ST:   "Sweeper",
+        PO:   "Pitch Out",
+        NA:   ""
+      },
       image_path: "default_heat_map.jpg",
       curr_pitcher_name: "",
       curr_pitcher_id: "NA",
       currentimage : 0,
       data: [
         {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
-        {id: 2, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
+        {id: 2, confidence: 'NA', type: '', speed: 'NA', locationX: 'NA', locationY: 'NA'},
         {id: 3, confidence: '7.04', type: 'Slider', speed: 82.27, locationX: 78, locationY: 38},
       ],
       itemsPerPage: 1,
