@@ -1,7 +1,7 @@
 from app.get_prediction import Predictions_Class
 from app import app, sql_utils, user_manager
-#import statsapi
-from flask import Flask, request, jsonify
+import statsapi
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from DataVisualizer import DataVisualizer
@@ -61,16 +61,29 @@ def upload_file():
     print(latest_uploaded_file)
     return jsonify({'message': 'File uploaded successfully'}), 200
 
-@app.route('/api/generate-images', methods=['POST'])  # Allow POST requests
 
+@app.route('/images/<filename>')
+def uploaded_file(filename):
+    return send_from_directory('C:/Users/davis/PitchTek-2/frontend/src/assets/', filename)
+
+@app.route('/api/generate-images', methods=['POST'])
 def generate_images_route():
     print(" test: ", latest_uploaded_file)
     if latest_uploaded_file is None:
         return jsonify({'error': 'No file has been uploaded yet'}), 400
 
+    # Initialize your DataVisualizer with the uploaded file
     visualizer = DataVisualizer(latest_uploaded_file)
-    
-    return jsonify({'message': 'Images generated successfully'})
+
+    # Assuming your Flask app runs on localhost:5000, construct the URLs for the images
+    image_urls = [
+        'http://localhost:5000/images/heatMapOFCounts.png',
+        'http://localhost:5000/images/count_vs_description_heatmap.png',
+        'http://localhost:5000/images/pitchVeloLastGame.png'
+    ]
+
+    # Return these URLs in the response
+    return jsonify({'message': 'Images generated successfully', 'images': image_urls})
 
 @app.route("/get_teams", methods=["GET"])
 def get_teams():

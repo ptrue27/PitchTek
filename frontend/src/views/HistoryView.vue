@@ -13,7 +13,7 @@
         <v-card class="pa-5" outlined tile>
           <v-card-title class="justify-center">
             <v-icon large color="success">mdi-cloud-upload</v-icon>
-            <span class="headline ml-3">Upload Player Data</span>
+            <span class="headline ml-3">Upload Pitcher Data</span>
           </v-card-title>
           <v-card-text class="text-center mb-4">
             Select a file containing player statistics to upload and analyze.
@@ -28,10 +28,10 @@
 
     <!-- Images Display Section -->
     <v-row justify="center" class="my-5">
-      <v-col v-for="image in images" :key="image" cols="12" sm="6" md="4">
-        <v-img :src="image" :alt="'Generated Image ' + image" class="my-2" contain></v-img>
-      </v-col>
-    </v-row>
+    <v-col v-for="image in images" :key="image" cols="12" sm="6" md="4">
+      <v-img :src="image" :alt="'Generated Image ' + image" class="my-2" contain></v-img>
+    </v-col>
+  </v-row>
 
     <!-- Player Name Input and Fetch Stats Button -->
     <v-row align="center" justify="center">
@@ -122,7 +122,7 @@ export default {
       fieldingStats: {},
       pitchingStats: {},
       battingStats: {},
-      images : []
+      images : ["C:/Users/davis/PitchTek-2/frontend/public/images/count_vs_description_heatmap.png", "C:/Users/davis/PitchTek-2/frontend/public/images/heatMapOFCounts.png" , "C:/Users/davis/PitchTek-2/frontend/public/images/pitchVeloLastGame.png"]
     };
   },
   methods: {
@@ -144,17 +144,14 @@ export default {
       });
     },
     generateImages() {
-  axios.post('http://localhost:5000/api/generate-images', {
-    // Additional data might be needed here, depending on your backend API
-  })
-  .then(response => {
-    // Update the images array with the newly generated image URLs
-    // This example assumes the response contains an array of image URLs
-    this.images = response.data.images;
-  })
-  .catch(error => {
-    console.error('Error generating images:', error);
-  });
+  axios.post('http://localhost:5000/api/generate-images')
+    .then(response => {
+      
+      this.images = response.data.images;
+    })
+    .catch(error => {
+      console.error('Error generating images:', error);
+    });
 },
     fetchPlayerStats() {
       if (!this.playerName.trim()) {
