@@ -1,4 +1,68 @@
 <template>
+  <v-container fluid class="mb-5">
+    <v-row justify="center">
+      <v-col cols="12" class="text-center">
+        <h2 class="display-1 font-weight-bold mb-3">Player Matchup</h2>
+        <v-file-input label="Upload CSV" @change="handleFileUpload" outlined dense solo-inverted solo></v-file-input>
+        <v-autocomplete
+        v-if="players.length"
+        v-model="selectedPlayer"
+        :items="players"
+        label="Select Player or Description"
+        outlined
+        dense
+        solo-inverted
+        solo
+        class="mt-3"
+      ></v-autocomplete>
+
+
+
+
+        <v-btn color="blue darken-1" dark @click="generateStatsChart" :disabled="!selectedPlayer">Generate Stats</v-btn>
+      </v-col>
+    </v-row>
+    <v-row v-if="chartInstance">
+      <v-col>
+        <canvas id="playerStatsChart"></canvas>
+      </v-col>
+    </v-row>
+  </v-container>
+
+ <v-container fluid>
+  <v-row justify="center">
+    <v-col cols="12">
+      <v-simple-table dense>
+  <template v-slot:default>
+    <thead>
+      <tr>
+        <th class="text-left">Pitch Type</th>
+        <th class="text-left">Event</th>
+        <th class="text-left">Description</th>
+        <th class="text-left">Plate X</th>
+        <th class="text-left">Plate Z</th>
+        <th class="text-left">Release Speed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(pitch, index) in pitcherOutings" :key="index">
+        <td>{{ pitch.pitchType }}</td>
+        <td>{{ pitch.event }}</td>
+        <td>{{ pitch.description }}</td>
+        <td>{{ pitch.plateX }}</td>
+        <td>{{ pitch.plateZ }}</td>
+        <td>{{ pitch.releaseSpeed }}</td>
+      </tr>
+    </tbody>
+  </template>
+</v-simple-table>
+
+
+    </v-col>
+  </v-row>
+</v-container>
+
+
   <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" class="text-center">
@@ -10,7 +74,7 @@
       <v-col cols="12" md="6">
         <v-card class="pa-4 mx-auto elevation-6" outlined>
           <v-text-field v-model="pitcherId" label="Pitcher ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
-          <v-btn color="green darken-1" dark @click="updatePitcherStats">Update</v-btn>
+          
           <v-alert v-if="pitcherError" type="error" class="mt-2">{{ pitcherError }}</v-alert>
         </v-card>
       </v-col>
@@ -18,7 +82,7 @@
       <v-col cols="12" md="6">
         <v-card class="pa-4 mx-auto elevation-6" outlined>
           <v-text-field v-model="batterId" label="Batter ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
-          <v-btn color="green darken-1" dark @click="updateBatterStats">Update</v-btn>
+          
           <v-alert v-if="batterError" type="error" class="mt-2">{{ batterError }}</v-alert>
         </v-card>
       </v-col>
@@ -96,6 +160,8 @@ import Chart from 'chart.js/auto';
 
 import axios from 'axios';
 
+import Papa from 'papaparse';
+
 export default {
   
 
@@ -122,31 +188,41 @@ export default {
         'Runs Batted In': 0,
         'Hits': 0
       },
-      selectedStat: null
+      selectedStat: null,
+      players: [],
+      outingSummaries: [],
+      chartData: null,
+      chartInstance: null,
+      nameIndexMap: new Map(), // To keep track of the indices
+      selectedPlayer: '',
+      pitcherOutings: [],
     };
   },
+
+
   
    methods: {
-    updatePitcherStats() {
-      if (!this.pitcherId.trim()) {
-        this.pitcherError = 'Please enter a Pitcher ID';
-        return;
-      }
+  updatePitcherStats() {
+    this.pitcherError = ''; // Reset error message each time the method is called
+    if (!this.pitcherId.trim()) {
+      this.pitcherError = 'Please enter a Pitcher ID';
+      return;
+    }
 
-      axios.get(`http://localhost:5000/api/player_pitching_stats`, { params: { player_name: this.pitcherId } })
-        .then(response => {
-          if (!response.data || Object.keys(response.data).length === 0) {
-            this.pitcherError = 'Player does not exist or error';
-          } else {
-            this.pitcherStats = response.data;
-            this.pitcherError = '';
-          }
-        })
-        .catch(() => {
-          this.pitcherError = 'Player does not exist or error';
-        });
-    },
-    updateBatterStats() {
+    axios.get(`http://localhost:5000/api/player_pitching_stats`, { params: { player_name: this.pitcherId } })
+      .then(response => {
+        if (!response.data || Object.keys(response.data).length === 0) {
+          this.pitcherError = 'No data found for this Pitcher ID';
+        } else {
+          this.pitcherStats = response.data;
+        }
+      })
+      .catch(error => {
+        this.pitcherError = 'Failed to fetch data: ' + error.message;
+      });
+  },
+  updateBatterStats() {
+    this.batterError = ''; // Reset error message each time the method is called
     if (!this.batterId.trim()) {
       this.batterError = 'Please enter a Batter ID';
       return;
@@ -155,15 +231,162 @@ export default {
     axios.get(`http://localhost:5000/api/player_batting_stats`, { params: { player_name: this.batterId } })
       .then(response => {
         if (!response.data || Object.keys(response.data).length === 0) {
-          this.batterError = 'Player does not exist';
+          this.batterError = 'No data found for this Batter ID';
         } else {
           this.batterStats = response.data;
-          this.batterError = '';
         }
       })
-      .catch(() => {
-        this.batterError = 'Player does not exist or error';
+      .catch(error => {
+        this.batterError = 'Error fetching batter data: ' + error.message;
       });
+  },
+  handleFileUpload(event) {
+  const file = event.target.files[0];
+  const nameIndexMap = new Map(); // To remember the indices of each name
+
+  Papa.parse(file, {
+    header: true,
+    dynamicTyping: true,
+    complete: (results) => {
+      this.csvData = results.data;
+      const names = []; // For the dropdown list
+
+      results.data.forEach((row, index) => {
+        const playerName = row.player_name; // Adjust if your column name is different
+        const desWords = row.des ? row.des.split(' ').slice(0, 2).join(' ') : '';
+
+        // Check and add the player name from the 'player_name' column
+        if (playerName && !nameIndexMap.has(playerName)) {
+          names.push(playerName);
+          nameIndexMap.set(playerName, index);
+        }
+
+        // Check and add the name from the 'des' column
+        if (desWords && !nameIndexMap.has(desWords)) {
+          names.push(desWords);
+          nameIndexMap.set(desWords, index);
+        }
+      });
+
+      this.players = names; // Now 'players' is just a list of names (strings)
+      this.nameIndexMap = nameIndexMap; // Save the mapping separately
+    },
+  });
+},
+analyzePitcherData() {
+  if (this.selectedPitcherIndex === null || !this.csvData) return;
+
+  // Filter rows for the selected pitcher
+  const pitcherData = this.csvData.filter((row, index) => index === this.selectedPitcherIndex);
+
+  this.pitcherOutings = pitcherData.map(row => ({
+    pitchType: row.pitch_type,
+    event: row.event,
+    description: row.description,
+    plateX: row.plate_x,
+    plateZ: row.plate_z,
+    releaseSpeed: row.release_speed,
+  }));
+},
+analyzeOutings() {
+    if (!this.selectedPlayer || !this.csvData) return;
+
+    // Filter rows for the selected player
+    const playerRows = this.csvData.filter(row => row.player_name === this.selectedPlayer);
+
+    // Initialize variables for outing analysis
+    let outings = [];
+    let currentOuting = [];
+    let lastIndex = -1;
+
+    // Group rows into outings
+    playerRows.forEach((row, index) => {
+      if (index - lastIndex > 1 && currentOuting.length > 0) {
+        outings.push([...currentOuting]); // End of an outing
+        currentOuting = [];
+      }
+      currentOuting.push(row); // Add row to current outing
+      lastIndex = index;
+    });
+    if (currentOuting.length > 0) outings.push([...currentOuting]); // Add the last outing
+
+    // Process each outing to summarize data
+    this.outingSummaries = outings.map(outing => {
+      const summary = {
+        totalPitches: outing.length,
+        pitches: outing.map(o => o.pitch_type), // Assuming 'pitch_type' is the column name
+        speeds: outing.map(o => o.speed), // Assuming 'speed' is the column name
+        plateZ: outing.map(o => o.plate_z), // Assuming 'plate_z' is the column name
+        plateX: outing.map(o => o.plate_x), // Assuming 'plate_x' is the column name
+      };
+      return summary;
+    });
+  },
+  generateStats() {
+    if (!this.selectedPlayer || !this.csvData) return;
+
+    // Filter rows for the selected player
+    const playerRows = this.csvData.filter(row => row.player_name === this.selectedPlayer);
+
+    // Group rows into outings and calculate stats for each outing
+    let outings = [];
+    let currentOuting = [];
+
+    playerRows.forEach((row, index) => {
+      if (index > 0 && row.player_name !== this.selectedPlayer) {
+        outings.push(currentOuting);
+        currentOuting = [];
+      }
+      currentOuting.push(row);
+    });
+
+    if (currentOuting.length) outings.push(currentOuting); // Add the last outing
+
+    this.outingSummaries = outings.map(outing => ({
+      totalPitches: outing.length,
+      pitches: outing.map(o => o.pitch_type).join(', '),
+      speeds: outing.map(o => o.pitch_speed).join(', '),
+      plateZ: outing.map(o => o.plate_z).join(', '),
+      plateX: outing.map(o => o.plate_x).join(', '),
+    }));
+  },
+
+
+    generateStatsChart() {
+      const selected = this.players.find(p => p.id === this.selectedPlayer);
+      if (!selected) return;
+
+      // Example chart generation logic, adjust as necessary
+      const data = {
+        labels: ['Stat 1', 'Stat 2', 'Stat 3'], // Placeholder labels
+        datasets: [{
+          label: selected.name,
+          data: [10, 20, 30], // Placeholder data
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+      }
+
+      this.chartInstance = new Chart(
+        document.getElementById('playerStatsChart'),
+        {
+          type: 'bar', // Adjust chart type as needed
+          data: data,
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        }
+      );
+    },
   },
     showGraph(stat) {
       this.selectedStat = stat;
@@ -197,8 +420,24 @@ export default {
             }
           }
       );
+    },
+watch: {
+  pitcherId(newVal, oldVal) {
+    if (newVal.trim() !== oldVal.trim()) {
+      this.updatePitcherStats();
     }
-  }
+  },
+  batterId(newVal, oldVal) {
+    if (newVal.trim() !== oldVal.trim()) {
+      this.updateBatterStats();
+    }
+  },
+  selectedPlayer(newVal, oldVal) {
+    if (newVal !== oldVal) {
+      this.analyzeOutings();
+    }
+  },
+}
 };
 </script>
 
