@@ -51,6 +51,16 @@
         History
       </v-btn>
 
+      <!--Real History button-->
+      <v-btn
+        v-if="$store.state.isLoggedIn"
+        to="/realhistory"
+        prepend-icon="mdi-history"
+        variant="tonal" class="mr-5"
+      >
+        Real History
+      </v-btn>
+
       <!--Logout button-->
       <v-btn
         v-if="$store.state.isLoggedIn"
