@@ -1,6 +1,5 @@
 <template>
   <div class="page-background">
-    <button @click="addComponent">Add Component</button>
     <div v-for="(component, index) in components" :key="index" class="component">
       <my-custom-component />
     </div>
@@ -15,13 +14,22 @@ export default {
   components: {
     MyCustomComponent // Register your custom component
   },
+  mounted() {
+      this.emitter.on("UpdateHistory", pitcher_obj => {
+
+        console.log("AAAAAAAAAAAAAAAAAAA", pitcher_obj)
+        this.AddLog();
+
+      });
+  },
   data() {
     return {
       components: []
     };
   },
   methods: {
-    addComponent() {
+    AddLog() {
+
       this.components.push({});
     }
   }

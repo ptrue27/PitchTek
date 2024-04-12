@@ -466,7 +466,9 @@
         axios.get(path, {params: { param1: this.gameState, param2: this.curr_pitcher_id}})
           .then((res) => {
             console.log("Pitch Prediction Recieved: " + res.data)
+              this.emitter.emit("UpdateHistory", res.data)
               this.emitter.emit("ChangePitch", res.data)
+
           })
           .catch((error) => {
             console.error(error);
