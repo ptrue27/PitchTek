@@ -1,7 +1,7 @@
 <template>
     <v-card
         style="width: 100%; margin: 10px 10px;"
-        height="150"
+        height="150" elevation="3"
     >
         <v-row>
             <v-col class="text-center">

@@ -1,6 +1,5 @@
 import os
 
-
 class Config:
     DB_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "databases")
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DB_DIR, 'app.db')

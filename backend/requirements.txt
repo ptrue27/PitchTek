@@ -2,13 +2,11 @@ flask
 flask-cors
 flask-login
 flask-sqlalchemy
-flask-wtf
 joblib
 matplotlib
 pandas
+plotly
 python-dotenv
 python-mlb-statsapi
 scikit-learn==1.3.0
-Flask
-plotly
 seaborn

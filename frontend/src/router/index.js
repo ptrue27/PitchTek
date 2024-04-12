@@ -2,9 +2,9 @@ import { createWebHistory, createRouter } from "vue-router";
 import LandingPageView from "./../views/LandingPageView.vue";
 import AboutView from "./../views/AboutView.vue";
 import DashboardView from "./../views/DashboardView.vue";
+import MatchupView from "./../views/MatchupView.vue";
 import StatisticsView from "./../views/StatisticsView.vue";
 import HistoryView from "./../views/HistoryView.vue";
-import RealHistoryView from "./../views/RealHistoryView.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 import store from './../store';
 
@@ -26,6 +26,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/matchup",
+    name: "Matchup",
+    component:MatchupView,
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/statistics",
     name: "Statistics",
     component: StatisticsView,
@@ -35,12 +41,6 @@ const routes = [
     path: "/history",
     name: "History",
     component: HistoryView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/realhistory",
-    name: "Real History",
-    component: RealHistoryView,
     meta: { requiresAuth: true },
   },
   {

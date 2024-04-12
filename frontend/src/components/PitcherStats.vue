@@ -1,5 +1,7 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px;">
+    <v-card style="width: 100%; margin: 10px 10px;" 
+        elevation="3"
+    >
         <!--Player select-->
         <v-row>
             <v-col>
@@ -53,7 +55,7 @@ export default {
         handlePitcherChange() {
             const index = this.pitcherNames.indexOf(this.pitcher.name);
             const id = this.pitcherIds[index];
-            const path = 'http://localhost:5000/get_pitcher/' + id;
+            const path = 'http://localhost:5000/api/get_pitcher/' + id;
 
             axios.get(path)
                 .then((res) => {

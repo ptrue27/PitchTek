@@ -12,13 +12,12 @@
 
 ### Backend
 1. Download and install Python
-2. Download and install sqlite3
-3. Current working directory is `PitchTek\backend`
-4. Create virtual environment 
+2. Current working directory is `PitchTek\backend`
+3. Create virtual environment 
     ```python -m venv env```
-5. Activate virtual environment (Windows)
+4. Activate virtual environment (Windows)
     ```.\env\Scripts\activate```
-6. Install packages 
+5. Install packages 
     ```pip install -r requirements.txt```
 
 ## Run

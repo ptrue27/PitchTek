@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from process_csv import determine_data_type
+from experiments.process_csv import determine_data_type
 
 
 class TestProcessCSV(unittest.TestCase):

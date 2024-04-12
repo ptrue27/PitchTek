@@ -1,21 +1,29 @@
 <template>
     <v-app-bar>
-      <!--Logo Icon and Title-->
-      <v-img
-        src="@/assets/baseball-icon.png"
-        alt="PitchTek logo"
-        max-height="50"
-        max-width="50"
-        class="ml-5"
-        contain
-      ></v-img>
+      <router-link to="/" class="text-decoration-none d-flex align-center" 
+        style="width: 170px;"
+      >
+        <!--Logo Icon and Title-->
+        <v-img
+          src="@/assets/baseball-icon.png"
+          alt="PitchTek logo"
+          max-height="50"
+          max-width="50"
+          class="ml-5"
+          contain
+        ></v-img>
 
-      <v-app-bar-title>PitchTek</v-app-bar-title>
+        <v-app-bar-title class="ml-3 text-decoration-none" style="color: black;">
+          PitchTek
+        </v-app-bar-title>
+      </router-link>
+
+      <v-spacer></v-spacer>
 
       <!--About button-->
       <v-btn
         to="/about"
-        prepend-icon="mdi-view-dashboard"
+        prepend-icon="mdi-information"
         variant="tonal" class="mr-5"
       >
         About
@@ -29,6 +37,16 @@
         variant="tonal" class="mr-5"
       >
         Dashboard
+      </v-btn>
+
+      <!--Matchup button-->
+      <v-btn
+        v-if="$store.state.isLoggedIn"
+        to="/matchup"
+        prepend-icon="mdi-account-multiple"
+        variant="tonal" class="mr-5"
+      >
+        Matchup
       </v-btn>
 
       <!--Statistics button-->
@@ -49,16 +67,6 @@
         variant="tonal" class="mr-5"
       >
         History
-      </v-btn>
-
-      <!--Real History button-->
-      <v-btn
-        v-if="$store.state.isLoggedIn"
-        to="/realhistory"
-        prepend-icon="mdi-history"
-        variant="tonal" class="mr-5"
-      >
-        Real History
       </v-btn>
 
       <!--Logout button-->
@@ -82,7 +90,7 @@ export default {
     async logoutUser() {
       try {
         // Make POST request
-        const path = 'http://localhost:5000/logout'
+        const path = 'http://localhost:5000/api/logout'
         const response = await axios.post(path);
         console.log(response.data);
         

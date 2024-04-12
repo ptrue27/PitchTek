@@ -66,11 +66,13 @@ const store = createStore({
                 pitcherNames: [],
             },
             predictionImgSrc: "@/assets/strikezone.jpg",
+            seasons: [],
         }
     },
     mutations: {
-        login(state) {
+        login(state, seasons) {
             state.isLoggedIn = true;
+            state.seasons = seasons;
         },
         logout(state) {
             state.isLoggedIn = false
