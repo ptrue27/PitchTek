@@ -1,5 +1,5 @@
 import sqlite3
-from app import sql_utils
+from app import stats_api
 import mlbstatsapi
 import time
 from random import uniform
@@ -14,7 +14,7 @@ def rest(rest_time=5):
 
 
 def remake_tables():
-    db_file = sql_utils.db_files["TEAMS"]
+    db_file = stats_api.db_files["TEAMS"]
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
@@ -75,7 +75,7 @@ def get_teams():
     """Populate the TEAMS table of the teams database.
     """
     table_name = "TEAMS"
-    db_file = sql_utils.db_files[table_name]
+    db_file = stats_api.db_files[table_name]
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
@@ -95,12 +95,12 @@ def get_teams():
 def get_rosters(min_team_id=0):
     """Populate the BATTERS and PITCHERS tables.
     """
-    db_file = sql_utils.db_files["BATTERS"]
+    db_file = stats_api.db_files["BATTERS"]
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
 
     # Get team ids
-    team_ids = sql_utils.get_table("TEAMS")["id"]
+    team_ids = stats_api.get_table("TEAMS")["id"]
     team_ids = [id for id in sorted(team_ids) if id > min_team_id]
 
     positions = {

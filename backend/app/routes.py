@@ -1,5 +1,5 @@
 from app.get_prediction import Predictions_Class
-from app import app, sql_utils, user_manager
+from app import app, user_manager, stats_api
 #import statsapi 
 from flask import request, jsonify
 from app.data_visualizer import DataVisualizer
@@ -9,19 +9,23 @@ import os
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():
     data = request.get_json()
-    result = user_manager.user_sign_up(data["username"], data["password"])
-    if result == "success":
-        return jsonify({'message': 'User signed up successfully'}), 201
-    elif result == "exists":
+    token = user_manager.user_sign_up(data["username"], data["password"])
+    if token:
+        seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
+        return jsonify({'message': 'User signed up successfully', 
+                        'seasons': seasons, 'token': token}), 200
+    else:
         return jsonify({'message': 'Username is unavailable'}), 400
 
 
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    result = user_manager.user_login(data["username"], data["password"])
-    if result:
-        return jsonify({'message': 'User logged in successfully'}), 200
+    token = user_manager.user_login(data["username"], data["password"])
+    if token:
+        seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
+        return jsonify({'message': 'User logged in successfully', 
+                        'seasons': seasons, 'token': token}), 200
     else:
         return jsonify({'message': 'Invalid username or password'}), 401
 
@@ -34,7 +38,7 @@ def logout():
 
 @app.route("/api/get_teams", methods=["GET"])
 def get_teams():
-    teams_dict = sql_utils.get_table("TEAMS")
+    teams_dict = stats_api.get_table("TEAMS")
     if teams_dict:
         return jsonify(teams_dict)
     else:
@@ -43,8 +47,8 @@ def get_teams():
 
 @app.route('/api/get_roster/<int:id>', methods=['GET'])
 def get_roster(id):
-    batters_dict = sql_utils.get_table("BATTERS", cols=["id", "name"], where=["team_id", id])
-    pitchers_dict = sql_utils.get_table("PITCHERS", cols=["id", "name"], where=["team_id", id])
+    batters_dict = stats_api.get_table("BATTERS", cols=["id", "name"], where=["team_id", id])
+    pitchers_dict = stats_api.get_table("PITCHERS", cols=["id", "name"], where=["team_id", id])
     roster_dict = {"batters": batters_dict, "pitchers": pitchers_dict}
     if batters_dict and pitchers_dict:
         return jsonify(roster_dict)
@@ -54,7 +58,7 @@ def get_roster(id):
 
 @app.route('/api/get_batter/<int:id>', methods=['GET'])
 def get_batter(id):
-    batter_dict = sql_utils.get_row("BATTERS", id)
+    batter_dict = stats_api.get_row("BATTERS", id)
     if batter_dict:
         return jsonify(batter_dict)
     else:
@@ -63,7 +67,7 @@ def get_batter(id):
 
 @app.route('/api/get_pitcher/<int:id>', methods=['GET'])
 def get_pitcher(id):
-    pitcher_dict = sql_utils.get_row("PITCHERS", id)
+    pitcher_dict = stats_api.get_row("PITCHERS", id)
     if pitcher_dict:
         return jsonify(pitcher_dict)
     else:
@@ -138,8 +142,6 @@ def generate_images_route():
     return jsonify({'message': 'Images generated successfully', 'images': image_urls})
 
 
-import logging
-logging.basicConfig(level=logging.INFO)
 @app.route("/api/mlb_player_stats", methods=['GET'])
 def get_mlb_player_stats():
     player_name = request.args.get('player_name').lower().strip()

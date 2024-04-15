@@ -1,6 +1,8 @@
 import sqlite3
 import os
+import pandas as pd
 from config import Config
+from baseball_id import Lookup
 
 
 db_files = {
@@ -79,4 +81,14 @@ def get_row(table_name, id):
     
     col_names = [col[0] for col in cursor.description]
     row_dict = dict(zip(col_names, data))
+    row_dict['img'] = get_image_url(id)
     return row_dict
+
+
+def get_image_url(mlb_id):
+    espn_id = Lookup.from_mlb_ids([mlb_id])['espn_id']
+    if len(espn_id.values) > 0 and not pd.isna(espn_id.values)[0]:
+        image_id = espn_id.values[0]
+        return f"https://a.espncdn.com/combiner/i?img=/i/headshots/mlb/players/full/{image_id}.png&w=350&h=254"
+    else: 
+        return ""

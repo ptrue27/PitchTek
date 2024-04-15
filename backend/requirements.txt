@@ -1,5 +1,7 @@
+baseball_id
 flask
 flask-cors
+flask-jwt-extended
 flask-login
 flask-sqlalchemy
 joblib

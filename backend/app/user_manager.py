@@ -3,6 +3,7 @@ from app.models import User
 
 import sqlalchemy as sa
 from flask_login import login_user, logout_user
+from flask_jwt_extended import create_access_token
 
 
 @login.user_loader
@@ -15,7 +16,7 @@ def user_sign_up(username, password):
     query = sa.select(User).where(User.username.like(username))
     user = db.session.scalars(query).first()
     if user:
-        return "exists"
+        return None
     
     # Add user to database
     new_user = User(username=username)
@@ -25,7 +26,8 @@ def user_sign_up(username, password):
 
     # Login user
     login_user(new_user)
-    return "success"
+    token = create_access_token(identity=new_user.id)
+    return token
 
 
 def user_login(username, password):
@@ -36,10 +38,11 @@ def user_login(username, password):
     # Check for login success
     if user and user.check_password(password):
         login_user(user)
-        return True
+        token = create_access_token(identity=user.id)
+        return token
     
     # Handle login failure
-    return False
+    return None
 
 
 def user_logout():
