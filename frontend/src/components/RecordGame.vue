@@ -23,8 +23,8 @@
                         <v-row class="no-wrap">
                           <v-col class="text-center">
                             <v-chip
-                              @click="toggleBase(2)"
-                              :style="{backgroundColor: baseColors[1]}" 
+                              @click="this.$store.commit('toggleBase', 1)"
+                              :style="{backgroundColor: getBaseColor(1)}" 
                               class="square-chip" size="small"
                             >2</v-chip>
                           </v-col>
@@ -35,15 +35,15 @@
                           <v-spacer></v-spacer>
                           <v-col class="text-center">
                             <v-chip
-                              @click="toggleBase(3)"
-                              :style="{backgroundColor: baseColors[2]}" 
+                              @click="this.$store.commit('toggleBase', 2)"
+                              :style="{backgroundColor: getBaseColor(2)}" 
                               class="square-chip" size="small"
                             >3</v-chip>
                           </v-col>
                           <v-col class="text-center">
                             <v-chip
-                              @click="toggleBase(1)"
-                              :style="{backgroundColor: baseColors[0]}" 
+                              @click="this.$store.commit('toggleBase', 0)"
+                              :style="{backgroundColor: getBaseColor(0)}" 
                               class="square-chip" size="small"
                             >1</v-chip>
                           </v-col>
@@ -77,10 +77,10 @@
                           <v-select
                             :items="innings" 
                             v-model="inning"
-                            @update:modelValue="handleInningChange"
                             variant="solo-filled"
                             density="compact" 
                             class="inning-v-select"
+                            color="green-darken-1"
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -92,13 +92,14 @@
                             Outs
                           </p>
                         </v-col>
-                        <v-col v-for="out in 3" :key="out" cols="2">
+                        <v-col v-for="(_, index) in 3" :key="index" cols="2">
                           <v-chip 
-                            @click="setOuts(out - 1)" 
-                            :style="{backgroundColor: outColors[out - 1]}" 
+                            @click="this.$store.commit('setOuts', index)" 
+                            :style="{backgroundColor: getColor(
+                              this.$store.state.outs, index)}" 
                             size="x-small" class="mr-1"
                           >
-                            {{ out - 1 }}
+                            {{ index }}
                           </v-chip>
                         </v-col>
                       </v-row>
@@ -110,13 +111,14 @@
                             Balls
                           </p>
                         </v-col>
-                        <v-col v-for="ball in 4" :key="ball" cols="2">
+                        <v-col v-for="(_, index) in 4" :key="index" cols="2">
                           <v-chip 
-                            @click="setBalls(ball - 1)" 
-                            :style="{backgroundColor: ballColors[ball - 1]}"
+                            @click="this.$store.commit('setBalls', index)" 
+                            :style="{backgroundColor: getColor(
+                              this.$store.state.balls, index)}" 
                             size="x-small" class="mr-1"
                           >
-                            {{ ball - 1 }}
+                            {{ index }}
                           </v-chip>
                         </v-col>
                       </v-row>
@@ -128,13 +130,14 @@
                             Strikes
                           </p>
                         </v-col>
-                        <v-col v-for="strike in 3" :key="strike" cols="2">
+                        <v-col v-for="(_, index) in 3" :key="index" cols="2">
                           <v-chip 
-                            @click="setStrikes(strike - 1)" 
-                            :style="{backgroundColor: strikeColors[strike - 1]}"
+                            @click="this.$store.commit('setStrikes', index)"  
+                            :style="{backgroundColor: getColor(
+                              this.$store.state.strikes, index)}" 
                             size="x-small" class="mr-1"
                           >
-                            {{ strike - 1 }}
+                            {{ index }}
                           </v-chip>
                         </v-col>
                       </v-row>
@@ -145,24 +148,29 @@
           </v-col>
   
           <!--Input pitch column-->
-          <v-col cols="4" class="text-center" style="margin-top: 50px;">
+          <v-col 
+            cols="4" class="text-center" 
+            style="margin-top: 50px; padding-right: 20px; padding-left: 0px;"
+          >
             <!--Game Select-->
             <v-row>
-              <v-col>
+              <v-col class="text-center">
                 <v-select
                   :items="this.$store.state.seasons" 
                   v-model="season"
+                  @update:modelValue="handleSeasonChange"
                   variant="solo-filled"
                   density="compact" 
-                  style="width: 185px; margin-top: 30px;"
+                  style="margin-top: 25px; margin-left: 36px"
+                  class="record-btn"
+                  color="green-darken-1"
                 ></v-select>
               </v-col>
             </v-row>
 
-
             <!--Start/stop game record button-->
-            <v-row>
-              <v-col>
+            <v-row style="margin-top: -15px;">
+              <v-col class="text-center">
                 <v-btn
                     @click="handleGameButtonClick"
                     class="record-btn my-font mx-auto"
@@ -181,9 +189,22 @@
             </v-row>
             
             <!--Input pitch dialog-->
-            <v-row v-if="recording" style="margin-top: 0px;">
-              <v-col>
+            <v-row v-if="recording" style="margin-top: 20px;">
+              <v-col class="text-center">
                 <InputPitch class="record-btn"/>
+              </v-col>
+            </v-row>
+            
+            <v-row v-else style="margin-top: 20px;">
+              <v-col class="text-center">
+                <v-btn 
+                    class="record-btn"
+                    @click="this.$store.commit('resetDashboard')"
+                    prepend-icon="mdi-refresh"
+                    text="Reset"
+                    color="green-darken-1"
+                    variant="outlined"
+                ></v-btn>
               </v-col>
             </v-row>
 
@@ -195,6 +216,7 @@
 <script>
   import InputPitch from "@/components/InputPitch.vue";
   import SelectTeams from "@/components/SelectTeams.vue";
+  import axios from "axios";
 
   export default {
     components: {
@@ -203,89 +225,45 @@
     },
     data() {
       return {
-        colors: {
-          unset: '#EEEEEE',
-          set: '#43A047',
-          set0: 'gray',
-        },
-        season: "Select Season",
         recording: false,
-        inning: "1∧",
         innings: [],
-        onBase: [false, false, false],
-        baseColors: [],
-        outNumber: 0,
-        outColors: [],
-        ballNumber: 0,
-        ballColors: [],
-        strikeNumber: 0,
-        strikeColors: [],
       };
     },
     methods: {
-      handleInningChange() {
-        this.$store.commit("setInning", this.inning);
-      },
       handleGameButtonClick() {
         console.log('Game Button clicked!');
-        if (this.recording) {
-          this.recording = false;
-        }
-        else {
-          this.recording = true;
+        this.recording = !this.recording;
+      },
+      handleSeasonChange() {
+        // Fill team selection lists
+        const path = "http://localhost:5000/api/get_teams";
+        axios.get(path)
+            .then((res) => {
+                const teams = res.data;
+                console.log("Loaded teams: " + teams["id"].length);
+                this.$store.commit("setTeamIds", teams["id"]);
+                this.$store.commit("setTeamNames", teams["name"]);
+            })
+            .catch((error) => {
+                console.error("Error loading teams: " + error);
+            });
+      },
+      getColor(state, index) {
+        if(state==index) {
+          if(index==0){
+            return 'gray';
+          } else {
+            return '#43A047';
+          }
+        } else {
+          return '#EEEEEE';
         }
       },
-      toggleBase(baseNumber) {
-        console.log('Toggled base:', baseNumber);
-        const i = baseNumber - 1;
-        this.onBase[i] = !this.onBase[i];
-        if(!this.onBase[i]){
-          this.baseColors[i] = this.colors.unset;
-        }
-        else{
-          this.baseColors[i] = this.colors.set;
-        }
-      },
-      setOuts(outNumber) {
-        this.outNumber = outNumber;
-        console.log('Changed number of outs:', outNumber)
-        if(outNumber == 0) {
-          this.outColors = [this.colors.set0, this.colors.unset, this.colors.unset];
-        }
-        if(outNumber == 1) {
-          this.outColors = [this.colors.unset, this.colors.set, this.colors.unset];
-        }
-        if(outNumber == 2) {
-          this.outColors = [this.colors.unset, this.colors.set, this.colors.set];
-        }
-      },
-      setBalls(ballNumber) {
-        this.ballNumber = ballNumber;
-        console.log('Changed number of balls:', ballNumber)
-        if(ballNumber == 0) {
-          this.ballColors = [this.colors.set0, this.colors.unset, this.colors.unset, this.colors.unset];
-        }
-        if(ballNumber == 1) {
-          this.ballColors = [this.colors.unset, this.colors.set, this.colors.unset, this.colors.unset];
-        }
-        if(ballNumber == 2) {
-          this.ballColors = [this.colors.unset, this.colors.set, this.colors.set, this.colors.unset];
-        }
-        if(ballNumber == 3) {
-          this.ballColors = [this.colors.unset, this.colors.set, this.colors.set, this.colors.set];
-        }
-      },
-      setStrikes(strikeNumber) {
-        this.strikeNumber = strikeNumber;
-        console.log('Changed number of strikes:', strikeNumber)
-        if(strikeNumber == 0) {
-          this.strikeColors = [this.colors.set0, this.colors.unset, this.colors.unset];
-        }
-        if(strikeNumber == 1) {
-          this.strikeColors = [this.colors.unset, this.colors.set, this.colors.unset];
-        }
-        if(strikeNumber == 2) {
-          this.strikeColors = [this.colors.unset, this.colors.set, this.colors.set];
+      getBaseColor(index) {
+        if(this.$store.state.bases[index]) {
+          return '#43A047';
+        } else {
+          return '#EEEEEE';
         }
       },
     },
@@ -294,13 +272,25 @@
       for (let i = 1; i <= 99; i++) {
         this.innings.push(`${i}∧`, `${i}∨`);
       }
-
-      // Set game state button colors
-      this.baseColors = [this.colors.unset, this.colors.unset, this.colors.unset];
-      this.outColors = [this.colors.set0, this.colors.unset, this.colors.unset];
-      this.ballColors = [this.colors.set0, this.colors.unset, this.colors.unset, this.colors.unset];
-      this.strikeColors = [this.colors.set0, this.colors.unset, this.colors.unset];
     },
+    computed: {
+      inning: {
+        get() {
+          return this.$store.state.inning;
+        },
+        set(newInning) {
+          this.$store.commit("setInning", newInning);
+        },
+      },
+      season: {
+        get() {
+          return this.$store.state.season;
+        },
+        set(newSeason) {
+          this.$store.commit("setSeason", newSeason);
+        },
+      },
+    }
   };
 </script>
   
@@ -318,8 +308,6 @@
   .record-btn {
     width: 75%;
     min-width: 90px;
-    margin-top: 5px;
-    margin-bottom: 5px;
   }
   .square-chip {
     width: 25px;

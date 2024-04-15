@@ -16,8 +16,11 @@
         <v-row style="margin-top: -30px;">
             <!--Player image-->
             <v-col cols="3">
-                <v-img
+                <v-img v-if="batter.img"
                     :src="batter.img"
+                ></v-img>
+                <v-img v-else
+                    src="@/assets/silhouette.png"
                 ></v-img>
             </v-col>
 

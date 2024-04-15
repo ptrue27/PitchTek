@@ -92,18 +92,19 @@ export default {
         // Make POST request
         const path = 'http://localhost:5000/api/logout'
         const response = await axios.post(path);
-        console.log(response.data);
         
         // Check if logout was successful
         if (response.status == 200) {
+          sessionStorage.removeItem('token');
           this.$store.commit("logout")
           this.$router.push({ name: 'LandingPage' });
+          console.log("Logged out")
         } 
       } 
       
       // Handle error
       catch (error) {
-        console.error('Error logging in user:', error);
+        console.error('Error logging out user:', error);
       }
     }
   }

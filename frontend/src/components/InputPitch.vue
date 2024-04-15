@@ -7,6 +7,7 @@
                 text="Record Pitch"
                 color="green-darken-1"
                 variant="outlined"
+                class="record-btn"
             ></v-btn>
         </template>
 

@@ -5,10 +5,11 @@
         <v-col cols="6">
             <v-select
                 :items="homeTeamNames" 
-                v-model="home.teamName"
+                v-model="homeTeamName"
                 @update:modelValue="handleHomeTeamChange"
-                variant="filled" 
+                variant="solo-filled" 
                 density="compact"
+                color="green-darken-1"
             ></v-select>
         </v-col>
                   
@@ -16,10 +17,11 @@
         <v-col cols="6">
             <v-select
                 :items="awayTeamNames" 
-                v-model="away.teamName"
+                v-model="awayTeamName"
                 @update:modelValue="handleAwayTeamChange"
-                variant="filled" 
+                variant="solo-filled" 
                 density="compact"
+                color="green-darken-1"
             ></v-select>
         </v-col>
      </v-row>
@@ -35,9 +37,10 @@
         <v-col cols="2">
             <v-select
                 :items="scores"
-                v-model="home.score"
+                v-model="homeScore"
                 density="compact"
                 variant="solo-filled"
+                color="green-darken-1"
             ></v-select>
         </v-col>
 
@@ -49,9 +52,10 @@
         <v-col cols="2">
             <v-select
                 :items="scores"
-                v-model="away.score"
+                v-model="awayScore"
                 density="compact"
                 variant="solo-filled"
+                color="green-darken-1"
             ></v-select>
         </v-col>
         <v-col cols="3" style="margin-top: 10px;" align="left">
@@ -68,23 +72,13 @@ import axios from 'axios';
 export default {
   data() {
     return {
-        teamIds: [],
-        teamNames: [],
         scores: [],
-        home: {
-            teamName: "Select Team",
-            score: 0,
-        },
-        away: {
-            teamName: "Select Team",
-            score: 0,
-        },
     };
   },
   methods: {
     handleHomeTeamChange() {
-      const index = this.teamNames.indexOf(this.home.teamName);
-      const teamId = this.teamIds[index];
+      const index = this.$store.state.teamNames.indexOf(this.homeTeamName);
+      const teamId = this.$store.state.teamIds[index];
       const path = 'http://localhost:5000/api/get_roster/' + teamId;
 
       axios.get(path)
@@ -99,6 +93,7 @@ export default {
             batterNames: roster.batters.name,
             pitcherIds: roster.pitchers.id,
             pitcherNames: roster.pitchers.name,
+            score: 0,
           };
           this.$store.commit("setHome", newHome);
         })
@@ -109,13 +104,14 @@ export default {
               batterNames: [], 
               pitcherIds: [], 
               pitcherNames: [],
+              score: 0,
             };
             this.$store.commit("setHome", newHome);
         });
     },
     handleAwayTeamChange() {
-      const index = this.teamNames.indexOf(this.away.teamName);
-      const teamId = this.teamIds[index];
+      const index = this.$store.state.teamNames.indexOf(this.awayTeamName);
+      const teamId = this.$store.state.teamIds[index];
       const path = 'http://localhost:5000/api/get_roster/' + teamId;
 
       axios.get(path)
@@ -130,6 +126,7 @@ export default {
             batterNames: roster.batters.name,
             pitcherIds: roster.pitchers.id,
             pitcherNames: roster.pitchers.name,
+            score: 0,
           };
           this.$store.commit("setAway", newAway);
         })
@@ -140,6 +137,7 @@ export default {
               batterNames: [], 
               pitcherIds: [], 
               pitcherNames: [],
+              score: 0,
             };
             this.$store.commit("setAway", newAway);
         });
@@ -151,28 +149,47 @@ export default {
     for (let i = 1; i <= 99; i++) {
       this.scores.push(i);
     }
-
-    // Fill team selection lists
-    const path = "http://localhost:5000/api/get_teams";
-    axios.get(path)
-        .then((res) => {
-            const teams = res.data;
-            console.log("Loaded teams: " + teams["id"].length)
-            this.teamIds = teams["id"]
-            this.teamNames = teams["name"];
-        })
-        .catch((error) => {
-            console.error("Error loading teams: " + error);
-        });
   },
   computed: {
     homeTeamNames() {
-      return this.teamNames.filter(team => team !== this.away.teamName);
+      return this.$store.state.teamNames.filter(team => team !== this.awayTeamName);
     },
     awayTeamNames() {
-      return this.teamNames.filter(team => team !== this.home.teamName);
+      return this.$store.state.teamNames.filter(team => team !== this.homeTeamName);
     },
-  }
+    homeTeamName: {
+      get() {
+        return this.$store.state.home.teamName;
+      },
+      set(name) {
+        this.$store.commit("setHomeTeamName", name);
+      },
+    },
+    homeScore: {
+      get() {
+        return this.$store.state.home.score;
+      },
+      set(score) {
+        this.$store.commit("setHomeScore", score);
+      },
+    },
+    awayTeamName: {
+      get() {
+        return this.$store.state.away.teamName;
+      },
+      set(name) {
+        this.$store.commit("setAwayTeamName", name);
+      },
+    },
+    awayScore: {
+      get() {
+        return this.$store.state.away.score;
+      },
+      set(score) {
+        this.$store.commit("setAwayScore", score);
+      },
+    },
+  },
 };
 </script>
 
@@ -183,7 +200,7 @@ export default {
     }
     .home-away {
         font-weight: bold;
-        font-size: 20px;
+        font-size: 16px;
         margin-top: -5px;
     }
 </style>

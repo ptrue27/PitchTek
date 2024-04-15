@@ -29,3 +29,4 @@ scratch.py
 *.db-journal
 
 backend/databases/pitches.db
+.env

@@ -10,14 +10,18 @@
                     v-model="pitcher.name" 
                     @update:modelValue="handlePitcherChange"
                     density="compact" 
+                    color="green-darken-1"
                 ></v-select>
             </v-col>
         </v-row>
         <v-row style="margin-top: -30px;">
             <!--Player image-->
             <v-col cols="3">
-                <v-img
+                <v-img v-if="pitcher.img"
                     :src="pitcher.img"
+                ></v-img>
+                <v-img v-else
+                    src="@/assets/silhouette.png"
                 ></v-img>
             </v-col>
 
