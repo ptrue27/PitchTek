@@ -100,7 +100,11 @@ export default {
                     this.emitter.emit("ChangePitcher", newPitcher)
                     this.emitter.emit("ChangePitcher2", newPitcher)
                     if (this.batterId) {
-                        this.$store.commit("setMatchup");
+                        const rand = Math.floor(Math.random() * 50);
+                        this.$store.commit("setMatchup", rand);
+                    }
+                    else {
+                        this.$store.commit("setMatchup", 0);
                     }
                     console.log("Changed pitcher: " + newPitcher.name + ", " + newPitcher.id);
                     this.$store.commit("setCurrentPitcher", newPitcher);

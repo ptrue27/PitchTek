@@ -90,18 +90,21 @@ const store = createStore({
             state.isLoggedIn = false;
             state.season = "Select Season";
         },
-        setMatchup(state) {
-            const rand = Math.floor(Math.random() * 50);
-            state.matchup = {     
-                pa: rand,
-                k: Math.floor(rand * .25),
-                bb:  Math.floor(rand * .085),
-                hits:  Math.floor(rand * .29),
-                singles:  Math.floor(rand * .14),
-                doubles:  Math.floor(rand * .05),
-                triples:  Math.floor(rand * .03),
-                hr:  Math.floor(rand * .07),
-            };
+        setMatchup(state, rand) {
+            if(rand) {
+                state.matchup = {     
+                    pa: rand,
+                    k: Math.floor(rand * .25),
+                    bb:  Math.floor(rand * .085),
+                    hits:  Math.floor(rand * .29),
+                    singles:  Math.floor(rand * .14),
+                    doubles:  Math.floor(rand * .05),
+                    triples:  Math.floor(rand * .03),
+                    hr:  Math.floor(rand * .07),
+                };
+            } else {
+                state.matchup = { ...defaultMatchup };
+            }
         },
         setSeason(state, season) {
             state.season = season;
@@ -183,6 +186,7 @@ const store = createStore({
             state.home.pitcherIds = home.pitcherIds;
             state.home.pitcherNames = home.pitcherNames;
             state.home.score = home.score;
+            state.matchup = { ...defaultMatchup };
             if (state.inning.includes('∨')) {
                 state.current.batter = { ...defaultBatter };
                 state.current.batterIds = home.batterIds;
@@ -202,6 +206,7 @@ const store = createStore({
             state.away.pitcherIds = away.pitcherIds;
             state.away.pitcherNames = away.pitcherNames;
             state.away.score = away.score;
+            state.matchup = { ...defaultMatchup };
             if (state.inning.includes('∧')) {
                 state.current.batter = { ...defaultBatter };
                 state.current.batterIds = away.batterIds;
@@ -218,6 +223,7 @@ const store = createStore({
             state.home = { ...defaultTeam };
             state.away = { ...defaultTeam };
             state.current = { ...defaultTeam };
+            state.matchup = { ...defaultMatchup };
             state.predictionImgSrc = "@/assets/strikezone.jpg";
             state.outs = 0;
             state.balls = 0;

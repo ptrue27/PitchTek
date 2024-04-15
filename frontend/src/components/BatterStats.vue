@@ -99,7 +99,11 @@ export default {
                     const newBatter = res.data;
                     console.log("Changed Batter: " + newBatter);
                     if (this.pitcherId) {
-                        this.$store.commit("setMatchup");
+                        const rand = Math.floor(Math.random() * 50);
+                        this.$store.commit("setMatchup", rand);
+                    }
+                    else {
+                        this.$store.commit("setMatchup", 0);
                     }
                     this.$store.commit("setCurrentBatter", newBatter);
                 })
