@@ -1,5 +1,5 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px;" 
+    <v-card style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;" 
         elevation="3"
     >
         <!--Player select-->
@@ -16,7 +16,7 @@
         </v-row>
         <v-row style="margin-top: -30px;">
             <!--Player image-->
-            <v-col cols="3">
+            <v-col cols="3" style="margin-top: 0px;">
                 <v-img v-if="pitcher.img"
                     :src="pitcher.img"
                 ></v-img>
@@ -25,26 +25,59 @@
                 ></v-img>
             </v-col>
 
-            <!--Player stats-->
+            <!--Counting stats-->
             <v-col cols="9" class="pr-2">
-                <div>
-                    <table class="stats-table">
-                        <thead>
-                            <tr>
-                            <th>ERA</th>
-                            <th>K/9</th>
-                            <th>BB/9</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>{{ pitcher.era }}</td>
-                            <td>{{ pitcher.kper9 }}</td>
-                            <td>{{ pitcher.bbper9 }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <!--Counting stats table-->
+                <v-row>
+                    <v-col>
+                        <div>
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                    <th>Games</th>
+                                    <th>PA</th>
+                                    <th>Hits</th>
+                                    <th>HR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <td>{{ pitcher.games }}</td>
+                                    <td>{{ pitcher.batters }}</td>
+                                    <td>{{ pitcher.hits }}</td>
+                                    <td>{{ pitcher.hr }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </v-col>
+                </v-row>
+
+                <!--Rate stats table-->
+                <v-row style="margin-bottom: 5px;">
+                    <v-col>
+                        <div>
+                            <table class="stats-table" color="green-darken-1">
+                                <thead>
+                                    <tr>
+                                    <th>ERA</th>
+                                    <th>WHIP</th>
+                                    <th>K/9</th>
+                                    <th>BB/9</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <td>{{ pitcher.era }}</td>
+                                    <td>{{ pitcher.whip }}</td>
+                                    <td>{{ pitcher.kper9 }}</td>
+                                    <td>{{ pitcher.bbper9 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </v-col>
+                </v-row>
             </v-col>
         </v-row>
     </v-card>
@@ -66,6 +99,9 @@ export default {
                     const newPitcher = res.data;
                     this.emitter.emit("ChangePitcher", newPitcher)
                     this.emitter.emit("ChangePitcher2", newPitcher)
+                    if (this.batterId) {
+                        this.$store.commit("setMatchup");
+                    }
                     console.log("Changed pitcher: " + newPitcher.name + ", " + newPitcher.id);
                     this.$store.commit("setCurrentPitcher", newPitcher);
                 })
@@ -80,25 +116,8 @@ export default {
             pitcher: state => state.current.pitcher,
             pitcherIds: state => state.current.pitcherIds,
             pitcherNames: state => state.current.pitcherNames,
+            batterId: state => state.current.batter.id,
         }),
     },
 };
 </script>
-
-<style>
-.stats-table {
-  border-collapse: collapse;
-  width: 95%;
-  font-size: 12px;
-  margin-bottom: 8px;
-}
-
-.stats-table th, .stats-table td {
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.stats-table th {
-  background-color: #f2f2f2;
-}
-</style>

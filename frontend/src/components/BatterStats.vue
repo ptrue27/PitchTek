@@ -1,6 +1,6 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px;" 
-        elevation="3"
+    <v-card style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;" 
+        elevation="3" 
     >
         <!--Player select-->
         <v-row>
@@ -10,12 +10,13 @@
                     v-model="batter.name"
                     @update:modelValue="handleBatterChange"
                     density="compact" 
+                    color="green-darken-1"
                 ></v-select>
             </v-col>
         </v-row>
         <v-row style="margin-top: -30px;">
             <!--Player image-->
-            <v-col cols="3">
+            <v-col cols="3" style="margin-top: 0px;">
                 <v-img v-if="batter.img"
                     :src="batter.img"
                 ></v-img>
@@ -26,24 +27,57 @@
 
             <!--Player stats-->
             <v-col cols="9" class="pr-2">
-                <div>
-                    <table class="stats-table">
-                        <thead>
-                            <tr>
-                            <th>HR</th>
-                            <th>OB%</th>
-                            <th>SLG%</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td>{{ batter.hr }}</td>
-                            <td>{{ batter.obp }}</td>
-                            <td>{{ batter.slg }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <!--Counting stats table-->
+                <v-row>
+                    <v-col>
+                        <div>
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                    <th>Games</th>
+                                    <th>PA</th>
+                                    <th>Hits</th>
+                                    <th>HR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <td>{{ batter.games }}</td>
+                                    <td>{{ batter.pa }}</td>
+                                    <td>{{ batter.pa }}</td>
+                                    <td>{{ batter.hr }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </v-col>
+                </v-row>
+
+                <!--Rate stats table-->
+                <v-row style="margin-bottom: 5px;">
+                    <v-col>
+                        <div>
+                            <table class="stats-table" color="green-darken-1">
+                                <thead>
+                                    <tr>
+                                    <th>AVG</th>
+                                    <th>OBP</th>
+                                    <th>SLG</th>
+                                    <th>OPS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <td>{{ batter.avg }}</td>
+                                    <td>{{ batter.obp }}</td>
+                                    <td>{{ batter.slg }}</td>
+                                    <td>{{ batter.ops }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </v-col>
+                </v-row>
             </v-col>
         </v-row>
     </v-card>
@@ -64,6 +98,9 @@ export default {
                 .then((res) => {
                     const newBatter = res.data;
                     console.log("Changed Batter: " + newBatter);
+                    if (this.pitcherId) {
+                        this.$store.commit("setMatchup");
+                    }
                     this.$store.commit("setCurrentBatter", newBatter);
                 })
                 .catch((error) => {
@@ -77,6 +114,7 @@ export default {
             batter: state => state.current.batter,
             batterIds: state => state.current.batterIds,
             batterNames: state => state.current.batterNames,
+            pitcherId: state => state.current.pitcher.id,
         }),
     },
 }
@@ -86,16 +124,18 @@ export default {
 .stats-table {
   border-collapse: collapse;
   width: 95%;
-  font-size: 12px;
-  margin-bottom: 8px;
+  font-size: 14px;
 }
 
-.stats-table th, .stats-table td {
-  border: 1px solid #ddd;
-  text-align: left;
+.stats-table td {
+  border: 1px solid #43A047;
+  text-align: center;
 }
 
 .stats-table th {
   background-color: #f2f2f2;
+  color: #43A047;
+  border: 1px solid gray;
+  text-align: center;
 }
 </style>

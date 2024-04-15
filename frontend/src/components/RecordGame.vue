@@ -1,16 +1,20 @@
 <template>
-      <v-card style="width: 100%; margin: 10px 10px;" 
+      <v-card style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;" 
         elevation="3"
       >
         <v-row>
           <!--Game state column-->
-          <v-col cols="8">
-            <v-container fluid>
+          <v-col cols="8" style="border-right: 2px solid #43A047;" >
+            <div>
                 <!--Team selection and score-->
-                <SelectTeams/>
+                <v-row style="border-bottom: 2px solid #43A047;">
+                  <v-col>
+                    <SelectTeams/>
+                  </v-col>
+                </v-row>
 
-                <!--Count and Inning Row-->
-                <v-row>
+                <!--Runners on Base/Count and Inning Row-->
+                <v-row style="margin-top: 25px; margin-bottom: 3px;">
                     <!--Runners on base-->
                     <v-col cols="5" class="d-flex flex-column justify-center">
                       <v-div>
@@ -144,13 +148,13 @@
 
                     </v-col>
                 </v-row>
-            </v-container>
+              </div>
           </v-col>
   
           <!--Input pitch column-->
           <v-col 
             cols="4" class="text-center" 
-            style="margin-top: 50px; padding-right: 20px; padding-left: 0px;"
+            style="margin-top: 43px; padding-right: 20px; padding-left: 0px;"
           >
             <!--Game Select-->
             <v-row>

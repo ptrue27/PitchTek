@@ -12,7 +12,7 @@
         </template>
 
             <v-card class="text-center">
-                <v-card-title class="pb-2 border-bottom">Record Pitch</v-card-title>
+                <v-card-title class="border-bottom">Record Pitch</v-card-title>
                 <v-row style="margin-top: 3px;">
                     <!--Input Pitch Location-->
                     <v-col style="margin-left: 5px;">
@@ -179,7 +179,7 @@
     margin-top: -18px;
   }
   .border-bottom {
-    border-bottom: 1px solid black;
-    background-color: #FAFAFA;
+    border-bottom: 1px solid gray;
+    background-color: #F2F2F2;
   }
 </style>

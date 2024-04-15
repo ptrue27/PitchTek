@@ -1,5 +1,5 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px;" 
+    <v-card style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;" 
       elevation="3"
     >
       <!-- Displaying Paginated Data -->
@@ -10,14 +10,13 @@
             <v-list-item-content>
                 <v-row>
                     <v-col cols="5">
-                        <v-img
-                            :src=imageURL
+                        <v-img :src=imageURL style="margin-top: 5px; margin-bottom: 5px"
                         ></v-img>
-                        <v-card-title>{{curr_pitcher_name}}</v-card-title>
                     </v-col>
                     <!--Innings and count-->
                     <v-col cols="7">
                         <!--Title-->
+
                         <v-row>
                             <v-col class="my-title">Confidence: {{item.confidence}}%</v-col>
                         </v-row>
@@ -42,8 +41,9 @@
       </v-list>
 
       <!-- Pagination Controls -->
-      <v-card-actions class="text-center">
-        <v-container class="pb-0">
+      <v-card-actions class="text-center border-top pt-3">
+        <v-row>
+          <v-col>
             <v-btn
                 @click="prevPage"
                 :disabled="currentPage === 0"
@@ -54,24 +54,12 @@
             <v-btn @click="nextPage" :disabled="currentPage === pages.length - 1">
                 <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
-        </v-container>
+          </v-col>
+        </v-row>
       </v-card-actions>
 
     </v-card>
 </template>
-
-<style>
-.my-title {
-    white-space: nowrap;
-    text-align: center;
-}
-.prediction-number {
-    white-space: nowrap;
-    text-align: center;
-    font-size: 10px;
-    padding-left: 2px;
-}
-</style>
 
 <script>
 export default {
@@ -99,7 +87,6 @@ export default {
         NA:   ""
       },
       image_path: "default_heat_map.jpg",
-      curr_pitcher_name: "",
       curr_pitcher_id: "NA",
       currentimage : 0,
       data: [
@@ -170,7 +157,6 @@ export default {
         // If heat maps for pitcher does not exist, make images
         // this.checkFileExists("@/assets/heat_maps/default_heat_map.jpg")
 
-        this.curr_pitcher_name = pitcher_obj.name
         this.curr_pitcher_id = pitcher_obj.id
 
         // Set values to default
@@ -182,3 +168,20 @@ export default {
     },
 };
 </script>
+
+<style>
+  .border-top {
+    border-top: 1px solid gray;
+    background-color: #F2F2F2;
+  }
+  .my-title {
+      white-space: nowrap;
+      text-align: center;
+  }
+  .prediction-number {
+      white-space: nowrap;
+      text-align: center;
+      font-size: 10px;
+      padding-left: 2px;
+  }
+</style>

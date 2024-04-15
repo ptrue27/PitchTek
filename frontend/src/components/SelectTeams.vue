@@ -1,6 +1,6 @@
 <template>
     <!--Team selection-->
-    <v-row class="text-center" style="margin-bottom: -40px;">
+    <v-row class="text-center" style="margin-bottom: -40px; margin-left: 3px; margin-top: 3px; margin-right: 3px;">
         <!--Input home team-->
         <v-col cols="6">
             <v-select
@@ -22,15 +22,16 @@
                 variant="solo-filled" 
                 density="compact"
                 color="green-darken-1"
+                style="margin-bottom: -30px;"
             ></v-select>
         </v-col>
      </v-row>
               
     <!--Score input-->
-    <v-row>
+    <v-row style="margin-bottom: -30px;">
         <!--Home Score-->
         <v-col cols="3" style="margin-top: 10px;" align="right">
-            <p class="home-away" style="margin-right: 10px;">
+            <p class="home-away" style="margin-right: 30px;">
                 Home
             </p>
         </v-col>
@@ -59,7 +60,7 @@
             ></v-select>
         </v-col>
         <v-col cols="3" style="margin-top: 10px;" align="left">
-            <p class="home-away" style="margin-left: 10px;">
+            <p class="home-away" style="margin-left: 30px;">
                 Away
             </p>
         </v-col>

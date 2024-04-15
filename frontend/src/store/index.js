@@ -40,6 +40,16 @@ const defaultTeam = {
     teamName: "Select Team",
     score: 0,
 };
+const defaultMatchup = {
+    pa: '-',
+    k: '-',
+    bb: '-',
+    hits: '-',
+    singles: '-',
+    doubles: '-',
+    triples: '-',
+    hr: '-',
+}
 
 const store = createStore({
     state() {
@@ -51,10 +61,12 @@ const store = createStore({
             default: {
                 batter: { ...defaultBatter },
                 pitcher: { ...defaultPitcher },
+                matchup: { ...defaultMatchup },
             },
             home: { ...defaultTeam },
             away: { ...defaultTeam },
             current: { ...defaultTeam },
+            matchup: { ...defaultMatchup },
             predictionImgSrc: "@/assets/strikezone.jpg",
             seasons: localStorage.getItem("seasons") ? JSON.parse(localStorage.getItem("seasons")) : [],
             season: "Select Season",
@@ -77,6 +89,19 @@ const store = createStore({
             localStorage.removeItem('token');
             state.isLoggedIn = false;
             state.season = "Select Season";
+        },
+        setMatchup(state) {
+            const rand = Math.floor(Math.random() * 50);
+            state.matchup = {     
+                pa: rand,
+                k: Math.floor(rand * .25),
+                bb:  Math.floor(rand * .085),
+                hits:  Math.floor(rand * .29),
+                singles:  Math.floor(rand * .14),
+                doubles:  Math.floor(rand * .05),
+                triples:  Math.floor(rand * .03),
+                hr:  Math.floor(rand * .07),
+            };
         },
         setSeason(state, season) {
             state.season = season;
