@@ -9,7 +9,7 @@
               <!--Input home team-->
               <v-col cols="6">
                 <v-text-field
-                  :value=score
+                  :value=HomeTeamName
                   density="compact"
                   variant="solo-filled"
                   readonly
@@ -18,7 +18,7 @@
               <!--Input away team-->
               <v-col cols="6">
                 <v-text-field
-                  v-model="away.teamName"
+                  :value="AwayTeamName"
                   variant="filled"
                   density="compact"
                   class="my-label team-name"
@@ -27,15 +27,15 @@
               </v-col>
             </v-row>
 
-            <!--Score input-->
-            <v-row class="score-row">
-              <!--Home Score and "-"-->
+            <!--HomeScore input-->
+            <v-row class="HomeScore-row">
+              <!--Home HomeScore and "-"-->
               <v-col cols="3" style="margin-top: 10px;" align="right">
                 <p style="margin-right: 10px;">Home</p>
               </v-col>
               <v-col cols="2">
                 <v-text-field
-                  :value="teamName"
+                  :value="HomeScore"
                   variant="filled"
                   density="compact"
                   class="my-label team-name"
@@ -45,14 +45,14 @@
               <v-col
                 cols="2"
                 style="margin-top: -2px; margin-left: -10px; margin-right: -10px;"
-                class="score-spacer text-center"
+                class="HomeScore-spacer text-center"
               >
                 <p>-</p>
               </v-col>
               <!--Away Score-->
               <v-col cols="2">
                 <v-text-field
-                  v-model="away.score"
+                  :value="AwayScore"
                   density="compact"
                   variant="solo-filled"
                   readonly
@@ -123,7 +123,7 @@
                   </v-col>
                   <v-col>
                     <v-text-field
-                      v-model="inning"
+                      :value=Inning
                       variant="solo-filled"
                       density="compact"
                       class="inning-v-select"
@@ -132,45 +132,7 @@
                   </v-col>
                 </v-row>
 
-                <!--Outs, Balls, and Strikes-->
-                <v-row no-gutters class="no-wrap mt-0" style="margin-top: 20px;">
-                  <v-col align="right" cols="4" class="my-font">
-                    <p class="out-ball-strike-text"> Outs</p>
-                  </v-col>
-                  <v-col cols="2">
-                    <v-chip
-                      :style="{backgroundColor: countColors.outs}"
-                      class="out-ball-strike-chip"
-                      disabled
-                    >
-                      {{ outs }}
-                    </v-chip>
-                  </v-col>
-                  <v-col align="right" cols="4" class="my-font">
-                    <p class="out-ball-strike-text"> Balls</p>
-                  </v-col>
-                  <v-col cols="2">
-                    <v-chip
-                      :style="{backgroundColor: countColors.balls}"
-                      class="out-ball-strike-chip"
-                      disabled
-                    >
-                      {{ balls }}
-                    </v-chip>
-                  </v-col>
-                  <v-col align="right" cols="4" class="my-font">
-                    <p class="out-ball-strike-text"> Strikes</p>
-                  </v-col>
-                  <v-col cols="2">
-                    <v-chip
-                      :style="{backgroundColor: countColors.strikes}"
-                      class="out-ball-strike-chip"
-                      disabled
-                    >
-                      {{ strikes }}
-                    </v-chip>
-                  </v-col>
-                </v-row>
+
               </v-col>
             </v-row>
           </v-container>
@@ -181,7 +143,7 @@
           <v-row>
             <v-col class="text-center">
               <v-img
-                src="@/assets/heat_maps/425794_CH_heat_map.jpg"
+                :src=ImageURL
                 class="mx-auto"
                 height="300px"
               ></v-img>
@@ -194,25 +156,34 @@
 </template>
 
 
+
 <script>
 export default {
     props: {
-      teamName: String,
-      score: String
+      HomeTeamName: String,
+      HomeScore: Number,
+      AwayTeamName: String,
+      AwayScore: Number,
+      Inning: String,
+      pitchType: String,
+      pitcherId: String,
+      baseColors: [String, String, String]
   },
   data: () => ({
-    away: { teamName: "Away Team", score: "0" },
-    inning: "1",
     outs: "0",
     balls: "0",
     strikes: "0",
-    baseColors: ["#FFF", "#FFF", "#FFF"],  // default white, change to another color if occupied
     countColors: {
       outs: '#FFF',
       balls: '#FFF',
       strikes: '#FFF'
     }
   }),
+  computed: {
+    ImageURL(){
+      return require("@/assets/heat_maps/" + this.pitcherId + "_" + this.pitchType + "_heat_map.jpg")
+    },
+  },
 };
 </script>
 
@@ -224,8 +195,11 @@ export default {
   font-size: 18px;
 }
 .square-chip {
-  width: 25px;
-  height: 25px;
+    width: 25px;
+    height: 25px;
+    //background-color: lightblue !important; /* Temporary to test visibility */
+    border: black;
+    opacity: 1 !important; /* Ensure it's fully opaque */
 }
 .inning-text, .out-ball-strike-text {
   margin: 0;

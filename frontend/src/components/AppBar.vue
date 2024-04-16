@@ -41,16 +41,6 @@
         Statistics
       </v-btn>
 
-      <!--History button-->
-      <v-btn
-        v-if="$store.state.isLoggedIn"
-        to="/history"
-        prepend-icon="mdi-history"
-        variant="tonal" class="mr-5"
-      >
-        History
-      </v-btn>
-
       <!--Real History button-->
       <v-btn
         v-if="$store.state.isLoggedIn"
@@ -58,7 +48,7 @@
         prepend-icon="mdi-history"
         variant="tonal" class="mr-5"
       >
-        Real History
+        History
       </v-btn>
 
       <!--Logout button-->

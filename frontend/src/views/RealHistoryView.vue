@@ -8,8 +8,14 @@
       <ItemComponent
         v-for="(team, index) in teams"
         :key="index"
-        :teamName="team.teamName"
-        :score="team.score"
+        :HomeTeamName="team.HomeTeamName"
+        :HomeScore="team.HomeScore"
+        :AwayTeamName="team.AwayTeamName"
+        :AwayScore="team.AwayScore"
+        :Inning="team.Inning"
+        :pitch-type="team.pitchType"
+        :pitcher-id="team.pitcherId"
+        :base-colors="team.baseColors"
       />
     </div>
   </div>
@@ -26,8 +32,8 @@ export default {
     return {
       teams: [],
       newTeam: {
-        teamName: '',
-        score: ''
+        //teamName: '',
+        //score: ''
       }
     }
   },
@@ -43,8 +49,14 @@ export default {
   methods: {
     addTeam(pitcher_obj) {
       this.teams.push({
-        teamName: pitcher_obj.pitchType[0],
-        score: pitcher_obj.pitcherId
+        HomeTeamName: pitcher_obj.HomeTeamName,
+        HomeScore: pitcher_obj.HomeScore,
+        AwayTeamName: pitcher_obj.AwayTeamName,
+        AwayScore: pitcher_obj.AwayScore,
+        Inning: pitcher_obj.Inning,
+        pitchType: pitcher_obj.pitchType,
+        pitcherId: pitcher_obj.pitcherId,
+        baseColors: pitcher_obj.baseColors
       });
 
 

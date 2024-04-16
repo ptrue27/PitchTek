@@ -405,7 +405,7 @@
               roster.pitchers.id.length + " pitchers"
             );
             const newHome = {
-              batterIds: roster.batters.id, 
+              batterIds: roster.batters.id,
               batterNames: roster.batters.name,
               pitcherIds: roster.pitchers.id,
               pitcherNames: roster.pitchers.name,
@@ -468,11 +468,16 @@
             console.log("Pitch Prediction Recieved for pitcher " + this.curr_pitcher_id + ": " + res.data)
 
             let eventObject = {
-                pitchType: res.data,
-                pitcherId: this.curr_pitcher_id
+                HomeTeamName: this.home.teamName,
+                HomeScore: this.home.score,
+                AwayTeamName: this.away.teamName,
+                AwayScore: this.away.score,
+                Inning: this.inning,
+                pitchType: res.data[0],
+                pitcherId: this.curr_pitcher_id,
+                baseColors: this.baseColors,
             };
 
-            //this.emitter.emit("UpdateHistory", eventObject);
             this.emitter.emit("UpdateHistory", eventObject);
             this.emitter.emit("ChangePitch", res.data)
 
