@@ -1,209 +1,206 @@
 <template>
-    <v-container fluid class="custom-style">
-      <v-card>
-        <v-row>
-          <!--Game state column-->
-          <v-col cols="8">
-            <v-container fluid class="custom-style-2">
-                <v-row class="text-center" style="margin-bottom: -40px;">
-                    <!--Input home team-->
-                    <v-col cols="6">
-                      <v-text-field
-                        v-model="home.teamName"
-                        variant="filled"
-                        density="compact"
-                        class="my-label team-name"
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-                    <!--Input away team-->
-                    <v-col cols="6">
-                        <v-text-field
-                          v-model="away.teamName"
-                          variant="filled"
-                          density="compact"
-                          class="my-label team-name"
-                          readonly
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
-
-                <!--Score input-->
-                <v-row class="score-row">
-                          <!--Home Score and "-"-->
-                          <v-col cols="3" style="margin-top: 10px;" align="right">
-                            <p style="margin-right: 10px;">Home</p>
-                          </v-col>
-                          <v-col cols="2">
-                                <v-text-field
-                                  v-model="home.score"
-                                  density="compact"
-                                  variant="solo-filled"
-                                  readonly
-                                ></v-text-field>
-                          </v-col>
-                          <v-col
-                            cols="2"
-                            style="margin-top: -2px; margin-left: -10px; margin-right: -10px;"
-                            class="score-spacer text-center"
-                          >
-                            <p>-</p>
-                          </v-col>
-                          <!--Away Score-->
-                          <v-col cols="2">
-                                <v-text-field
-                                  v-model="away.score"
-                                  density="compact"
-                                  variant="solo-filled"
-                                  readonly
-                                ></v-text-field>
-                          </v-col>
-                          <v-col cols="3" style="margin-top: 10px;" align="left">
-                            <p style="margin-left: 10px;">Away</p>
-                          </v-col>
-                </v-row>
-
-
-                <!--Count and Inning Row-->
-                <v-row>
-                    <!--Runners on base-->
-                    <v-col cols="5" class="d-flex flex-column justify-center">
-                      <v-div>
-                        <v-row class="no-wrap my-font text-center">
-                          <v-col style="padding-bottom: 0;">On Base</v-col>
-                        </v-row>
-                        <!--Second base-->
-                        <v-row class="no-wrap">
-                          <v-col class="text-center">
-                            <v-chip
-                              :style="{backgroundColor: baseColors[1]}"
-                              class="square-chip" size="small"
-                              disabled
-                            >2</v-chip>
-                          </v-col>
-                        </v-row>
-
-                        <!--First and third base-->
-                        <v-row class="mt-0">
-                          <v-spacer></v-spacer>
-                          <v-col class="text-center">
-                            <v-chip
-                              :style="{backgroundColor: baseColors[2]}"
-                              class="square-chip" size="small"
-                              disabled
-                            >3</v-chip>
-                          </v-col>
-                          <v-col class="text-center">
-                            <v-chip
-                              :style="{backgroundColor: baseColors[0]}"
-                              class="square-chip" size="small"
-                              disabled
-                            >1</v-chip>
-                          </v-col>
-                          <v-spacer></v-spacer>
-                        </v-row>
-
-                        <!--Homeplate-->
-                        <v-row class="mt-0">
-                          <v-col class="text-center">
-                            <v-img
-                              src="@/assets/homeplate.png"
-                              height="25px"
-                              >
-                            </v-img>
-                          </v-col>
-                        </v-row>
-
-                      </v-div>
-                    </v-col>
-
-                    <!--Innings and count-->
-                    <v-col cols="7">
-                      <!--Inning-->
-                      <v-row style="margin-bottom: 0px;">
-                        <v-col align="right" cols="4" class="no-wrap my-font">
-                          <p class="inning-text"> Inning</p>
-                        </v-col>
-                        <v-col>
-                          <v-text-field
-                            v-model="inning"
-                            variant="solo-filled"
-                            density="compact"
-                            class="inning-v-select"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <!--Outs-->
-                      <v-row no-gutters class="no-wrap mt-0">
-                        <v-col align="right" cols="4" class="my-font">
-                          <p class="out-ball-strike-text"> Outs</p>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip
-                            :style="{backgroundColor: countColors.outs}"
-                            class="out-ball-strike-chip"
-                            disabled
-                          >
-                            {{ outs }}
-                          </v-chip>
-                        </v-col>
-                        <v-col align="right" cols="4" class="my-font">
-                          <p class="out-ball-strike-text"> Balls</p>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip
-                            :style="{backgroundColor: countColors.balls}"
-                            class="out-ball-strike-chip"
-                            disabled
-                          >
-                            {{ balls }}
-                          </v-chip>
-                        </v-col>
-                      </v-row>
-
-                      <!--Strikes-->
-                      <v-row no-gutters class="no-wrap mt-0">
-                        <v-col align="right" cols="4" class="my-font">
-                          <p class="out-ball-strike-text"> Strikes</p>
-                        </v-col>
-                        <v-col cols="2">
-                          <v-chip
-                            :style="{backgroundColor: countColors.strikes}"
-                            class="out-ball-strike-chip"
-                            disabled
-                          >
-                            {{ strikes }}
-                          </v-chip>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                </v-row>
-            </v-container>
-          </v-col>
-
-          <!--Pitch input column-->
-          <v-col cols="4">
-            <v-row>
-              <v-col class="text-center">
-                <v-img
-                  src="@/assets/heat_maps/425794_CH_heat_map.jpg"
-                  class="mx-auto"
-                  height="300px"
-                ></v-img>
+  <v-container fluid class="custom-style">
+    <v-card>
+      <v-row>
+        <!--Game state column-->
+        <v-col cols="8">
+          <v-container fluid class="custom-style-2">
+            <v-row class="text-center" style="margin-bottom: -40px;">
+              <!--Input home team-->
+              <v-col cols="6">
+                <v-text-field
+                  :value=score
+                  density="compact"
+                  variant="solo-filled"
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <!--Input away team-->
+              <v-col cols="6">
+                <v-text-field
+                  v-model="away.teamName"
+                  variant="filled"
+                  density="compact"
+                  class="my-label team-name"
+                  readonly
+                ></v-text-field>
               </v-col>
             </v-row>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-container>
+
+            <!--Score input-->
+            <v-row class="score-row">
+              <!--Home Score and "-"-->
+              <v-col cols="3" style="margin-top: 10px;" align="right">
+                <p style="margin-right: 10px;">Home</p>
+              </v-col>
+              <v-col cols="2">
+                <v-text-field
+                  :value="teamName"
+                  variant="filled"
+                  density="compact"
+                  class="my-label team-name"
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col
+                cols="2"
+                style="margin-top: -2px; margin-left: -10px; margin-right: -10px;"
+                class="score-spacer text-center"
+              >
+                <p>-</p>
+              </v-col>
+              <!--Away Score-->
+              <v-col cols="2">
+                <v-text-field
+                  v-model="away.score"
+                  density="compact"
+                  variant="solo-filled"
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3" style="margin-top: 10px;" align="left">
+                <p style="margin-left: 10px;">Away</p>
+              </v-col>
+            </v-row>
+
+            <!--Count and Inning Row-->
+            <v-row>
+              <!--Runners on base-->
+              <v-col cols="5" class="d-flex flex-column justify-center">
+                <v-div>
+                  <v-row class="no-wrap my-font text-center">
+                    <v-col style="padding-bottom: 0;">On Base</v-col>
+                  </v-row>
+                  <!--Second base-->
+                  <v-row class="no-wrap">
+                    <v-col class="text-center">
+                      <v-chip
+                        :style="{backgroundColor: baseColors[1]}"
+                        class="square-chip" size="small"
+                        disabled
+                      >2</v-chip>
+                    </v-col>
+                  </v-row>
+
+                  <!--First and third base-->
+                  <v-row class="mt-0">
+                    <v-spacer></v-spacer>
+                    <v-col class="text-center">
+                      <v-chip
+                        :style="{backgroundColor: baseColors[2]}"
+                        class="square-chip" size="small"
+                        disabled
+                      >3</v-chip>
+                    </v-col>
+                    <v-col class="text-center">
+                      <v-chip
+                        :style="{backgroundColor: baseColors[0]}"
+                        class="square-chip" size="small"
+                        disabled
+                      >1</v-chip>
+                    </v-col>
+                    <v-spacer></v-spacer>
+                  </v-row>
+
+                  <!--Homeplate-->
+                  <v-row class="mt-0">
+                    <v-col class="text-center">
+                      <v-img
+                        src="@/assets/homeplate.png"
+                        height="25px"
+                      ></v-img>
+                    </v-col>
+                  </v-row>
+                </v-div>
+              </v-col>
+
+              <!--Innings and count-->
+              <v-col cols="7">
+                <!--Inning-->
+                <v-row style="margin-bottom: 0px;">
+                  <v-col align="right" cols="4" class="no-wrap my-font">
+                    <p class="inning-text"> Inning</p>
+                  </v-col>
+                  <v-col>
+                    <v-text-field
+                      v-model="inning"
+                      variant="solo-filled"
+                      density="compact"
+                      class="inning-v-select"
+                      readonly
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <!--Outs, Balls, and Strikes-->
+                <v-row no-gutters class="no-wrap mt-0" style="margin-top: 20px;">
+                  <v-col align="right" cols="4" class="my-font">
+                    <p class="out-ball-strike-text"> Outs</p>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-chip
+                      :style="{backgroundColor: countColors.outs}"
+                      class="out-ball-strike-chip"
+                      disabled
+                    >
+                      {{ outs }}
+                    </v-chip>
+                  </v-col>
+                  <v-col align="right" cols="4" class="my-font">
+                    <p class="out-ball-strike-text"> Balls</p>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-chip
+                      :style="{backgroundColor: countColors.balls}"
+                      class="out-ball-strike-chip"
+                      disabled
+                    >
+                      {{ balls }}
+                    </v-chip>
+                  </v-col>
+                  <v-col align="right" cols="4" class="my-font">
+                    <p class="out-ball-strike-text"> Strikes</p>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-chip
+                      :style="{backgroundColor: countColors.strikes}"
+                      class="out-ball-strike-chip"
+                      disabled
+                    >
+                      {{ strikes }}
+                    </v-chip>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-col>
+
+        <!--Pitch input column-->
+        <v-col cols="4">
+          <v-row>
+            <v-col class="text-center">
+              <v-img
+                src="@/assets/heat_maps/425794_CH_heat_map.jpg"
+                class="mx-auto"
+                height="300px"
+              ></v-img>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-container>
 </template>
+
 
 <script>
 export default {
+    props: {
+      teamName: String,
+      score: String
+  },
   data: () => ({
-    home: { teamName: "Home Team", score: "0" },
     away: { teamName: "Away Team", score: "0" },
     inning: "1",
     outs: "0",

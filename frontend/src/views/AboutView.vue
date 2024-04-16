@@ -1,36 +1,65 @@
 <template>
-  <v-app>
-    <v-container>
-      <!-- Use v-img with dynamic src binding -->
-      <v-img
-        :src=imageSrc
-        alt="Alternative Text"
-        aspect-ratio="2.75"
-        contain
-      ></v-img>
-
-      <!-- Button to change the image dynamically -->
-      <v-btn @click="changeImage">Change Image</v-btn>
-    </v-container>
-  </v-app>
+  <div id="app">
+    <h1>Team Scores List</h1>
+    <form @submit.prevent="addTeam">
+      <input type="text" v-model="newTeam.teamName" placeholder="Enter team name" required>
+      <input type="text" v-model="newTeam.score" placeholder="Enter score" required>
+      <button type="submit">Add Team</button>
+    </form>
+    <div>
+      <ItemComponent
+        v-for="(team, index) in teams"
+        :key="index"
+        :teamName="team.teamName"
+        :score="team.score"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
+import ItemComponent from '@/components/PreviousPrediction2.vue';
+
 export default {
+  components: {
+    ItemComponent
+  },
   data() {
     return {
-      imageSrc: require("@/assets/heat_maps/default_heat_map.jpg") // Default image source
-    };
+      teams: [],
+      newTeam: {
+        teamName: '',
+        score: ''
+      }
+    }
+  },
+  mounted() {
+      this.emitter.on("NewUpdateHistory", (pitcher_obj) => {
+
+        console.log("Here100", pitcher_obj)
+
+        this.addTeam(pitcher_obj);
+
+      });
   },
   methods: {
-    changeImage() {
-      // Simulate changing image dynamically
-      this.imageSrc = require("@/assets/heat_maps/default_heat_map.jpg");
+    addTeam(pitcher_obj) {
+      this.teams.push({
+        teamName: pitcher_obj.pitchType[0],
+        score: pitcher_obj.pitcherId
+      });
+
+
     }
   }
-};
+}
 </script>
 
-<style scoped>
-/* Your component-specific styles */
+<style>
+#app {
+  text-align: center;
+}
+input, button {
+  margin: 5px;
+}
 </style>

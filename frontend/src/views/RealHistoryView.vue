@@ -1,48 +1,64 @@
 <template>
-  <div class="page-background">
-    <div v-for="(component, index) in components" :key="index" class="component">
-      <my-custom-component />
+  <div id="app">
+    <h1>Previous Predictions</h1>
+    <form @submit.prevent="">
+
+    </form>
+    <div>
+      <ItemComponent
+        v-for="(team, index) in teams"
+        :key="index"
+        :teamName="team.teamName"
+        :score="team.score"
+      />
     </div>
   </div>
 </template>
 
 <script>
-// Import your custom component
-import MyCustomComponent from '@/components/PreviousPrediction2.vue';
+import ItemComponent from '@/components/PreviousPrediction2.vue';
 
 export default {
   components: {
-    MyCustomComponent // Register your custom component
-  },
-  mounted() {
-      this.emitter.on("UpdateHistory", pitcher_obj => {
-
-        console.log("AAAAAAAAAAAAAAAAAAA", pitcher_obj)
-        this.AddLog();
-
-      });
+    ItemComponent
   },
   data() {
     return {
-      components: []
-    };
+      teams: [],
+      newTeam: {
+        teamName: '',
+        score: ''
+      }
+    }
+  },
+  mounted() {
+      this.emitter.on("UpdateHistory", (pitcher_obj) => {
+
+        console.log("Here100", pitcher_obj)
+
+        this.addTeam(pitcher_obj);
+
+      });
   },
   methods: {
-    AddLog() {
+    addTeam(pitcher_obj) {
+      this.teams.push({
+        teamName: pitcher_obj.pitchType[0],
+        score: pitcher_obj.pitcherId
+      });
 
-      this.components.push({});
+
     }
   }
-};
+}
 </script>
 
 <style>
-.component {
-  margin-top: 0px;
-  padding: 0px;
-  border: 0px solid #ccc;
+#app {
+  text-align: center;
 }
-.page-background {
-  background-color: #bbb4b4; /* Example color */
+
+input, button {
+  margin: 5px;
 }
 </style>

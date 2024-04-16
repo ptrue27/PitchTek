@@ -465,9 +465,16 @@
 
         axios.get(path, {params: { param1: this.gameState, param2: this.curr_pitcher_id}})
           .then((res) => {
-            console.log("Pitch Prediction Recieved: " + res.data)
-              this.emitter.emit("UpdateHistory", res.data)
-              this.emitter.emit("ChangePitch", res.data)
+            console.log("Pitch Prediction Recieved for pitcher " + this.curr_pitcher_id + ": " + res.data)
+
+            let eventObject = {
+                pitchType: res.data,
+                pitcherId: this.curr_pitcher_id
+            };
+
+            //this.emitter.emit("UpdateHistory", eventObject);
+            this.emitter.emit("UpdateHistory", eventObject);
+            this.emitter.emit("ChangePitch", res.data)
 
           })
           .catch((error) => {
