@@ -380,7 +380,7 @@ analyzeOutings() {
       const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [{
-          label: stat,
+          label: stat, 
           data: [0, 10, 5, 2, 20, 30, 45],
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255, 99, 132, 1)',
