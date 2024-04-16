@@ -241,38 +241,23 @@ export default {
       });
   },
   handleFileUpload(event) {
-  const file = event.target.files[0];
-  const nameIndexMap = new Map(); // To remember the indices of each name
-
-  Papa.parse(file, {
-    header: true,
-    dynamicTyping: true,
-    complete: (results) => {
-      this.csvData = results.data;
-      const names = []; // For the dropdown list
-
-      results.data.forEach((row, index) => {
-        const playerName = row.player_name; // Adjust if your column name is different
-        const desWords = row.des ? row.des.split(' ').slice(0, 2).join(' ') : '';
-
-        // Check and add the player name from the 'player_name' column
-        if (playerName && !nameIndexMap.has(playerName)) {
-          names.push(playerName);
-          nameIndexMap.set(playerName, index);
-        }
-
-        // Check and add the name from the 'des' column
-        if (desWords && !nameIndexMap.has(desWords)) {
-          names.push(desWords);
-          nameIndexMap.set(desWords, index);
-        }
+      const file = event.target.files[0];
+      Papa.parse(file, {
+        header: true,
+        dynamicTyping: true,
+        complete: (results) => {
+          this.csvData = results.data;
+          this.players = [...new Set(results.data.map(row => row.player_name))];
+        },
       });
-
-      this.players = names; // Now 'players' is just a list of names (strings)
-      this.nameIndexMap = nameIndexMap; // Save the mapping separately
     },
-  });
-},
+    fetchRecentDescription() {
+      if (!this.selectedPlayer || !this.csvData.length) return;
+      const playerRows = this.csvData.filter(row => row.player_name === this.selectedPlayer);
+      const mostRecentRow = playerRows[playerRows.length - 1]; // Assuming the data is already sorted by date or index
+      this.recentDescription = mostRecentRow ? mostRecentRow.des : 'No description available';
+    }
+  },
 analyzePitcherData() {
   if (this.selectedPitcherIndex === null || !this.csvData) return;
 
@@ -288,6 +273,7 @@ analyzePitcherData() {
     releaseSpeed: row.release_speed,
   }));
 },
+
 analyzeOutings() {
     if (!this.selectedPlayer || !this.csvData) return;
 
@@ -387,7 +373,7 @@ analyzeOutings() {
         }
       );
     },
-  },
+  
     showGraph(stat) {
       this.selectedStat = stat;
 
