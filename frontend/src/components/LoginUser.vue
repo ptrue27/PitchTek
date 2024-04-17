@@ -11,7 +11,7 @@
             <v-text-field 
               type="text" 
               v-model="username" 
-              placeholder="Username" 
+              placeholder="Email" 
               class="my-text-input"
               :rules="usernameRules"
               ref="usernameInput"
@@ -71,9 +71,9 @@
         password: '',
         errorMessage: '',
         usernameRules: [
-          v => !!v || 'Username is required',
-          v => (v && v.length >= 3 && v.length <= 32) || 'Username must be between 3 and 32 characters',
-          v => /^[a-zA-Z0-9]*$/.test(v) || 'Username must contain only alphanumeric characters'
+          v => !!v || 'Email is required',
+          v => /.+@.+\..+/.test(v) || 'Email must be valid',
+          v => (v && v.length <= 64) || 'Email must be less than 64 characters'
         ],
         passwordRules: [
           v => !!v || 'Password is required',

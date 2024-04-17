@@ -97,8 +97,6 @@ export default {
             axios.get(path)
                 .then((res) => {
                     const newPitcher = res.data;
-                    this.emitter.emit("ChangePitcher", newPitcher)
-                    this.emitter.emit("ChangePitcher2", newPitcher)
                     if (this.batterId) {
                         const rand = Math.floor(Math.random() * 50);
                         this.$store.commit("setMatchup", rand);
