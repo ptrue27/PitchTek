@@ -1,11 +1,16 @@
 from app.get_prediction import Predictions_Class
 from app import app, user_manager, stats_api
 #import statsapi 
-from flask import request, jsonify
 from app.data_visualizer import DataVisualizer
 import os
+from flask import Flask, request, jsonify, send_file, send_from_directory
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')  # Use the 'Agg' backend, which is non-interactive and does not require a GUI.
+import matplotlib.pyplot as plt
 
-
+import io
+import base64
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():
     data = request.get_json()
@@ -87,7 +92,84 @@ def make_prediction():
     pitch_type = "Sinker (SI)"
     pitch_speed = 92.7
     return jsonify(pitch_type, pitch_speed)
+df_global = pd.DataFrame()
 
+
+@app.route('/get_latest_at_bat', methods=['GET'])
+def get_latest_at_bat():
+    player_name = request.args.get('player_name')
+    if not player_name or df_global.empty:
+        return jsonify({'error': 'No data or player name provided'}), 400
+
+    # Filter the data for the selected player and get the latest entry
+    player_data = df_global[df_global['player_from_des'] == player_name]
+    latest_at_bat = player_data.iloc[-1]  # assuming the data is ordered chronologically
+
+    # Prepare the data for visualization
+    data = {
+        'plate_x': latest_at_bat['plate_x'],
+        'plate_z': latest_at_bat['plate_z'],
+        'description': latest_at_bat['des']
+    }
+    return jsonify(data)
+df_global = pd.DataFrame()
+@app.route('/upload_csv', methods=['POST'])
+def upload_csv():
+    global df_global
+    file = request.files['file']
+    df_global = pd.read_csv(file)
+    df_global['player_from_des'] = df_global['des'].apply(lambda x: ' '.join(x.split()[:2]))
+    players = df_global['player_from_des'].unique().tolist()
+    return jsonify(players)
+
+
+os.makedirs('static', exist_ok=True)
+
+@app.route('/fetch_latest_at_bat_plot', methods=['GET'])
+def fetch_latest_at_bat_plot():
+    player_name = request.args.get('player_name')
+    if not player_name:
+        return jsonify({'error': 'Player name parameter is missing'}), 400
+    
+    if df_global.empty or 'player_from_des' not in df_global.columns:
+        return jsonify({'error': 'No data available or incorrect data format'}), 400
+
+    mask = df_global['player_from_des'].str.contains(player_name, na=False)
+    if not mask.any():
+        return jsonify({'error': 'Player not found in data'}), 404
+
+    start_index = mask[mask].index[0]
+    end_index = mask[start_index:].idxmin() if False in mask[start_index:].values else None
+
+    player_data = df_global.iloc[start_index:end_index]
+    if player_data.empty:
+        return jsonify({'error': 'No data found for this player'}), 404
+
+    latest_at_bat = player_data.iloc[-1]
+
+    # Generate plot
+    fig, ax = plt.subplots()
+    ax.scatter([latest_at_bat['plate_x']], [latest_at_bat['plate_z']], color='blue')
+    ax.set_xlim(-3, 3)
+    ax.set_ylim(0, 5)
+    ax.set_title(f"Latest at-bat: {latest_at_bat['des']}")
+    ax.set_xlabel('Plate X')
+    ax.set_ylabel('Plate Z')
+
+    # Save the plot to a file
+    filename = f"latest_at_bat.png"
+    file_path = f"C:/Users/davis/Documents/PitchTek/frontend/src/assets/static/{filename}"
+    plt.savefig(file_path)
+    plt.close(fig)
+
+    # Return the URL to the saved image
+    image_url = f"{request.host_url}static/{filename}"
+    return jsonify({'image_url': image_url})
+
+
+@app.route('/get_latest_image', methods=['GET'])
+def get_latest_image():
+    return send_from_directory(app.static_folder, 'latest_at_bat_plot.png')
 '''
 # Directory where uploaded files are stored
 UPLOAD_FOLDER = 'C:/Users/davis/PitchTek-2/uploads'

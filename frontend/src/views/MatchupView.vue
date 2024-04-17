@@ -1,9 +1,16 @@
   <template>
-     <v-container fluid class="mb-5">
+  <v-container fluid class="mb-5">
     <v-row justify="center">
       <v-col cols="12" class="text-center">
         <h2 class="display-1 font-weight-bold mb-3">Player Matchup</h2>
-        <v-file-input label="Upload CSV" @change="handleFileUpload" outlined dense solo-inverted solo></v-file-input>
+        <v-file-input 
+          label="Upload CSV" 
+          @change="handleFileUpload" 
+          outlined 
+          dense 
+          solo-inverted 
+          solo
+        ></v-file-input>
         <v-autocomplete
           v-if="players.length"
           v-model="selectedPlayer"
@@ -15,30 +22,17 @@
           solo
           class="mt-3"
         ></v-autocomplete>
-
-
-
-
-         
-        </v-col>
-      </v-row>
-      <v-row v-if="chartInstance">
-        <v-col>
-          <canvas id="playerStatsChart"></canvas>
-        </v-col>
-      </v-row>
-    </v-container>
-      <v-row>
-        <v-col cols="12" md="6" v-for="(imageSrc, index) in images" :key="index">
-          <v-img :src="imageSrc" class="white--text" height="200px">
-          <template v-slot:placeholder>
-    <v-row class="fill-height ma-0" align="center" justify="center">
-      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+        <v-btn color="primary" @click="fetchLatestAtBatPlot">Show Latest At-Bat Plot</v-btn>
+        
+        <v-col cols="12" sm="8" md="6">
+        <v-img v-if="showImage"
+              src="@/assets/static/latest_at_bat.png"
+              alt="Latest At-Bat Plot">
+        </v-img>
+      </v-col>
+      </v-col>
     </v-row>
-  </template>
-</v-img>
-  </v-col>
-</v-row>
+  </v-container>
 
     <v-container fluid>
       <v-row justify="center">
@@ -137,7 +131,7 @@
 
   import axios from 'axios';
 
-  import Papa from 'papaparse';
+
 
   export default {
     
@@ -147,6 +141,7 @@
       return {
       pitcherId: '',
       batterId: '',
+      showImage: false,
       pitcherStats: {
         'ERA': 0.0,
         'WHIP': 0,
@@ -170,6 +165,7 @@
       outingSummaries: [],
       chartData: null,
       chartInstance: null,
+      generatedImageUrl: 'C:/Users/davis/Documents/PitchTek/frontend/src/assets/static/latest_at_bat.png',
       nameIndexMap: new Map(),
       selectedImageUrl: 'C:/Users/davis/PitchTek-2/frontend/src/assets/strikezone.jpg',
       pitcherOutings: [],
@@ -237,38 +233,26 @@
       });
   },
   handleFileUpload(event) {
-  const file = event.target.files[0];
-  const nameIndexMap = new Map(); // To remember the indices of each name
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
 
-  Papa.parse(file, {
-    header: true,
-    dynamicTyping: true,
-    complete: (results) => {
-      this.csvData = results.data;
-      const names = []; // For the dropdown list
-
-      results.data.forEach((row, index) => {
-        const playerName = row.player_name; // Adjust if your column name is different
-        const desWords = row.des ? row.des.split(' ').slice(0, 2).join(' ') : '';
-
-        // Check and add the player name from the 'player_name' column
-        if (playerName && !nameIndexMap.has(playerName)) {
-          names.push(playerName);
-          nameIndexMap.set(playerName, index);
-        }
-
-        // Check and add the name from the 'des' column
-        if (desWords && !nameIndexMap.has(desWords)) {
-          names.push(desWords);
-          nameIndexMap.set(desWords, index);
-        }
-      });
-
-      this.players = names; // Now 'players' is just a list of names (strings)
-      this.nameIndexMap = nameIndexMap; // Save the mapping separately
+      axios.post('http://localhost:5000/upload_csv', formData)
+        .then(response => {
+          this.players = response.data;
+        })
+        .catch(error => console.error('Failed to upload file:', error));
     },
-  });
-},
+    fetchLatestAtBatPlot() {
+      axios.get(`http://localhost:5000/fetch_latest_at_bat_plot`, { params: { player_name: this.selectedPlayer } })
+        .then(response => {
+          this.imageUrl = response.data.image_url;
+        })
+        .catch(error => {
+          console.error("Error fetching latest at-bat plot:", error);
+        });
+        this.showImage = true;
+    },
 analyzePitcherData() {
   if (this.selectedPitcherIndex === null || !this.csvData) return;
 
@@ -318,33 +302,29 @@ analyzeOutings() {
         return summary;
       });
     },
-    generateStats() {
-      if (!this.selectedPlayer || !this.csvData) return;
-
-      // Filter rows for the selected player
-      const playerRows = this.csvData.filter(row => row.player_name === this.selectedPlayer);
-
-      // Group rows into outings and calculate stats for each outing
-      let outings = [];
-      let currentOuting = [];
-
-      playerRows.forEach((row, index) => {
-        if (index > 0 && row.player_name !== this.selectedPlayer) {
-          outings.push(currentOuting);
-          currentOuting = [];
+    updateChart(data) {
+      const ctx = document.getElementById('playerStatsChart').getContext('2d');
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+      }
+      this.chartInstance = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: data.description,
+            data: [{ x: data.plate_x, y: data.plate_z }],
+            backgroundColor: 'rgb(75, 192, 192)'
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              type: 'linear',
+              position: 'bottom'
+            }
+          }
         }
-        currentOuting.push(row);
       });
-
-      if (currentOuting.length) outings.push(currentOuting); // Add the last outing
-
-      this.outingSummaries = outings.map(outing => ({
-        totalPitches: outing.length,
-        pitches: outing.map(o => o.pitch_type).join(', '),
-        speeds: outing.map(o => o.pitch_speed).join(', '),
-        plateZ: outing.map(o => o.plate_z).join(', '),
-        plateX: outing.map(o => o.plate_x).join(', '),
-      }));
     },
 
 
@@ -375,7 +355,7 @@ analyzeOutings() {
           data: data,
           options: {
             scales: {
-              y: {
+              y: { 
                 beginAtZero: true
               }
             }
