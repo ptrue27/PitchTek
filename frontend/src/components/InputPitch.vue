@@ -138,11 +138,12 @@
                 console.log('Predict Button clicked!');
 
                 const path = 'http://localhost:5000/make_prediction';
-
-                axios.get(path, { params: this.gameState})
+                const params = this.gameState;
+                axios.get(path, { params })
                 .then((res) => {
-                    console.log("Pitch Prediction Recieved: " + res.data)
-                    this.emitter.emit("ChangePitch", res.data)
+                    const predictions = res.data.predictions;
+                    console.log("Pitch Predictions Recieved: " + predictions);
+                    this.$store.commit("predict", predictions);
                 })
                 .catch((error) => {
                     console.error(error);
@@ -160,15 +161,7 @@
                 };
             }
         },
-        mounted() {
 
-        // Sets current pitcher name/id and resets image
-        this.emitter.on("ChangePitcher2", pitcher_obj => {
-
-            this.curr_pitcher_id = pitcher_obj.id
-
-        });
-        },
     };
 </script>
 

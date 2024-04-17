@@ -84,9 +84,27 @@ def make_prediction():
 
     #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
     #pitch_speed = predicter.get_speed(pitch_type)
-    pitch_type = "Sinker (SI)"
-    pitch_speed = 92.7
-    return jsonify(pitch_type, pitch_speed)
+    predictions = [{
+        "img": "425794_CH_heat_map.jpg",
+        "speed": 83.3,
+        "location": 4,
+        "confidence": 54.73,
+        "type": " Changeup (CH)",
+        }, {
+        "img": "425844_SI_heat_map.jpg",
+        "speed": 92.3,
+        "location": 7,
+        "confidence": 32.80,
+        "type": "Sinker (SI)",
+        }, {
+        "img": "425794_CU_heat_map.jpg",
+        "speed": 88.2,
+        "location": 7,
+        "confidence": 12.06,
+        "type": "Sinker (SI)",
+        }
+    ]
+    return jsonify({"predictions": predictions})
 
 '''
 # Directory where uploaded files are stored

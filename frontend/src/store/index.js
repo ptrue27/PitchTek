@@ -49,7 +49,19 @@ const defaultMatchup = {
     doubles: '-',
     triples: '-',
     hr: '-',
-}
+};
+const defaultPrediction = {
+    img: "default_heat_map.jpg",
+    speed: '-',
+    location: '-',
+    confidence: '-',
+    type: '-',
+};
+const defaultPredictions = [
+    { ...defaultPrediction }, 
+    { ...defaultPrediction }, 
+    { ...defaultPrediction },
+];
 
 const store = createStore({
     state() {
@@ -67,7 +79,7 @@ const store = createStore({
             away: { ...defaultTeam },
             current: { ...defaultTeam },
             matchup: { ...defaultMatchup },
-            predictionImgSrc: "@/assets/strikezone.jpg",
+            predictions: [ ...defaultPredictions ],
             seasons: localStorage.getItem("seasons") ? JSON.parse(localStorage.getItem("seasons")) : [],
             season: "Select Season",
             outs: 0,
@@ -89,6 +101,9 @@ const store = createStore({
             localStorage.removeItem('token');
             state.isLoggedIn = false;
             state.season = "Select Season";
+        },
+        predict(state, predictions) {
+            state.predictions = predictions;
         },
         setMatchup(state, rand) {
             if(rand) {
@@ -224,11 +239,11 @@ const store = createStore({
             state.away = { ...defaultTeam };
             state.current = { ...defaultTeam };
             state.matchup = { ...defaultMatchup };
-            state.predictionImgSrc = "@/assets/strikezone.jpg";
             state.outs = 0;
             state.balls = 0;
             state.strikes = 0;
             state.bases = [false, false, false];
+            state.predictions = { ...defaultPredictions };
         },
     },
 });

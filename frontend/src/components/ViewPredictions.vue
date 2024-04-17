@@ -5,33 +5,33 @@
       <!-- Displaying Paginated Data -->
       <v-list>
         <v-list-item-group>
-          <v-list-item v-for="item in currentData" :key="item.id">
+          <v-list-item v-for="(item, index) in currentData" :key="item.id">
             <!-- Content for each row -->
             <v-list-item-content>
                 <v-row>
-                    <v-col cols="5">
-                        <v-img :src=imageURL style="margin-top: 5px; margin-bottom: 5px"
+                  <!--Prediction image-->
+                    <v-col cols="6">
+                        <v-img :src=imageURLs[index] style="margin-top: 5px; margin-bottom: 5px; height: 392px;"
                         ></v-img>
                     </v-col>
-                    <!--Innings and count-->
-                    <v-col cols="7">
-                        <!--Title-->
 
-                        <v-row>
-                            <v-col class="my-title">Confidence: {{item.confidence}}%</v-col>
+                    <!--Predicted values-->
+                    <v-col cols="6">
+                        <v-row style="margin-top: 75px;">
+                            <v-col class="predict-col">Confidence:</v-col>
+                            <v-col class="predict-data-col">{{ predictions[index].confidence }}%</v-col>
                         </v-row>
-                        <!--Pitch info-->
-                        <v-row>
-                            <v-col>Pitch type:</v-col>
-                            <v-col>{{pitchDict[item.type]}}</v-col>
+                        <v-row class="predict-row">
+                          <v-col class="predict-col">Pitch type:</v-col>
+                          <v-col class="predict-data-col">{{ predictions[index].type }}</v-col>
                         </v-row>
-                        <v-row>
-                            <v-col>Speed:</v-col>
-                            <v-col>{{item.speed}} mph</v-col>
+                        <v-row class="predict-row">
+                          <v-col class="predict-col">Speed:</v-col>
+                          <v-col class="predict-data-col">{{ predictions[index].speed }} mph</v-col>
                         </v-row>
-                        <v-row>
-                            <v-col>Location:</v-col>
-                            <v-col>({{item.locationX}}, {{item.locationY}})</v-col>
+                        <v-row class="predict-row">
+                          <v-col class="predict-col">Location:</v-col>
+                          <v-col class="predict-data-col">Zone {{ predictions[index].location }}</v-col>
                         </v-row>
                     </v-col>
                 </v-row>
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'my-component',
   data() {
@@ -86,9 +88,6 @@ export default {
         PO:   "Pitch Out",
         NA:   ""
       },
-      image_path: "default_heat_map.jpg",
-      curr_pitcher_id: "NA",
-      currentimage : 0,
       data: [
         {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
         {id: 2, confidence: 'NA', type: '', speed: 'NA', locationX: 'NA', locationY: 'NA'},
@@ -107,16 +106,23 @@ export default {
     });
   },
   computed: {
+    ...mapState({
+        pitcherId: state => state.current.pitcher.id,
+    }),
+    predictions: {
+      get() {
+        return this.$store.state.predictions;
+      },
+    },
     currentData() {
       return this.pages[this.currentPage] || [];
     },
-    predictionImgSrc() {
-      //return this.$store.state.predictionImgSrc
-      //console.log("predictionImgSrc called")
-      return require(this.imageURL)
-    },
-    imageURL(){
-      return require("@/assets/heat_maps/" + this.image_path)
+    imageURLs(){
+      return [
+        require("@/assets/heat_maps/" + this.predictions[0].img),
+        require("@/assets/heat_maps/" + this.predictions[1].img),
+        require("@/assets/heat_maps/" + this.predictions[2].img),
+      ]
     },
   },
   methods: {
@@ -124,7 +130,8 @@ export default {
       this.currentPage = Math.max(this.currentPage - 1, 0);
     },
     nextPage() {
-      this.currentPage = Math.min(this.currentPage + 1, this.data.length - 1);
+      console.log(this.predictions.length + "::" + this.predictions[0].type + this.predictions[1].type);
+      this.currentPage = Math.min(this.currentPage + 1, this.predictions.length - 1);
     },
     /*checkFileExists(my_URL) {
       fetch(my_URL)
@@ -141,31 +148,31 @@ export default {
         });
     }*/
   },
-    mounted() {
-      this.emitter.on("ChangePitch", my_var => {
-        console.log('ChangePitch() called, with pitch:', my_var[0]);
-        this.data[0].type = my_var[0]
-        this.data[0].speed = my_var[1]
+  /*mounted() {
+    this.emitter.on("ChangePitch", my_var => {
+      console.log('ChangePitch() called, with pitch:', my_var[0]);
+      this.data[0].type = my_var[0]
+      this.data[0].speed = my_var[1]
 
-        this.image_path = this.curr_pitcher_id + "_" + my_var[0] + "_heat_map.jpg"
-        console.log("this image: " + this.imageURL)
-      });
+      this.predictionImg = this.curr_pitcher_id + "_" + my_var[0] + "_heat_map.jpg"
+      console.log("this image: " + this.imageURL)
+    });
 
-      // Sets current pitcher name/id and resets image
-      this.emitter.on("ChangePitcher", pitcher_obj => {
+    // Sets current pitcher name/id and resets image
+    this.emitter.on("ChangePitcher", pitcher_obj => {
 
-        // If heat maps for pitcher does not exist, make images
-        // this.checkFileExists("@/assets/heat_maps/default_heat_map.jpg")
+      // If heat maps for pitcher does not exist, make images
+      // this.checkFileExists("@/assets/heat_maps/default_heat_map.jpg")
 
-        this.curr_pitcher_id = pitcher_obj.id
+      this.curr_pitcher_id = pitcher_obj.id
 
-        // Set values to default
-        this.image_path = "default_heat_map.jpg"
-        this.data[0].type = ""
-        this.data[0].speed = ""
+      // Set values to default
+      this.image_path = "default_heat_map.jpg"
+      this.data[0].type = ""
+      this.data[0].speed = ""
 
-      });
-    },
+    });
+  },*/
 };
 </script>
 
@@ -174,14 +181,22 @@ export default {
     border-top: 1px solid gray;
     background-color: #F2F2F2;
   }
-  .my-title {
-      white-space: nowrap;
-      text-align: center;
-  }
   .prediction-number {
       white-space: nowrap;
       text-align: center;
       font-size: 10px;
       padding-left: 2px;
+  }
+  .predict-col {
+    margin-left:50px;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .predict-data-row {
+    margin-left: 50px;
+    font-size: 18px;
+  }
+  .predict-row {
+    padding-top: 20px;
   }
 </style>
