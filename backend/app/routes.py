@@ -1,6 +1,6 @@
 from app.get_prediction import Predictions_Class
 from app import app, user_manager, stats_api
-#import statsapi 
+import statsapi 
 from flask import request, jsonify
 from app.data_visualizer import DataVisualizer
 import os
@@ -158,7 +158,7 @@ def generate_images_route():
 
     # Return these URLs in the response
     return jsonify({'message': 'Images generated successfully', 'images': image_urls})
-
+'''
 
 @app.route("/api/mlb_player_stats", methods=['GET'])
 def get_mlb_player_stats():
@@ -181,6 +181,7 @@ def get_mlb_player_stats():
     except Exception as e:
         print("Failed to fetch player stats: %s", str(e))
         return jsonify({"error": str(e)}), 500
+    
     
 @app.route("/api/player_pitching_stats", methods=['GET'])
 def get_player_pitching_stats():
@@ -283,6 +284,7 @@ def get_player_fielding_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
 @app.route("/api/player_batting_stats", methods=['GET'])
 def get_player_batting_stats():
     player_name = request.args.get('player_name')
@@ -327,5 +329,3 @@ def get_player_batting_stats():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-'''

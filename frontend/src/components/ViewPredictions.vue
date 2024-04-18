@@ -88,32 +88,23 @@ export default {
         PO:   "Pitch Out",
         NA:   ""
       },
-      data: [
-        {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
-        {id: 2, confidence: 'NA', type: '', speed: 'NA', locationX: 'NA', locationY: 'NA'},
-        {id: 3, confidence: '7.04', type: 'Slider', speed: 82.27, locationX: 78, locationY: 38},
-      ],
       itemsPerPage: 1,
       currentPage: 0,
       pages: [],
     };
   },
   created() {
-    this.pages = Array.from({ length: Math.ceil(this.data.length / this.itemsPerPage) }, (_, index) => {
+    this.pages = Array.from({ length: Math.ceil(this.predictions.length / this.itemsPerPage) }, (_, index) => {
       const startIndex = index * this.itemsPerPage;
       const endIndex = startIndex + this.itemsPerPage;
-      return this.data.slice(startIndex, endIndex);
+      return this.predictions.slice(startIndex, endIndex);
     });
   },
   computed: {
     ...mapState({
         pitcherId: state => state.current.pitcher.id,
+        predictions: state => state.predictions,
     }),
-    predictions: {
-      get() {
-        return this.$store.state.predictions;
-      },
-    },
     currentData() {
       return this.pages[this.currentPage] || [];
     },

@@ -6,9 +6,9 @@ flask-login
 flask-sqlalchemy
 joblib
 matplotlib
+MLB-StatsAPI
 pandas
 plotly
 python-dotenv
-python-mlb-statsapi
 scikit-learn==1.3.0
 seaborn
