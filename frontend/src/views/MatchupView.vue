@@ -209,7 +209,7 @@ export default {
       return;
     }
 
-    axios.get(`http://localhost:5000/api/player_pitching_stats`, { params: { player_name: this.pitcherId } })
+    axios.get('http://' + this.$store.state.host + '/api/player_pitching_stats', { params: { player_name: this.pitcherId } })
       .then(response => {
         if (!response.data || Object.keys(response.data).length === 0) {
           this.pitcherError = 'No data found for this Pitcher ID';
@@ -228,7 +228,7 @@ export default {
       return;
     }
 
-    axios.get(`http://localhost:5000/api/player_batting_stats`, { params: { player_name: this.batterId } })
+    axios.get('http://' + this.$store.state.host + '/api/player_batting_stats', { params: { player_name: this.batterId } })
       .then(response => {
         if (!response.data || Object.keys(response.data).length === 0) {
           this.batterError = 'No data found for this Batter ID';
