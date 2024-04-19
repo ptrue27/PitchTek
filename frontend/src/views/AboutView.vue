@@ -13,8 +13,8 @@
     </p>
 
     <h2>Dashboard View</h2>
-    <img src="@/assets/dashboard.png" alt="Dashboard">
 
+    <v-img :src="require('@/assets/dashboard.png')" style="margin-top: 5px; margin-bottom: 1px; height: 392px;"></v-img>
     <h2>Project Description</h2>
     <p>
       PitchTek is a baseball analytics application that allows users to view player statistics, record a game’s progress,
@@ -43,26 +43,26 @@
     </ul>
 
     <h2>Team Members</h2>
-    <div class="team-members">
-      <figure>
-        <img src="@/assets/default.jpg" alt="Parker" />
-        <figcaption>Parker True</figcaption>
-      </figure>
-      <figure>
-        <img src="@/assets/default.jpg" alt="Davis" />
-        <figcaption>Davis Dunkley</figcaption>
-      </figure>
-      <figure>
-        <img src="@/assets/default.jpg" alt="Ethan" />
-        <figcaption>Ethan Carroll</figcaption>
-      </figure>
-    </div>
+  <div class="image-row">
+    <img v-for="(image, index) in images" :key="index" :src="image.src" :alt="image.alt" class="image">
+  </div>
   </div>
 </template>
 
 <script>
+
 export default {
-  name: 'PitchTekPage'
+  name: 'PitchTekPage',
+
+ data() {
+    return {
+      images: [
+        { src: require('@/assets/default.jpg'), alt: 'Davis' },
+        { src: require('@/assets/default.jpg'), alt: 'Parker' },
+        { src: require('@/assets/default.jpg'), alt: 'Ethan' }
+      ]
+    };
+  }
 }
 </script>
 
