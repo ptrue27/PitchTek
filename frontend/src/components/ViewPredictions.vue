@@ -124,20 +124,7 @@ export default {
       console.log(this.predictions.length + "::" + this.predictions[0].type + this.predictions[1].type);
       this.currentPage = Math.min(this.currentPage + 1, this.predictions.length - 1);
     },
-    /*checkFileExists(my_URL) {
-      fetch(my_URL)
-        .then(response => {
-          if (response.ok) {
-            console.log("this.fileExists = true; URL: ", my_URL)
-          } else {
-            console.log("this.fileExists = false; URL: ", my_URL)
-          }
-        })
-        .catch(error => {
-          console.error('Error checking file existence:', error);
-          console.log("this.fileExists = false; URL: ", my_URL)
-        });
-    }*/
+
   },
   /*mounted() {
     this.emitter.on("ChangePitch", my_var => {
