@@ -5,7 +5,7 @@ from flask_login import LoginManager
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static", static_folder="../frontend/dist")
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 login = LoginManager(app)
