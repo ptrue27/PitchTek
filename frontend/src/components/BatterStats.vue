@@ -92,7 +92,7 @@ export default {
         handleBatterChange() {
             const index = this.batterNames.indexOf(this.batter.name);
             const batterId = this.batterIds[index];
-            const path = 'http://localhost:5000/api/get_batter/' + batterId;
+            const path = 'http://' + this.$store.state.host + ':5000/api/get_batter/' + batterId;
 
             axios.get(path)
                 .then((res) => {

@@ -240,7 +240,7 @@
       },
       handleSeasonChange() {
         // Fill team selection lists
-        const path = "http://localhost:5000/api/get_teams";
+        const path = "http://" + this.$store.state.host + ":5000/api/get_teams";
         axios.get(path)
             .then((res) => {
                 const teams = res.data;

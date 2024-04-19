@@ -92,7 +92,7 @@ export default {
         handlePitcherChange() {
             const index = this.pitcherNames.indexOf(this.pitcher.name);
             const id = this.pitcherIds[index];
-            const path = 'http://localhost:5000/api/get_pitcher/' + id;
+            const path = 'http://' + this.$store.state.host + ':5000/api/get_pitcher/' + id;
 
             axios.get(path)
                 .then((res) => {

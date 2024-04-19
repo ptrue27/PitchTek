@@ -80,7 +80,7 @@ export default {
     handleHomeTeamChange() {
       const index = this.$store.state.teamNames.indexOf(this.homeTeamName);
       const teamId = this.$store.state.teamIds[index];
-      const path = 'http://localhost:5000/api/get_roster/' + teamId;
+      const path = 'http://' + this.$store.state.host + ':5000/api/get_roster/' + teamId;
 
       axios.get(path)
         .then((res) => {
@@ -113,7 +113,7 @@ export default {
     handleAwayTeamChange() {
       const index = this.$store.state.teamNames.indexOf(this.awayTeamName);
       const teamId = this.$store.state.teamIds[index];
-      const path = 'http://localhost:5000/api/get_roster/' + teamId;
+      const path = 'http://' + this.$store.state.host + ':5000/api/get_roster/' + teamId;
 
       axios.get(path)
         .then((res) => {

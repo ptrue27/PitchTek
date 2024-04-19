@@ -1,7 +1,7 @@
 from app.get_prediction import Predictions_Class
 from app import app, user_manager, stats_api
 import statsapi 
-from flask import request, jsonify, render_template
+from flask import request, jsonify, render_template, send_from_directory
 from app.data_visualizer import DataVisualizer
 import os
 
@@ -334,4 +334,6 @@ def get_player_batting_stats():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+    if path and path != 'favicon.ico':  # Exclude favicon.ico from catch-all
+        return send_from_directory(app.static_folder, path)
     return render_template('index.html')
