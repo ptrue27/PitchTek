@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <v-container fluid class="history-container">
     <button @click="addComponent">Add Component</button>
     <div v-for="(component, index) in components" :key="index" class="component">
       <my-custom-component />
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -30,8 +30,12 @@ export default {
 
 <style>
 .component {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
+  margin-top: 2px;
+  padding: 2px;
+  border: 0px solid #ccc;
+}
+.history-container {
+  background-color: #C8E6C9;
+  height: 80px;
 }
 </style>
