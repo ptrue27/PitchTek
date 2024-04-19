@@ -103,7 +103,7 @@
           if (this.mode == "Login") {
             endpoint = "login"
           }
-          const path = 'http://' + this.$store.state.host + ':5000/api/' + endpoint;
+          const path = 'http://' + this.$store.state.host + '/api/' + endpoint;
           const response = await axios.post(path, {
             username: this.username,
             password: this.password

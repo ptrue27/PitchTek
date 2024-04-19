@@ -59,7 +59,7 @@ export default {
        formData.append('file', this.selectedFile);
 
       axios
-        .post('http://' + this.$store.state.host + ':5000/api/upload', formData, {
+        .post('http://' + this.$store.state.host + '/api/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

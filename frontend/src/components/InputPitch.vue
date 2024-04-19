@@ -137,7 +137,7 @@
             handlePredictButtonClick() {
                 console.log('Predict Button clicked!');
 
-                const path = 'http://' + this.$store.state.host + ':5000/make_prediction';
+                const path = 'http://' + this.$store.state.host + '/make_prediction';
                 const params = this.gameState;
                 axios.get(path, { params })
                 .then((res) => {

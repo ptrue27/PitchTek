@@ -90,7 +90,7 @@ export default {
     async logoutUser() {
       try {
         // Make POST request
-        const path = 'http://' + this.$store.state.host + ':5000/api/logout';
+        const path = 'http://' + this.$store.state.host + '/api/logout';
         const response = await axios.post(path);
         
         // Check if logout was successful
