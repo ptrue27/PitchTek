@@ -244,14 +244,16 @@
         .catch(error => console.error('Failed to upload file:', error));
     },
     fetchLatestAtBatPlot() {
+      const timestamp = new Date().getTime();
       axios.get(`http://localhost:5000/fetch_latest_at_bat_plot`, { params: { player_name: this.selectedPlayer } })
         .then(response => {
-          this.imageUrl = response.data.image_url;
+          this.generatedImageUrl = `${response.data.image_url}?t=${timestamp}`;
+          this.showImage = true;
         })
         .catch(error => {
           console.error("Error fetching latest at-bat plot:", error);
         });
-        this.showImage = true;
+        
     },
 analyzePitcherData() {
   if (this.selectedPitcherIndex === null || !this.csvData) return;
