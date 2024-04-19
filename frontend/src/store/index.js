@@ -66,7 +66,7 @@ const defaultPredictions = [
 const store = createStore({
     state() {
         return {
-            host: "http://ec2-18-208-169-218.compute-1.amazonaws.com/",
+            host: "ec2-18-208-169-218.compute-1.amazonaws.com/",
             isLoggedIn: localStorage.getItem("token") !== null,
             teamIds: [],
             teamNames: [],
