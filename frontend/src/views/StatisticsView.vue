@@ -131,6 +131,39 @@ export default {
   },
   methods: {
     uploadFile(file) {
+    // Create a new FileReader object
+    const reader = new FileReader();
+
+    // Define what happens when the file has been read
+    reader.onload = (e) => {
+      const content = e.target.result;
+      // Split the content by newline to count rows, consider CSV header
+      const rows = content.split('\n').filter(line => line.trim() !== '');
+      if (rows.length < 150) {
+        alert('Warning: The uploaded file contains less than 150 rows. This might affect the analysis accuracy.');
+      }
+
+      // Proceed to upload the file to the server
+      const formData = new FormData();
+      formData.append('file', file);
+      axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        console.log(response.data.message);
+        // Additional actions based on successful upload, if needed
+      })
+      .catch(error => {
+        console.error('Error during file upload:', error);
+      });
+    };
+
+    // Trigger the file read
+    reader.readAsText(file);
+  },
+    uploadFile(file) {
       const formData = new FormData();
       formData.append('file', file);
 
