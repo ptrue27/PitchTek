@@ -14,7 +14,7 @@
 
     <h2>Dashboard View</h2>
 
-    <v-img :src="require('@/assets/dashboard.png')" style="margin-top: 5px; margin-bottom: 1  px; height: 392px;"></v-img>
+    <v-img :src="require('@/assets/dashboard.png')" style="margin-top: 0px;  height: 392px;"></v-img>
     <h2>Project Description</h2>
     <p>
       PitchTek is a baseball analytics application that allows users to view player statistics, record a game’s progress,
@@ -43,8 +43,11 @@
     </ul>
 
     <h2>Team Members</h2>
-  <div class="image-row">
-    <img v-for="(image, index) in images" :key="index" :src="image.src" :alt="image.alt" class="image">
+   <div class="image-row">
+    <div v-for="(image, index) in images" :key="index" class="image-wrapper">
+      <img :src="image.src" :alt="image.alt" class="image">
+      <span class="label">{{ image.label }}</span>
+    </div>
   </div>
   </div>
 </template>
@@ -57,9 +60,9 @@ export default {
  data() {
     return {
       images: [
-        { src: require('@/assets/Parker_True_-_Head_Shot.jpg'), alt: 'Davis' },
-        { src: require('@/assets/davis.jpg'), alt: 'Parker' },
-        { src: require('@/assets/ethan.jpg'), alt: 'Ethan' }
+        { src: require('@/assets/Parker_True_-_Head_Shot.jpg'), label: 'Parker True' },
+        { src: require('@/assets/davis.jpg'), label: 'Davis Dunkley' },
+        { src: require('@/assets/ethan.jpg'), label: 'Ethan Carroll' }
       ]
     };
   }
@@ -80,4 +83,20 @@ export default {
   width: 33.33%;
   margin-right: 10px;
 }
+.image {
+  max-width: 220px; /* Adjust the maximum width as needed */
+  max-height: 220px; /* Adjust the maximum height as needed */
+}
+
+.image-wrapper {
+  display: inline-block;
+  margin-right: 20px; /* Adjust spacing between images */
+}
+
+.label {
+  display: block;
+  text-align: center;
+  font-weight: bold; /* Apply bold font weight */
+}
+
 </style>
