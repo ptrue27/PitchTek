@@ -1,9 +1,10 @@
 from app.get_prediction import Predictions_Class
 from app import app, user_manager, stats_api
-#import statsapi 
+import statsapi 
 from app.data_visualizer import DataVisualizer
 import os
 from flask import Flask, request, jsonify, send_file, send_from_directory
+from werkzeug.utils import secure_filename
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')  # Use the 'Agg' backend, which is non-interactive and does not require a GUI.
@@ -186,7 +187,7 @@ def fetch_latest_at_bat_plot():
 @app.route('/get_latest_image', methods=['GET'])
 def get_latest_image():
     return send_from_directory(app.static_folder, 'latest_at_bat_plot.png')
-'''
+
 # Directory where uploaded files are stored
 UPLOAD_FOLDER = 'C:/Users/davis/PitchTek-2/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -408,4 +409,3 @@ def get_player_batting_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-'''

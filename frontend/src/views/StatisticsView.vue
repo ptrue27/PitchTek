@@ -19,8 +19,12 @@
             Select a file containing player statistics to upload and analyze.
           </v-card-text>
           <v-card-actions class="justify-center">
-            <input type="file" @change="file => uploadFile(file.target.files[0])" />
+            <input type="file" @change="uploadFile(file.target.files[0])" />
             <v-btn color="success" @click="generateImages">Generate Images</v-btn>
+           
+            <a href="C:/Users/davis/Documents/PitchTek/backend/assets/Pitch_Data_Template.csv" download="Pitch_Data_Template.csv">
+              <v-btn color="primary">Download Template</v-btn>
+            </a>
           </v-card-actions>
         </v-card>
       </v-col>
