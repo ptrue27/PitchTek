@@ -14,7 +14,7 @@
 
     <h2>Dashboard View</h2>
 
-    <v-img :src="require('@/assets/dashboard.png')" style="margin-top: 5px; margin-bottom: 1px; height: 392px;"></v-img>
+    <v-img :src="require('@/assets/dashboard.png')" style="margin-top: 5px; margin-bottom: 1  px; height: 392px;"></v-img>
     <h2>Project Description</h2>
     <p>
       PitchTek is a baseball analytics application that allows users to view player statistics, record a game’s progress,
@@ -57,9 +57,9 @@ export default {
  data() {
     return {
       images: [
-        { src: require('@/assets/default.jpg'), alt: 'Davis' },
-        { src: require('@/assets/default.jpg'), alt: 'Parker' },
-        { src: require('@/assets/default.jpg'), alt: 'Ethan' }
+        { src: require('@/assets/Parker_True_-_Head_Shot.jpg'), alt: 'Davis' },
+        { src: require('@/assets/davis.jpg'), alt: 'Parker' },
+        { src: require('@/assets/ethan.jpg'), alt: 'Ethan' }
       ]
     };
   }
