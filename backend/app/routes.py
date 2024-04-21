@@ -189,7 +189,7 @@ def get_latest_image():
     return send_from_directory(app.static_folder, 'latest_at_bat_plot.png')
 
 # Directory where uploaded files are stored
-UPLOAD_FOLDER = 'C:/Users/davis/PitchTek-2/uploads'
+UPLOAD_FOLDER = './PitchTek-2/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Variable to keep track of the latest uploaded file
@@ -219,7 +219,7 @@ def upload_file():
 
 @app.route('/images/<filename>')
 def uploaded_file(filename):
-    return send_from_directory('C:/Users/davis/PitchTek-2/frontend/src/assets/', filename)
+    return send_from_directory('./frontend/src/assets/', filename)
 
 @app.route('/api/generate-images', methods=['POST'])
 def generate_images_route():
