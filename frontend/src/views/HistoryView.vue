@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     ...mapState(['inning', 'home', 'away',
-      'predictions', 'outs', 'balls', 'strikes', 'bases'])
+      'predictions', 'outs', 'balls', 'strikes', 'bases', 'current'])
   },
   data() {
     return {
@@ -36,7 +36,12 @@ export default {
         outs: this.outs,
         balls: this.balls,
         strikes: this.strikes,
-        bases: [...this.bases]
+        bases: [...this.bases],
+        current: this.current,
+        pitcher_name: this.current.pitcher.name,
+        pitcher_img: this.current.pitcher.img,
+        batter_name: this.current.batter.name,
+        batter_img: this.current.batter.img,
       };
       // Push the store snapshot into components array
       this.components.unshift(storeSnapshot);

@@ -154,10 +154,32 @@
           </div>
         </v-col>
 
-        <!-- Second Column with Text -->
+        <!-- Second Column -->
         <v-col cols="12" md="3">
-          <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <v-row align="center" justify="center">
+            <v-col cols="5" class="text-center">
+              <v-img v-if="storeSnapshot.pitcher_img"
+                :src="storeSnapshot.pitcher_img"
+                style="border: 1px solid black;"
+                class="align-self-center"
+              ></v-img>
+              <div><b>Pitcher</b></div>
+              <div>{{storeSnapshot.pitcher_name}}</div>
+            </v-col>
+            <v-col cols="2" class="text-center">vs</v-col>
+            <v-col cols="5" class="text-center">
+              <v-img v-if="storeSnapshot.batter_img"
+                :src="storeSnapshot.batter_img"
+                style="border: 1px solid black;"
+                class="align-self-center"
+              ></v-img>
+              <div><b>Batter</b></div>
+              <div>{{storeSnapshot.batter_name}}</div>
+            </v-col>
+          </v-row>
         </v-col>
+
+
 
         <!-- Third Column with Image -->
         <v-col cols="12" md="3" class="image-container">
@@ -180,7 +202,7 @@
           </v-row>
           <v-row class="predict-row">
             <v-col class="predict-col">Location:</v-col>
-            <v-col class="predict-data-col">Zone {{ storeSnapshot.predictions[0].location }}</v-col>
+            <v-col class="predict-data-col">Zone {{ storeSnapshot.current.pitcher.name}}</v-col>
           </v-row>
         </v-col>
       </v-row>

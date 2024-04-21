@@ -248,6 +248,7 @@ const store = createStore({
             state.predictions = { ...defaultPredictions };
         },
     },
+    
 });
 
 export default store
