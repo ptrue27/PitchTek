@@ -1,6 +1,6 @@
 from app.get_prediction import Predictions_Class
 from app import app, user_manager, stats_api
-import statsapi 
+#import statsapi
 from flask import request, jsonify, render_template, send_from_directory
 from app.data_visualizer import DataVisualizer
 import os

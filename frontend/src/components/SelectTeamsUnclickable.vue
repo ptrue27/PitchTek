@@ -6,7 +6,6 @@
             <v-select readonly="true"
                 :items="homeTeamNames"
                 v-model="homeTeamName"
-                @update:modelValue="handleHomeTeamChange"
                 variant="solo-filled"
                 density="compact"
                 color="green-darken-1"
@@ -19,7 +18,6 @@
             <v-select readonly="true"
                 :items="awayTeamNames" 
                 v-model="awayTeamName"
-                @update:modelValue="handleAwayTeamChange"
                 variant="solo-filled" 
                 density="compact"
                 color="green-darken-1"
@@ -69,126 +67,35 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 
 export default {
-  data() {
-    return {
-        scores: [],
-    };
-  },
-  methods: {
-    handleHomeTeamChange() {
-      const index = this.$store.state.teamNames.indexOf(this.homeTeamName);
-      const teamId = this.$store.state.teamIds[index];
-      const path = 'http://localhost:5000/api/get_roster/' + teamId;
-
-      axios.get(path)
-        .then((res) => {
-          const roster = res.data;
-          console.log("Loaded roster for " + teamId + ": " + 
-            roster.batters.id.length + " batters, " +
-            roster.pitchers.id.length + " pitchers"
-          );
-          const newHome = {
-            batterIds: roster.batters.id, 
-            batterNames: roster.batters.name,
-            pitcherIds: roster.pitchers.id,
-            pitcherNames: roster.pitchers.name,
-            score: 0,
-          };
-          this.$store.commit("setHome", newHome);
-        })
-        .catch((error) => {
-            console.error("Error loading roster for " + teamId + ": " + error);
-            const newHome = {
-              batterIds: [], 
-              batterNames: [], 
-              pitcherIds: [], 
-              pitcherNames: [],
-              score: 0,
-            };
-            this.$store.commit("setHome", newHome);
-        });
-    },
-    handleAwayTeamChange() {
-      const index = this.$store.state.teamNames.indexOf(this.awayTeamName);
-      const teamId = this.$store.state.teamIds[index];
-      const path = 'http://localhost:5000/api/get_roster/' + teamId;
-
-      axios.get(path)
-        .then((res) => {
-          const roster = res.data;
-          console.log("Loaded roster for " + teamId + ": " + 
-            roster.batters.id.length + " batters, " +
-            roster.pitchers.id.length + " pitchers"
-          );
-          const newAway = {
-            batterIds: roster.batters.id, 
-            batterNames: roster.batters.name,
-            pitcherIds: roster.pitchers.id,
-            pitcherNames: roster.pitchers.name,
-            score: 0,
-          };
-          this.$store.commit("setAway", newAway);
-        })
-        .catch((error) => {
-            console.error("Error loading roster for " + teamId + ": " + error);
-            const newAway = {
-              batterIds: [], 
-              batterNames: [], 
-              pitcherIds: [], 
-              pitcherNames: [],
-              score: 0,
-            };
-            this.$store.commit("setAway", newAway);
-        });
-    },
-  },
-  created() {
-    // Fill score selection list
-    this.scores.push(0);
-    for (let i = 1; i <= 99; i++) {
-      this.scores.push(i);
+  props: {
+    storeSnapshot: {
+      type: Object,
+      required: true
     }
   },
+
   computed: {
-    homeTeamNames() {
-      return this.$store.state.teamNames.filter(team => team !== this.awayTeamName);
-    },
-    awayTeamNames() {
-      return this.$store.state.teamNames.filter(team => team !== this.homeTeamName);
-    },
     homeTeamName: {
       get() {
-        return this.$store.state.home.teamName;
-      },
-      set(name) {
-        this.$store.commit("setHomeTeamName", name);
+        return this.storeSnapshot.home.teamName
       },
     },
     homeScore: {
       get() {
-        return this.$store.state.home.score;
-      },
-      set(score) {
-        this.$store.commit("setHomeScore", score);
+        return this.storeSnapshot.home.score
       },
     },
     awayTeamName: {
       get() {
-        return this.$store.state.away.teamName;
-      },
-      set(name) {
-        this.$store.commit("setAwayTeamName", name);
+        return this.storeSnapshot.away.teamName
       },
     },
     awayScore: {
       get() {
-        return this.$store.state.away.score;
-      },
-      set(score) {
-        this.$store.commit("setAwayScore", score);
+        return this.storeSnapshot.away.score
       },
     },
   },
@@ -205,6 +112,5 @@ export default {
         font-size: 16px;
         margin-top: -5px;
     }
-
 
 </style>

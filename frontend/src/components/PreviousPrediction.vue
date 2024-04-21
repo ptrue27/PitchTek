@@ -9,7 +9,7 @@
             <!--Team selection and score-->
             <v-row style="border-bottom: 2px solid #43A047;">
               <v-col>
-                <SelectTeams/>
+                <SelectTeams :storeSnapshot="storeSnapshot" />
               </v-col>
             </v-row>
 
@@ -85,7 +85,7 @@
                   </v-col>
                   <v-col>
                     <select disabled class="vuetify-like-dropdown">
-                      <option selected>{{inning}}</option>
+                      <option selected>{{storeSnapshot.inning}}</option>
                     </select>
                   </v-col>
                 </v-row>
@@ -101,7 +101,7 @@
                     <v-chip
                         @click="this.$store.commit('setOuts', index)"
                         :style="{backgroundColor: getColor(
-                              this.$store.state.outs, index)}"
+                              storeSnapshot.outs, index)}"
                         :class="{'mr-1': true, 'unclickable': true}"
                         size="x-small"
                     >
@@ -121,7 +121,7 @@
                     <v-chip
                         @click="this.$store.commit('setBalls', index)"
                         :style="{backgroundColor: getColor(
-                              this.$store.state.balls, index)}"
+                              storeSnapshot.balls, index)}"
                         :class="{'mr-1': true, 'unclickable': true}"
                         size="x-small"
                     >
@@ -139,9 +139,8 @@
                   </v-col>
                   <v-col v-for="(_, index) in 3" :key="index" cols="2">
                     <v-chip
-                        @click="this.$store.commit('setStrikes', index)"
                         :style="{backgroundColor: getColor(
-                              this.$store.state.strikes, index)}"
+                              storeSnapshot.strikes, index)}"
                         :class="{'mr-1': true, 'unclickable': true}"
                         size="x-small"
                     >
@@ -167,21 +166,21 @@
 
         <!-- Fourth Column with Text -->
         <v-col cols="2">
-          <v-row style="margin-top: 75px;">
+          <v-row style="margin-top: 25px;">
             <v-col class="predict-col">Confidence:</v-col>
-            <v-col class="predict-data-col">{{ predictions[0].confidence }}%</v-col>
+            <v-col class="predict-data-col">{{ storeSnapshot.predictions[0].confidence }}%</v-col>
           </v-row>
           <v-row class="predict-row">
             <v-col class="predict-col">Pitch type:</v-col>
-            <v-col class="predict-data-col">{{ predictions[0].type }}</v-col>
+            <v-col class="predict-data-col">{{ storeSnapshot.predictions[0].type }}</v-col>
           </v-row>
           <v-row class="predict-row">
             <v-col class="predict-col">Speed:</v-col>
-            <v-col class="predict-data-col">{{ predictions[0].speed }} mph</v-col>
+            <v-col class="predict-data-col">{{ storeSnapshot.predictions[0].speed }} mph</v-col>
           </v-row>
           <v-row class="predict-row">
             <v-col class="predict-col">Location:</v-col>
-            <v-col class="predict-data-col">Zone {{ predictions[0].location }}</v-col>
+            <v-col class="predict-data-col">Zone {{ storeSnapshot.predictions[0].location }}</v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -191,27 +190,24 @@
 
 
 <script>
-import {mapState} from 'vuex';
+
 import SelectTeams from "@/components/SelectTeamsUnclickable.vue";
 
 export default {
   components: {
     SelectTeams
   },
-  data() {
-    return {
-      image_path: "default_heat_map.jpg",
-
-    };
+  props: {
+    storeSnapshot: {
+      type: Object,
+      required: true
+    }
   },
   computed: {
     imageURL() {
-      return require("@/assets/heat_maps/" + this.predictions[0].img)
+      return require("@/assets/heat_maps/" + this.storeSnapshot.predictions[0].img )
     },
-    ...mapState({
-      predictions: state => state.predictions,
-      inning: state => state.inning
-    })
+
   },
   methods: {
     getColor(state, index) {
@@ -226,7 +222,7 @@ export default {
       }
     },
     getBaseColor(index) {
-      if (this.$store.state.bases[index]) {
+      if (this.storeSnapshot.bases[index]) {
         return '#43A047';
       } else {
         return '#EEEEEE';
@@ -238,23 +234,11 @@ export default {
 
 <style>
 .image-container img {
-  height: 300px; /* Set your desired height */
-  width: auto;  /* Maintain aspect ratio */
+  height: 300px;
+  width: auto;
 }
 .image-container {
   flex: 1;
-}
-
-.text-table {
-  flex: 2;
-}
-
-table {
-  width: 100%;
-}
-
-th {
-  background-color: #ffffff;
 }
 
 .unclickable {
