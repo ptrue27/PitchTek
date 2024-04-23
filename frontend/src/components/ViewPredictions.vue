@@ -126,31 +126,6 @@ export default {
     },
 
   },
-  /*mounted() {
-    this.emitter.on("ChangePitch", my_var => {
-      console.log('ChangePitch() called, with pitch:', my_var[0]);
-      this.data[0].type = my_var[0]
-      this.data[0].speed = my_var[1]
-
-      this.predictionImg = this.curr_pitcher_id + "_" + my_var[0] + "_heat_map.jpg"
-      console.log("this image: " + this.imageURL)
-    });
-
-    // Sets current pitcher name/id and resets image
-    this.emitter.on("ChangePitcher", pitcher_obj => {
-
-      // If heat maps for pitcher does not exist, make images
-      // this.checkFileExists("@/assets/heat_maps/default_heat_map.jpg")
-
-      this.curr_pitcher_id = pitcher_obj.id
-
-      // Set values to default
-      this.image_path = "default_heat_map.jpg"
-      this.data[0].type = ""
-      this.data[0].speed = ""
-
-    });
-  },*/
 };
 </script>
 

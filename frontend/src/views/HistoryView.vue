@@ -1,6 +1,5 @@
 <template>
   <v-container fluid class="history-container">
-    <button @click="addComponent">Add Component</button>
     <div v-for="(componentData, index) in components" :key="index" class="component">
       <!-- Pass the store snapshot as a prop to my-custom-component -->
       <my-custom-component :storeSnapshot="componentData" />
@@ -46,6 +45,9 @@ export default {
       // Push the store snapshot into components array
       this.components.unshift(storeSnapshot);
     }
+  },
+  created() {
+    this.emitter.on('UpdateHistory', this.addComponent);
   }
 };
 </script>

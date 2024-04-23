@@ -144,6 +144,7 @@
                     const predictions = res.data.predictions;
                     console.log("Pitch Predictions Recieved: " + predictions);
                     this.$store.commit("predict", predictions);
+                    this.emitter.emit("UpdateHistory");
                 })
                 .catch((error) => {
                     console.error(error);
