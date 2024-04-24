@@ -2,8 +2,7 @@
 #
 # NOTE: The heat map is from the catchers perspective
 #
-# Pitchers with heatmaps that look the same: 543056
-import unittest
+#
 import sqlite3
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,8 +11,9 @@ import matplotlib.patches as patches
 
 
 def get_dataframe(id):
+
     # Connect to SQLite database
-    conn = sqlite3.connect('databases/pitches.db')
+    conn = sqlite3.connect('../databases/pitches.db')
 
     # Create a cursor object to execute SQL queries
     cursor = conn.cursor()
@@ -40,7 +40,6 @@ def get_dataframe(id):
 # Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
 def make_heat_map(pitch_type, player_id):
 
-    path = '../uploads/' + player_id + '_pitch_data.csv'
     df = get_dataframe(player_id)
 
     # Extract values
@@ -89,11 +88,11 @@ def make_heat_map(pitch_type, player_id):
     plt.yticks([])
 
     # Display the plot
-    #plt.show()
+    plt.show()
 
     #Export the plot
-    file_name = r"..\frontend\src\assets\heat_maps\\" + player_id + "_" + pitch_type + "_heat_map.jpg"
-    plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+    #file_name = r"..\frontend\src\assets\heat_maps\\" + player_id + "_" + pitch_type + "_heat_map.jpg"
+    #plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
     #return file_name
 
@@ -145,13 +144,8 @@ def create_default_strike_zone():
 
 def main():
 
-    id = "608665"
-
-    #create_default_strike_zone()
-    make_heat_map("SI", id)
-   # make_heat_map("SL", id)
-    #make_heat_map("CU", id)
-    #make_heat_map("CH", id)
+    id = "434378"
+    make_heat_map("FF", id)
 
 
 main()
