@@ -75,6 +75,7 @@ def make_heat_map(pitch_type, player_id, location, error):
     for i in range(1, 3):
         plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
 
+
     # Add Pitch Location Prediction + Error Zone
     plt.plot(location[0], location[1], 'bo')
     error_ellipse = Ellipse(
