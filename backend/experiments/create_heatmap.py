@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import matplotlib.patches as patches
+from matplotlib.patches import Ellipse
+import os
 
 
 def get_dataframe(id):
@@ -38,7 +40,7 @@ def get_dataframe(id):
     return df
 
 # Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
-def make_heat_map(pitch_type, player_id):
+def make_heat_map(pitch_type, player_id, location, error):
 
     df = get_dataframe(player_id)
 
@@ -73,6 +75,12 @@ def make_heat_map(pitch_type, player_id):
     for i in range(1, 3):
         plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
 
+    # Add Pitch Location Prediction + Error Zone
+    plt.plot(location[0], location[1], 'bo')
+    error_ellipse = Ellipse(
+        xy=location, width=2*error[0], height=2*error[0], edgecolor='b', fc='None', lw=2)
+    plt.gca().add_patch(error_ellipse)
+
     # Remove the x and y-axis
     #plt.axis('off')
 
@@ -91,8 +99,10 @@ def make_heat_map(pitch_type, player_id):
     plt.show()
 
     #Export the plot
-    #file_name = r"..\frontend\src\assets\heat_maps\\" + player_id + "_" + pitch_type + "_heat_map.jpg"
-    #plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+    #directory = r"..\..\frontend\src\assets\heat_maps_v2"
+    #file_name = f"{player_id}_{pitch_type}_heat_map.jpg"
+    #file_path = os.path.join(directory, file_name)
+    #plt.savefig(file_path, bbox_inches='tight', pad_inches=0.1)
 
     #return file_name
 
@@ -145,7 +155,9 @@ def create_default_strike_zone():
 def main():
 
     id = "434378"
-    make_heat_map("FF", id)
+    location = [0.5615384615384615, 1.9673992673992675]
+    error = [0.5585559817570016, 0.8199079238523023]
+    make_heat_map("FF", id, location, error)
 
 
 main()

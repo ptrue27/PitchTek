@@ -98,21 +98,28 @@ def main():
         X, y, test_size=0.2, random_state=42)
     model = train_model(X_train, y_train)
 
-    release_speed = float(
-        input("Enter the release speed of the pitch (mph): "))
-    plate_x = float(input("Enter the last pitch's plate_x position: "))
-    plate_z = float(input("Enter the last pitch's plate_z position: "))
-    balls = int(input("Enter the current number of balls: "))
-    strikes = int(input("Enter the current number of strikes: "))
+    #release_speed = float(input("Enter the release speed of the pitch (mph): "))
+    #plate_x = float(input("Enter the last pitch's plate_x position: "))
+    #plate_z = float(input("Enter the last pitch's plate_z position: "))
+    #balls = int(input("Enter the current number of balls: "))
+    #strikes = int(input("Enter the current number of strikes: "))
+
+    release_speed = 90
+    plate_x = 0
+    plate_z = 0
+    balls = 0
+    strikes = 0
 
     pitch_type, location, error = predict_and_estimate_error(
         model, label_encoder, release_speed, plate_x, plate_z, balls, strikes)
+
     visualize_prediction_with_error(pitch_type, location, error)
 
     # Predict the most likely next pitch type based on the count
     next_pitch_type = predict_next_pitch_type(data, balls, strikes)
     print(f"The most likely next pitch type is: {next_pitch_type}")
-
+    print(f"location: {location}")
+    print(f"error: {error}")
 
 if __name__ == "__main__":
     main()
