@@ -57,18 +57,14 @@ const defaultPrediction = {
     confidence: '-',
     type: '-',
 };
-const defaultPredictions = [
-    { ...defaultPrediction }, 
-    { ...defaultPrediction }, 
-    { ...defaultPrediction },
-];
 
 const store = createStore({
     state() {
         return {
-            // host: "localhost:5000" // developent
-            host: "pitchtek.pro", // production
+            host: "localhost:5000", // development
+            //host: "pitchtek.pro", // production
             isLoggedIn: localStorage.getItem("token") !== null,
+            recording: false,
             teamIds: [],
             teamNames: [],
             inning: "1∧",
@@ -81,9 +77,13 @@ const store = createStore({
             away: { ...defaultTeam },
             current: { ...defaultTeam },
             matchup: { ...defaultMatchup },
-            predictions: [ ...defaultPredictions ],
-            seasons: localStorage.getItem("seasons") ? JSON.parse(localStorage.getItem("seasons")) : [],
-            season: "Select Season",
+            prediction: { ...defaultPrediction },
+            season: {
+                ids: localStorage.getItem("seasonIds") ? JSON.parse(localStorage.getItem("seasonIds")) : [],
+                names: localStorage.getItem("seasonNames") ? JSON.parse(localStorage.getItem("seasonNames")) : [],
+                id: 0,
+                name: "Select Season"
+            },
             outs: 0,
             balls: 0,
             strikes: 0,
@@ -92,39 +92,36 @@ const store = createStore({
     },
     mutations: {
         login(state, payload) {
-            state.seasons = payload.seasons;
-            localStorage.setItem('token', payload.token);
-            localStorage.setItem('seasons', JSON.stringify(payload.seasons));
             state.isLoggedIn = true;
+            localStorage.setItem('token', payload.token);
+            state.season.ids = payload.season_ids;
+            localStorage.setItem('seasonIds', JSON.stringify(payload.season_ids));
+            state.season.names = payload.season_names;
+            localStorage.setItem('seasonNames', JSON.stringify(payload.season_names));
         },
         logout(state) {
             console.log("Logout: " + state.isLoggedIn);
             this.commit('resetDashboard');
             localStorage.removeItem('token');
             state.isLoggedIn = false;
-            state.season = "Select Season";
+            state.season.name = "Select Season";
         },
-        predict(state, predictions) {
-            state.predictions = predictions;
+        setRecording(state, isRecording) {
+            state.recording = isRecording;
         },
-        setMatchup(state, rand) {
-            if(rand) {
-                state.matchup = {     
-                    pa: rand,
-                    k: Math.floor(rand * .25),
-                    bb:  Math.floor(rand * .085),
-                    hits:  Math.floor(rand * .29),
-                    singles:  Math.floor(rand * .14),
-                    doubles:  Math.floor(rand * .05),
-                    triples:  Math.floor(rand * .03),
-                    hr:  Math.floor(rand * .07),
-                };
+        predict(state, prediction) {
+            state.prediction = prediction;
+        },
+        setMatchup(state, matchup) {
+            if(matchup) {
+                state.matchup = matchup;
             } else {
                 state.matchup = { ...defaultMatchup };
             }
         },
         setSeason(state, season) {
-            state.season = season;
+            state.season.name = season.name;
+            state.season.id = season.id;
             this.commit('resetDashboard');
         },
         setTeamIds(state, ids) {
@@ -245,7 +242,7 @@ const store = createStore({
             state.balls = 0;
             state.strikes = 0;
             state.bases = [false, false, false];
-            state.predictions = { ...defaultPredictions };
+            state.prediction = { ...defaultPrediction };
         },
     },
     

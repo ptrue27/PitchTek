@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="history-container">
+  <v-container fluid  class="dashboard-container">
     <div v-for="(componentData, index) in components" :key="index" class="component">
       <!-- Pass the store snapshot as a prop to my-custom-component -->
       <my-custom-component :storeSnapshot="componentData" />
@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     ...mapState(['inning', 'home', 'away',
-      'predictions', 'outs', 'balls', 'strikes', 'bases', 'current'])
+      'prediction', 'outs', 'balls', 'strikes', 'bases', 'current'])
   },
   data() {
     return {
@@ -29,14 +29,21 @@ export default {
       // Capture the entire state of the Vuex store
       const storeSnapshot = {
         inning: this.inning,
-        home: this.home,
-        away: this.away,
-        predictions: this.predictions,
+        home_name: this.home.teamName,
+        home_score: this.home.score,
+        away_name: this.away.teamName,
+        away_score: this.away.score,
+        prediction_img: this.prediction.img,
+        prediction_speed: this.prediction.speed,
+        prediction_location: this.prediction.location,
+        prediction_confidence: this.prediction.confidence,
+        prediction_type: this.prediction.type,
         outs: this.outs,
         balls: this.balls,
         strikes: this.strikes,
-        bases: [...this.bases],
-        current: this.current,
+        base_first: this.bases[0],
+        base_second: this.bases[1],
+        base_third: this.bases[2],
         pitcher_name: this.current.pitcher.name,
         pitcher_img: this.current.pitcher.img,
         batter_name: this.current.batter.name,
@@ -57,10 +64,5 @@ export default {
   margin-top: 2px;
   padding: 2px;
   border: 0px solid #ccc;
-}
-
-.history-container {
-  background-color: #C8E6C9;
-  height: auto;
 }
 </style>

@@ -113,6 +113,7 @@
           // Check if request was successful
           if (response.status == 200 || response.status == 201) {
             this.errorMessage = '';
+            console.log("RESPONSE" + response)
             this.$store.commit("login", response.data);
             this.$router.push({ name: 'Dashboard' });
           } 
@@ -134,7 +135,7 @@
   
 <style>
   .error-message {
-    color: rgb(196, 46, 46);
+    color: rgb(182, 45, 45);
   }
   .login-card {
     padding: 20px;

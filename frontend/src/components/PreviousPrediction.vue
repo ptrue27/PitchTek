@@ -27,8 +27,7 @@
                   <v-row class="no-wrap">
                     <v-col class="text-center">
                       <v-chip
-                          @click="this.$store.commit('toggleBase', 1)"
-                          :style="{backgroundColor: getBaseColor(1)}"
+                          :style="{backgroundColor: getBaseColor(storeSnapshot.base_second)}"
                           :class="{'square-chip': true, 'unclickable': true}"
                           size="small"
                       >2
@@ -41,8 +40,7 @@
                     <v-spacer></v-spacer>
                     <v-col class="text-center">
                       <v-chip
-                          @click="this.$store.commit('toggleBase', 2)"
-                          :style="{backgroundColor: getBaseColor(2)}"
+                          :style="{backgroundColor: getBaseColor(storeSnapshot.base_third)}"
                           :class="{'square-chip': true, 'unclickable': true}"
                           size="small"
                       >3
@@ -50,8 +48,7 @@
                     </v-col>
                     <v-col class="text-center">
                       <v-chip
-                          @click="this.$store.commit('toggleBase', 0)"
-                          :style="{backgroundColor: getBaseColor(0)}"
+                          :style="{backgroundColor: getBaseColor(storeSnapshot.base_first)}"
                           :class="{'square-chip': true, 'unclickable': true}"
                           size="small"
                       >1
@@ -99,7 +96,6 @@
                   </v-col>
                   <v-col v-for="(_, index) in 3" :key="index" cols="2">
                     <v-chip
-                        @click="this.$store.commit('setOuts', index)"
                         :style="{backgroundColor: getColor(
                               storeSnapshot.outs, index)}"
                         :class="{'mr-1': true, 'unclickable': true}"
@@ -119,7 +115,6 @@
                   </v-col>
                   <v-col v-for="(_, index) in 4" :key="index" cols="2">
                     <v-chip
-                        @click="this.$store.commit('setBalls', index)"
                         :style="{backgroundColor: getColor(
                               storeSnapshot.balls, index)}"
                         :class="{'mr-1': true, 'unclickable': true}"
@@ -179,30 +174,28 @@
           </v-row>
         </v-col>
 
-
-
         <!-- Third Column with Image -->
         <v-col cols="12" md="3" class="image-container">
-          <img :src="imageURL" alt="Image"/>
+          <img :src="imageURL" alt="Pitch prediction heatmap"/>
         </v-col>
 
         <!-- Fourth Column with Text -->
         <v-col cols="2">
           <v-row style="margin-top: 25px;">
             <v-col class="predict-col">Confidence:</v-col>
-            <v-col class="predict-data-col">{{ storeSnapshot.predictions[0].confidence }}%</v-col>
+            <v-col class="predict-data-col">{{ storeSnapshot.prediction_confidence }}%</v-col>
           </v-row>
           <v-row class="predict-row">
             <v-col class="predict-col">Pitch type:</v-col>
-            <v-col class="predict-data-col">{{ storeSnapshot.predictions[0].type }}</v-col>
+            <v-col class="predict-data-col">{{ storeSnapshot.prediction_type }}</v-col>
           </v-row>
           <v-row class="predict-row">
             <v-col class="predict-col">Speed:</v-col>
-            <v-col class="predict-data-col">{{ storeSnapshot.predictions[0].speed }} mph</v-col>
+            <v-col class="predict-data-col">{{ storeSnapshot.prediction_speed }} mph</v-col>
           </v-row>
           <v-row class="predict-row">
             <v-col class="predict-col">Location:</v-col>
-            <v-col class="predict-data-col">Zone {{ storeSnapshot.current.pitcher.name}}</v-col>
+            <v-col class="predict-data-col">Zone {{ storeSnapshot.prediction_location}}</v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -212,7 +205,6 @@
 
 
 <script>
-
 import SelectTeams from "@/components/SelectTeamsUnclickable.vue";
 
 export default {
@@ -227,7 +219,7 @@ export default {
   },
   computed: {
     imageURL() {
-      return require("@/assets/heat_maps/" + this.storeSnapshot.predictions[0].img )
+      return require("@/assets/heat_maps/" + this.storeSnapshot.prediction_img )
     },
 
   },
@@ -243,8 +235,8 @@ export default {
         return '#EEEEEE';
       }
     },
-    getBaseColor(index) {
-      if (this.storeSnapshot.bases[index]) {
+    getBaseColor(baseValue) {
+      if (baseValue) {
         return '#43A047';
       } else {
         return '#EEEEEE';

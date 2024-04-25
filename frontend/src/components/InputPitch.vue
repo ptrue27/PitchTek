@@ -83,6 +83,7 @@
                                     class="mx-auto"
                                     @click="handlePredictButtonClick"
                                     color="green-darken-1"
+                                    :disabled="isButtonDisabled"
                                 >Save Pitch</v-btn>  
                             </v-col>
                         </v-row>
@@ -106,6 +107,7 @@
 <script>
     import axios from 'axios';
     import InputPitchLocation from "@/components/InputPitchLocation.vue";
+    import { mapState } from 'vuex';
 
     export default {
         components: {
@@ -130,7 +132,6 @@
                         "Splitter (FS)",
                         "Sweeper (ST)"],
                 speed: 0.0,
-                curr_pitcher_id: "NA",
             };
         },
         methods: {
@@ -141,9 +142,9 @@
                 const params = this.gameState;
                 axios.get(path, { params })
                 .then((res) => {
-                    const predictions = res.data.predictions;
-                    console.log("Pitch Predictions Recieved: " + predictions);
-                    this.$store.commit("predict", predictions);
+                    const prediction = res.data;
+                    console.log("Pitch Prediction Recieved: " + prediction);
+                    this.$store.commit("predict", prediction);
                     this.emitter.emit("UpdateHistory");
                 })
                 .catch((error) => {
@@ -156,11 +157,27 @@
             },
         },
         computed: {
+            ...mapState({
+                pitcherId: state => state.current.pitcher.id,
+                batterId: state => state.current.batter.id,
+                recording: state => state.recording,
+            }),
             gameState() {
                 return {
                     inning: this.$store.state.inning,
+                    batter: this.$store.state.current.batter.id,
+                    pitcher: this.$store.state.current.pitcher.id,
+                    outs: this.$store.state.outs,
+                    balls: this.$store.state.balls,
+                    strikes: this.$store.state.strikes,
+                    bases: this.$store.state.bases,
+                    pitchSpeed: this.speed,
+                    pitchType: this.type,
                 };
-            }
+            },
+            isButtonDisabled() {
+                return (!this.recording || !this.pitcherId || !this.batterId);
+            },
         },
 
     };

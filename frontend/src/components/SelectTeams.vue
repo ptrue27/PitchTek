@@ -80,20 +80,24 @@ export default {
     handleHomeTeamChange() {
       const index = this.$store.state.teamNames.indexOf(this.homeTeamName);
       const teamId = this.$store.state.teamIds[index];
-      const path = 'http://' + this.$store.state.host + '/api/get_roster/' + teamId;
+      const path = 'http://' + this.$store.state.host + '/api/get_roster';
+      const params = {
+        season_name: this.$store.state.season.name,
+        team_id: teamId
+      };
 
-      axios.get(path)
+      axios.get(path, { params })
         .then((res) => {
           const roster = res.data;
           console.log("Loaded roster for " + teamId + ": " + 
-            roster.batters.id.length + " batters, " +
-            roster.pitchers.id.length + " pitchers"
+            roster.batters.ids.length + " batters, " +
+            roster.pitchers.ids.length + " pitchers"
           );
           const newHome = {
-            batterIds: roster.batters.id, 
-            batterNames: roster.batters.name,
-            pitcherIds: roster.pitchers.id,
-            pitcherNames: roster.pitchers.name,
+            batterIds: roster.batters.ids, 
+            batterNames: roster.batters.names,
+            pitcherIds: roster.pitchers.ids,
+            pitcherNames: roster.pitchers.names,
             score: 0,
           };
           this.$store.commit("setHome", newHome);
@@ -113,20 +117,24 @@ export default {
     handleAwayTeamChange() {
       const index = this.$store.state.teamNames.indexOf(this.awayTeamName);
       const teamId = this.$store.state.teamIds[index];
-      const path = 'http://' + this.$store.state.host + '/api/get_roster/' + teamId;
+      const path = 'http://' + this.$store.state.host + '/api/get_roster';
+      const params = {
+        season_name: this.$store.state.season.name,
+        team_id: teamId
+      };
 
-      axios.get(path)
+      axios.get(path, { params })
         .then((res) => {
           const roster = res.data;
           console.log("Loaded roster for " + teamId + ": " + 
-            roster.batters.id.length + " batters, " +
-            roster.pitchers.id.length + " pitchers"
+            roster.batters.ids.length + " batters, " +
+            roster.pitchers.ids.length + " pitchers"
           );
           const newAway = {
-            batterIds: roster.batters.id, 
-            batterNames: roster.batters.name,
-            pitcherIds: roster.pitchers.id,
-            pitcherNames: roster.pitchers.name,
+            batterIds: roster.batters.ids, 
+            batterNames: roster.batters.names,
+            pitcherIds: roster.pitchers.ids,
+            pitcherNames: roster.pitchers.names,
             score: 0,
           };
           this.$store.commit("setAway", newAway);

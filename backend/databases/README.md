@@ -49,6 +49,22 @@ SEASONS (
     name TEXT(32),
 )
 
+TEAMS (
+    id INTEGER PRIMARY KEY,
+    season_id INTEGER FOREIGN KEY,
+    name TEXT(32),
+)
+
+PITCHERS (
+    id INTEGER PRIMARY KEY,
+    team_id INTEGER FOREIGN KEY,
+)
+
+BATTERS (
+    id INTEGER PRIMARY KEY,
+    team_id INTEGER FOREIGN KEY,
+)
+
 GAMES (
     id INTEGER PRIMARY KEY,
     season_id INTEGER FOREIGN KEY,

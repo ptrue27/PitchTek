@@ -12,18 +12,16 @@ def sign_up():
     res = user_manager.user_sign_up(data["username"], data["password"])
     if res:
         return jsonify(res), 200
-    else:
-        return jsonify({'message': 'Username is unavailable'}), 400
+    return jsonify({'message': 'Username is unavailable'}), 400
 
 
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     res = user_manager.user_login(data["username"], data["password"])
-    if res["token"]:
+    if res:
         return jsonify(res), 200
-    else:
-        return jsonify({'message': 'Invalid username or password'}), 401
+    return jsonify({'message': 'Invalid username or password'}), 401
 
 
 @app.route('/api/logout', methods=['POST'])
@@ -34,43 +32,73 @@ def logout():
 
 @app.route("/api/get_teams", methods=["GET"])
 def get_teams():
-    data = request.get_json()
-    season_id, season_name = data["season_id"], data["season_name"]
-    if season_name.split(" ")[0] == "MLB":
-        teams_dict = stats_api.get_table("TEAMS")
-    if teams_dict:
-        return jsonify(teams_dict)
-    else:
-        return jsonify({"error": "Teams not found"}), 404
+    season_id = request.args.get("season_id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB teams
+    if split_name[0] == "MLB":
+        ids, names = stats_api.get_teams(int(split_name[1]))
+        return jsonify({"ids": ids, "names": names})
+    
+    return jsonify({"error": "Teams not found"}), 404
 
 
-@app.route('/api/get_roster/<int:id>', methods=['GET'])
-def get_roster(id):
-    batters_dict = stats_api.get_table("BATTERS", cols=["id", "name"], where=["team_id", id])
-    pitchers_dict = stats_api.get_table("PITCHERS", cols=["id", "name"], where=["team_id", id])
-    roster_dict = {"batters": batters_dict, "pitchers": pitchers_dict}
-    if batters_dict and pitchers_dict:
-        return jsonify(roster_dict)
-    else:
-        return jsonify({"error": "Roster not found"}), 404
+@app.route('/api/get_roster', methods=['GET'])
+def get_roster():
+    team_id = request.args.get("team_id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB roster
+    if split_name[0] == "MLB":
+        pitchers, batters = stats_api.get_roster(team_id, int(split_name[1]))
+        return jsonify({"pitchers": pitchers, "batters": batters})
+
+    return jsonify({"error": "Roster not found"}), 404
 
 
-@app.route('/api/get_batter/<int:id>', methods=['GET'])
-def get_batter(id):
-    batter_dict = stats_api.get_row("BATTERS", id)
-    if batter_dict:
-        return jsonify(batter_dict)
-    else:
-        return jsonify({"error": "Batter not found"}), 404
+@app.route('/api/get_batter', methods=['GET'])
+def get_batter():
+    id = request.args.get("id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB batter
+    if split_name[0] == "MLB":
+        batter = stats_api.get_batter(id, int(split_name[1]))
+        return jsonify(batter)
+
+    return jsonify({"error": "Batter not found"}), 404
 
 
-@app.route('/api/get_pitcher/<int:id>', methods=['GET'])
-def get_pitcher(id):
-    pitcher_dict = stats_api.get_row("PITCHERS", id)
-    if pitcher_dict:
-        return jsonify(pitcher_dict)
-    else:
-        return jsonify({"error": "Pitcher not found"}), 404
+@app.route('/api/get_pitcher', methods=['GET'])
+def get_pitcher():
+    id = request.args.get("id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB pitcher
+    if split_name[0] == "MLB":
+        pitcher = stats_api.get_pitcher(id, int(split_name[1]))
+        return jsonify(pitcher)
+
+    return jsonify({"error": "Pitcher not found"}), 404
+
+
+@app.route('/api/get_versus', methods=['GET'])
+def get_versus():
+    pitcher_id = request.args.get("pitcher_id")
+    batter_id = request.args.get("batter_id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB pitcher
+    if split_name[0] == "MLB":
+        matchup = stats_api.get_versus(batter_id, pitcher_id)
+        return jsonify(matchup)
+
+    return jsonify({"error": "Versus statistics not found"}), 404
 
 
 @app.route('/make_prediction', methods=['GET'])

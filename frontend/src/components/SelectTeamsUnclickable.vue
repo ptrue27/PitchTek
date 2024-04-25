@@ -80,22 +80,22 @@ export default {
   computed: {
     homeTeamName: {
       get() {
-        return this.storeSnapshot.home.teamName
+        return this.storeSnapshot.home_name
       },
     },
     homeScore: {
       get() {
-        return this.storeSnapshot.home.score
+        return this.storeSnapshot.home_score
       },
     },
     awayTeamName: {
       get() {
-        return this.storeSnapshot.away.teamName
+        return this.storeSnapshot.away_name
       },
     },
     awayScore: {
       get() {
-        return this.storeSnapshot.away.score
+        return this.storeSnapshot.away_score
       },
     },
   },

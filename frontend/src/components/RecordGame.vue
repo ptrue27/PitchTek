@@ -1,13 +1,82 @@
 <template>
-      <v-card style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;" 
+      <v-card style="width: 100%; margin: 10px 10px; border: 1px solid #43A047;" 
         elevation="3"
       >
         <v-row>
+          <!--Input pitch column-->
+          <v-col 
+            cols="4" class="text-center" style="padding-left: 18px;"
+          >
+            <!--Title-->
+            <v-row class="border-bottom" style="margin-top: 0px; font-weight: bold">
+                <v-col class="text-center">
+                    <div>Record Game</div>
+                </v-col>
+            </v-row>
+            <!--Game Select-->
+            <v-row>
+              <v-col class="text-center">
+                <v-select
+                  :items="this.$store.state.season.names" 
+                  v-model="season"
+                  @update:modelValue="handleSeasonChange"
+                  variant="solo-filled"
+                  density="compact" 
+                  style="margin-top: 25px; margin-left: 36px"
+                  class="record-btn"
+                  color="green-darken-1"
+                ></v-select>
+              </v-col>
+            </v-row>
+
+            <!--Start/stop game record button-->
+            <v-row style="margin-top: -15px;">
+              <v-col class="text-center">
+                <v-btn
+                    @click="handleGameButtonClick"
+                    class="record-btn my-font mx-auto"
+                    :color="recording ? 'red' : 'green-darken-1'"
+                >
+                  <template v-if="recording">
+                      <v-icon left>mdi-stop-circle</v-icon>
+                      <p style="margin-left: 8px;">Stop Game</p>
+                  </template>
+                  <template v-else>
+                      <v-icon left>mdi-play-circle</v-icon>
+                      <p style="margin-left: 8px;">Start Game</p>
+                  </template>
+                </v-btn>
+              </v-col>
+            </v-row>
+            
+            <!--Input pitch dialog-->
+            <v-row v-if="recording" style="margin-top: 20px;">
+              <v-col class="text-center">
+                <InputPitch class="record-btn"/>
+              </v-col>
+            </v-row>
+            
+            <v-row v-else style="margin-top: 20px;">
+              <v-col class="text-center">
+                <v-btn 
+                    class="record-btn"
+                    @click="this.$store.commit('resetDashboard')"
+                    prepend-icon="mdi-refresh"
+                    text="Reset"
+                    color="green-darken-1"
+                    variant="outlined"
+                ></v-btn>
+              </v-col>
+            </v-row>
+
+          </v-col>
+
           <!--Game state column-->
-          <v-col cols="8" style="border-right: 2px solid #43A047;" >
+          <v-col cols="8" 
+            style="border-left: 2px solid #43A047; margin-top: 5px; margin-bottom: 1px">
             <div>
                 <!--Team selection and score-->
-                <v-row style="border-bottom: 2px solid #43A047;">
+                <v-row>
                   <v-col>
                     <SelectTeams/>
                   </v-col>
@@ -16,7 +85,7 @@
                 <!--Runners on Base/Count and Inning Row-->
                 <v-row style="margin-top: 25px; margin-bottom: 3px;">
                     <!--Runners on base-->
-                    <v-col cols="5" class="d-flex flex-column justify-center">
+                    <v-col cols="4" class="d-flex flex-column justify-center">
                       <v-div>
                         <v-row class="no-wrap my-font text-center">
                           <v-col style="padding-bottom: 0;">
@@ -69,7 +138,7 @@
                     </v-col>
 
                     <!--Innings and count-->
-                    <v-col cols="7">
+                    <v-col cols="8" style="padding-right: 20px;">
                       <!--Inning-->
                       <v-row style="margin-bottom: 2px;">
                         <v-col align="right" cols="4" class="no-wrap my-font">
@@ -151,68 +220,6 @@
               </div>
           </v-col>
   
-          <!--Input pitch column-->
-          <v-col 
-            cols="4" class="text-center" 
-            style="margin-top: 43px; padding-right: 20px; padding-left: 0px;"
-          >
-            <!--Game Select-->
-            <v-row>
-              <v-col class="text-center">
-                <v-select
-                  :items="this.$store.state.seasons" 
-                  v-model="season"
-                  @update:modelValue="handleSeasonChange"
-                  variant="solo-filled"
-                  density="compact" 
-                  style="margin-top: 25px; margin-left: 36px"
-                  class="record-btn"
-                  color="green-darken-1"
-                ></v-select>
-              </v-col>
-            </v-row>
-
-            <!--Start/stop game record button-->
-            <v-row style="margin-top: -15px;">
-              <v-col class="text-center">
-                <v-btn
-                    @click="handleGameButtonClick"
-                    class="record-btn my-font mx-auto"
-                    :color="recording ? 'red' : 'green-darken-1'"
-                >
-                  <template v-if="recording">
-                      <v-icon left>mdi-stop-circle</v-icon>
-                      <p style="margin-left: 8px;">Stop Game</p>
-                  </template>
-                  <template v-else>
-                      <v-icon left>mdi-play-circle</v-icon>
-                      <p style="margin-left: 8px;">Start Game</p>
-                  </template>
-                </v-btn>
-              </v-col>
-            </v-row>
-            
-            <!--Input pitch dialog-->
-            <v-row v-if="recording" style="margin-top: 20px;">
-              <v-col class="text-center">
-                <InputPitch class="record-btn"/>
-              </v-col>
-            </v-row>
-            
-            <v-row v-else style="margin-top: 20px;">
-              <v-col class="text-center">
-                <v-btn 
-                    class="record-btn"
-                    @click="this.$store.commit('resetDashboard')"
-                    prepend-icon="mdi-refresh"
-                    text="Reset"
-                    color="green-darken-1"
-                    variant="outlined"
-                ></v-btn>
-              </v-col>
-            </v-row>
-
-          </v-col>
         </v-row>
       </v-card>
 </template>
@@ -229,24 +236,27 @@
     },
     data() {
       return {
-        recording: false,
         innings: [],
       };
     },
     methods: {
       handleGameButtonClick() {
-        console.log('Game Button clicked!');
+        console.log('Now recording: ' + !this.recording);
         this.recording = !this.recording;
       },
       handleSeasonChange() {
         // Fill team selection lists
         const path = "http://" + this.$store.state.host + "/api/get_teams";
-        axios.get(path)
+        const params = { 
+          season_id: this.$store.state.season.id,
+          season_name: this.$store.state.season.name 
+        };
+        axios.get(path, { params })
             .then((res) => {
                 const teams = res.data;
-                console.log("Loaded teams: " + teams["id"].length);
-                this.$store.commit("setTeamIds", teams["id"]);
-                this.$store.commit("setTeamNames", teams["name"]);
+                console.log("Loaded teams: " + teams["ids"].length);
+                this.$store.commit("setTeamIds", teams["ids"]);
+                this.$store.commit("setTeamNames", teams["names"]);
             })
             .catch((error) => {
                 console.error("Error loading teams: " + error);
@@ -288,10 +298,25 @@
       },
       season: {
         get() {
-          return this.$store.state.season;
+          return this.$store.state.season.name;
         },
-        set(newSeason) {
+        set(seasonName) {
+          const index = this.$store.state.season.names.indexOf(this.seasonName);
+          const seasonId = this.$store.state.season.ids[index];
+          const newSeason = {
+            name: seasonName,
+            id: seasonId
+          };
           this.$store.commit("setSeason", newSeason);
+          console.log("Set season: " + this.$store.state.season.name)
+        },
+      },
+      recording: {
+        get() {
+          return this.$store.state.recording;
+        },
+        set(newState) {
+          this.$store.commit("setRecording", newState);
         },
       },
     }
