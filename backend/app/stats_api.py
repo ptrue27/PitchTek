@@ -10,6 +10,7 @@ db_files = {
     "BATTERS": "mlb.db",
     "PITCHERS": "mlb.db",
     "USER": "app.db",
+    "SEASONS": "app.db",
 }
 
 

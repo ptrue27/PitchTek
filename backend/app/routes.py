@@ -9,11 +9,9 @@ import os
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():
     data = request.get_json()
-    token = user_manager.user_sign_up(data["username"], data["password"])
-    if token:
-        seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
-        return jsonify({'message': 'User signed up successfully', 
-                        'seasons': seasons, 'token': token}), 200
+    res = user_manager.user_sign_up(data["username"], data["password"])
+    if res:
+        return jsonify(res), 200
     else:
         return jsonify({'message': 'Username is unavailable'}), 400
 
@@ -21,11 +19,9 @@ def sign_up():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    token = user_manager.user_login(data["username"], data["password"])
-    if token:
-        seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
-        return jsonify({'message': 'User logged in successfully', 
-                        'seasons': seasons, 'token': token}), 200
+    res = user_manager.user_login(data["username"], data["password"])
+    if res["token"]:
+        return jsonify(res), 200
     else:
         return jsonify({'message': 'Invalid username or password'}), 401
 
@@ -38,7 +34,10 @@ def logout():
 
 @app.route("/api/get_teams", methods=["GET"])
 def get_teams():
-    teams_dict = stats_api.get_table("TEAMS")
+    data = request.get_json()
+    season_id, season_name = data["season_id"], data["season_name"]
+    if season_name.split(" ")[0] == "MLB":
+        teams_dict = stats_api.get_table("TEAMS")
     if teams_dict:
         return jsonify(teams_dict)
     else:
@@ -84,27 +83,14 @@ def make_prediction():
 
     #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
     #pitch_speed = predicter.get_speed(pitch_type)
-    predictions = [{
+    prediction = {
         "img": "425794_CH_heat_map.jpg",
         "speed": 83.3,
         "location": 4,
         "confidence": 54.73,
         "type": " Changeup (CH)",
-        }, {
-        "img": "425844_SI_heat_map.jpg",
-        "speed": 92.3,
-        "location": 7,
-        "confidence": 32.80,
-        "type": "Sinker (SI)",
-        }, {
-        "img": "425794_CU_heat_map.jpg",
-        "speed": 88.2,
-        "location": 7,
-        "confidence": 12.06,
-        "type": "Sinker (SI)",
-        }
-    ]
-    return jsonify({"predictions": predictions})
+    }
+    return jsonify(prediction)
 
 '''
 # Directory where uploaded files are stored
@@ -334,6 +320,6 @@ def get_player_batting_stats():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    if path and path != 'favicon.ico':  # Exclude favicon.ico from catch-all
+    if path and path != 'favicon.ico':
         return send_from_directory(app.static_folder, path)
     return render_template('index.html')
