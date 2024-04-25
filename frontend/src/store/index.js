@@ -66,8 +66,8 @@ const defaultPredictions = [
 const store = createStore({
     state() {
         return {
-            // host: "localhost:5000" // developent
-            host: "pitchtek.pro", // production
+            host: "localhost:5000", // developent
+            //host: "pitchtek.pro", // production
             isLoggedIn: localStorage.getItem("token") !== null,
             teamIds: [],
             teamNames: [],
@@ -88,6 +88,9 @@ const store = createStore({
             balls: 0,
             strikes: 0,
             bases: [false, false, false],
+            release_speed: 0,
+            plate_x: 0,
+            plate_z: 2.49
         }
     },
     mutations: {
@@ -195,6 +198,15 @@ const store = createStore({
         setAwayScore(state, score) {
             state.away.score = score;
         },
+        setReleaseSpeed(state, speed) {
+            state.release_speed = speed;
+        },
+        setPlateX(state, x) {
+            state.plate_x = x;
+        },
+        setPlateZ(state, z) {
+            state.plate_z = z;
+        },
         setHome(state, home) {
             state.home.batter = { ...defaultBatter };
             state.home.batterIds = home.batterIds;
@@ -246,6 +258,9 @@ const store = createStore({
             state.strikes = 0;
             state.bases = [false, false, false];
             state.predictions = { ...defaultPredictions };
+            state.release_speed = 0,
+            state.plate_x = 0,
+            state.plate_z = 2.49
         },
     },
     

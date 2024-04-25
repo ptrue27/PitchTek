@@ -74,7 +74,7 @@ def get_pitcher(id):
         return jsonify({"error": "Pitcher not found"}), 404
 
 
-'''@app.route('/make_prediction', methods=['GET'])
+@app.route('/make_prediction', methods=['GET'])
 def make_prediction():
     #predicter = Predictions_Class()
 
@@ -86,12 +86,12 @@ def make_prediction():
     #pitch_speed = predicter.get_speed(pitch_type)
 
     # Assuming you're passing variables via query parameters in a GET request
-    #variable1 = request.args.get('params')
-
+    variable1 = request.args.to_dict()
+    inning = request.args.get("inning")
+    print(inning)
 
     # Do something with the variables
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    #print("Variable 1:", variable1)
+    print("all args:", variable1)
 
 
     predictions = [{
@@ -114,7 +114,7 @@ def make_prediction():
         "type": "Sinker (SI)",
         }
     ]
-    return jsonify({"predictions": predictions})'''
+    return jsonify({"predictions": predictions})
 
 '''
 # Directory where uploaded files are stored

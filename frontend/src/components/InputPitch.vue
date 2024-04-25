@@ -66,7 +66,7 @@
                                     v-model="speed"
                                     variant="filled"
                                     type="number"
-                                    step="0.1"
+                                    step="1"
                                     dense
                                     outlined
                                     style="width: 100px; margin-top: -15px;"
@@ -130,12 +130,14 @@
                         "Splitter (FS)",
                         "Sweeper (ST)"],
                 speed: 0.0,
-                curr_pitcher_id: "NA",
             };
         },
         methods: {
             handlePredictButtonClick() {
                 console.log('Predict Button clicked!');
+
+                // Set Pitch Speed(and pitch type in the future)
+                this.$store.commit('setReleaseSpeed', this.speed)
 
                 const path = 'http://' + this.$store.state.host + '/make_prediction';
                 const params = this.gameState;
@@ -158,7 +160,11 @@
         computed: {
             gameState() {
                 return {
-                    inning: this.$store.state.inning,
+                    strikes: this.$store.state.strikes,
+                    balls: this.$store.state.balls,
+                    release_speed: this.$store.state.release_speed,
+                    plate_x: this.$store.state.plate_x,
+                    plate_z: this.$store.state.plate_z
                 };
             }
         },
