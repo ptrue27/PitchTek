@@ -19,7 +19,8 @@
             Select a file containing player statistics to upload and analyze.
           </v-card-text>
           <v-card-actions class="justify-center">
-            <input type="file" @change="uploadFile(file.target.files[0])" />
+            <input type="file" @change="uploadFile($event.target.files[0])" />
+
             <v-btn color="success" @click="generateImages">Generate Images</v-btn>
            
             <a href="C:/Users/davis/Documents/PitchTek/backend/assets/Pitch_Data_Template.csv" download="Pitch_Data_Template.csv">
@@ -163,7 +164,7 @@ export default {
     // Trigger the file read
     reader.readAsText(file);
   },
-    uploadFile(file) {
+    /*uploadFile(file) {
       const formData = new FormData();
       formData.append('file', file);
 
@@ -179,7 +180,7 @@ export default {
       .catch(error => {
         console.error('Error during file upload:', error);
       });
-    },
+    }*/
     generateImages() {
   axios.post('http://localhost:5000/api/generate-images')
     .then(response => {

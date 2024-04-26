@@ -1,28 +1,32 @@
 from app.get_prediction import Predictions_Class
 from app import app, user_manager, stats_api
-import statsapi 
+import statsapi
 from app.data_visualizer import DataVisualizer
 import os
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')  # Use the 'Agg' backend, which is non-interactive and does not require a GUI.
 import matplotlib.pyplot as plt
 
-import io
-import base64
+# Configure directories using environment variables or default to a relative path
+app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './uploads')
+app.config['STATIC_FOLDER'] = os.getenv('STATIC_FOLDER', './static')
+
+# Ensure the directory exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(app.config['STATIC_FOLDER'], exist_ok=True)
+
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():
     data = request.get_json()
     token = user_manager.user_sign_up(data["username"], data["password"])
     if token:
         seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
-        return jsonify({'message': 'User signed up successfully', 
-                        'seasons': seasons, 'token': token}), 200
+        return jsonify({'message': 'User signed up successfully', 'seasons': seasons, 'token': token}), 200
     else:
         return jsonify({'message': 'Username is unavailable'}), 400
-
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -30,17 +34,14 @@ def login():
     token = user_manager.user_login(data["username"], data["password"])
     if token:
         seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
-        return jsonify({'message': 'User logged in successfully', 
-                        'seasons': seasons, 'token': token}), 200
+        return jsonify({'message': 'User logged in successfully', 'seasons': seasons, 'token': token}), 200
     else:
         return jsonify({'message': 'Invalid username or password'}), 401
-
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
     user_manager.user_logout()
     return jsonify({'message': 'User logged out successfully'}), 200
-
 
 @app.route("/api/get_teams", methods=["GET"])
 def get_teams():
@@ -49,7 +50,6 @@ def get_teams():
         return jsonify(teams_dict)
     else:
         return jsonify({"error": "Teams not found"}), 404
-
 
 @app.route('/api/get_roster/<int:id>', methods=['GET'])
 def get_roster(id):
@@ -61,7 +61,6 @@ def get_roster(id):
     else:
         return jsonify({"error": "Roster not found"}), 404
 
-
 @app.route('/api/get_batter/<int:id>', methods=['GET'])
 def get_batter(id):
     batter_dict = stats_api.get_row("BATTERS", id)
@@ -69,7 +68,6 @@ def get_batter(id):
         return jsonify(batter_dict)
     else:
         return jsonify({"error": "Batter not found"}), 404
-
 
 @app.route('/api/get_pitcher/<int:id>', methods=['GET'])
 def get_pitcher(id):
@@ -79,41 +77,28 @@ def get_pitcher(id):
     else:
         return jsonify({"error": "Pitcher not found"}), 404
 
-
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
-    #predicter = Predictions_Class()
-
-    # Extract keys associated with 'param1'
-    #param1_keys = [key for key in request.args.keys() if key.startswith('param1')]
-    #param1_dict = {key.split('[', 1)[1][:-1]: request.args[key] for key in param1_keys}
-
-    #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
-    #pitch_speed = predicter.get_speed(pitch_type)
     pitch_type = "Sinker (SI)"
     pitch_speed = 92.7
     return jsonify(pitch_type, pitch_speed)
-df_global = pd.DataFrame()
 
+df_global = pd.DataFrame()
 
 @app.route('/get_latest_at_bat', methods=['GET'])
 def get_latest_at_bat():
     player_name = request.args.get('player_name')
     if not player_name or df_global.empty:
         return jsonify({'error': 'No data or player name provided'}), 400
-
-    # Filter the data for the selected player and get the latest entry
     player_data = df_global[df_global['player_from_des'] == player_name]
     latest_at_bat = player_data.iloc[-1]  # assuming the data is ordered chronologically
-
-    # Prepare the data for visualization
     data = {
         'plate_x': latest_at_bat['plate_x'],
         'plate_z': latest_at_bat['plate_z'],
         'description': latest_at_bat['des']
     }
     return jsonify(data)
-df_global = pd.DataFrame()
+
 @app.route('/upload_csv', methods=['POST'])
 def upload_csv():
     global df_global
@@ -123,103 +108,68 @@ def upload_csv():
     players = df_global['player_from_des'].unique().tolist()
     return jsonify(players)
 
-
-os.makedirs('static', exist_ok=True)
-
-
 @app.route('/fetch_latest_at_bat_plot', methods=['GET'])
 def fetch_latest_at_bat_plot():
     player_name = request.args.get('player_name')
     if not player_name:
         return jsonify({'error': 'Player name parameter is missing'}), 400
-
     if df_global.empty or 'player_from_des' not in df_global.columns:
         return jsonify({'error': 'No data available or incorrect data format'}), 400
-
     mask = df_global['player_from_des'].str.contains(player_name, na=False)
     if not mask.any():
         return jsonify({'error': 'Player not found in data'}), 404
-
     start_index = mask[mask].index[0]
     end_index = mask[start_index:].idxmin() if False in mask[start_index:].values else None
-
-    # Subset the data for the player
     player_data = df_global[start_index:end_index]
     player_data = player_data[player_data['des'] == player_data.loc[start_index, 'des']]
-
     if player_data.empty:
         return jsonify({'error': 'No data found for this player'}), 404
-
     latest_at_bat = player_data.iloc[-1]
-
-    # Generate plot
     fig, ax = plt.subplots()
     ax.scatter(player_data['plate_x'], player_data['plate_z'], color='blue')
-
-    # Adding a strike zone box
     strike_zone_bottom = 1.5
     strike_zone_top = 3.5
     plate_width = 1.42
     ax.add_patch(plt.Rectangle((-plate_width/2, strike_zone_bottom), plate_width, strike_zone_top - strike_zone_bottom, fill=False, color='red', lw=2))
-
-    # Annotating points
     for i, point in enumerate(player_data.itertuples(), 1):
         ax.annotate(str(i), (point.plate_x, point.plate_z), textcoords="offset points", xytext=(0,10), ha='center')
-
     ax.set_xlim(-3, 3)
     ax.set_ylim(0, 5)
     ax.set_title(f"Latest at-bat: {latest_at_bat['des']}")
     ax.set_xlabel('Plate X')
     ax.set_ylabel('Plate Z')
-
-    # Save the plot to a file
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    base_directory = os.path.dirname(os.path.dirname(os.path.dirname(current_directory)))
     filename = "latest_at_bat.png"
-    file_path = os.path.join(base_directory, 'Pitchtek/frontend/src/assets/static/', filename)
+    file_path = os.path.join(app.config['STATIC_FOLDER'], filename)
     plt.savefig(file_path)
     plt.close(fig)
-
     return jsonify({'image_url': f'static/{filename}'})
-
-
 
 @app.route('/get_latest_image', methods=['GET'])
 def get_latest_image():
-    return send_from_directory(app.static_folder, 'latest_at_bat_plot.png')
-
-# Directory where uploaded files are stored
-UPLOAD_FOLDER = './PitchTek-2/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Variable to keep track of the latest uploaded file
-latest_uploaded_file = None
+    return send_from_directory(app.config['STATIC_FOLDER'], 'latest_at_bat_plot.png')
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
     global latest_uploaded_file
-    
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
-    
     file = request.files['file']
-    
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
-    
     filename = secure_filename(file.filename)
     save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(save_path)
-    
-    # Update the path of the latest uploaded file
     latest_uploaded_file = save_path
-    print(latest_uploaded_file)
     return jsonify({'message': 'File uploaded successfully'}), 200
-
 
 @app.route('/images/<filename>')
 def uploaded_file(filename):
-    return send_from_directory('./frontend/src/assets/', filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+# Other API endpoints...
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route('/api/generate-images', methods=['POST'])
 def generate_images_route():
