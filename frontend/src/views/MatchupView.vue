@@ -62,7 +62,7 @@
       <v-row>
         <v-col cols="12" md="6">
           <v-card class="mx-auto" flat>
-            <v-img src="@/assets/pitcher.jpg" class="white--text align-end" height="200px" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
+            <v-img src="@/assets/silhouette.png" class="white--text align-end" height="200px" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
               <v-card-title>Pitcher Statistics</v-card-title>
             </v-img>
             <v-card-text>
@@ -70,8 +70,8 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
-                      <th class="text-left">Stat</th>
-                      <th class="text-left">Value</th>
+                      <th class="statistic-cell">Statistic</th>
+                      <th class="value-cell">Value</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -88,7 +88,7 @@
 
         <v-col cols="12" md="6">
           <v-card class="mx-auto" flat>
-            <v-img src="@/assets/batter.jpg" class="white--text align-end" height="200px" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
+            <v-img src="@/assets/silhouette.png" class="white--text align-end" height="200px" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)">
               <v-card-title>Batter Statistics</v-card-title>
             </v-img>
             <v-card-text>
@@ -96,8 +96,8 @@
                 <template v-slot:default>
                   <thead>
                     <tr>
-                      <th class="text-left">Stat</th>
-                      <th class="text-left">Value</th>
+                      <th class="statistic-cell">Statistic</th>
+        <th class="value-cell">Value</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -531,6 +531,16 @@ analyzeOutings() {
     margin-top: 10px;
     border-radius: 25px; /* Match the rounded edges of the text box */
   }
+
+  .statistic-cell {
+  font-weight: bold;
+  color: #333; /* Dark color for statistic names */
+}
+
+.value-cell {
+  background-color: #eee; /* Light grey background for values */
+  color: #666; /* Dark grey color for text */
+}
 
   /* Optional: Add additional styling to enhance the overall look */
   .image-container {

@@ -52,21 +52,22 @@
     <v-card class="mt-5">
       <v-card-title class="green lighten-2 white--text">Fielding Stats</v-card-title>
       <v-simple-table>
-        <template v-slot:default>
-          <thead>
-            <tr>
-              <th class="text-left">Statistic</th>
-              <th class="text-left">Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(value, stat) in fieldingStats" :key="`fielding-${stat}`">
-              <td>{{ stat }}</td>
-              <td>{{ value }}</td>
-            </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
+  <template v-slot:default>
+    <thead>
+      <tr>
+        <th class="statistic-cell">Statistic</th>
+        <th class="value-cell">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(value, stat) in fieldingStats" :key="`fielding-${stat}`">
+        <!-- Use v-bind:style to dynamically change styles -->
+        <td :style="{ fontWeight: 'bold', color: getStatColor(stat) }">{{ stat }}</td>
+        <td :style="{ backgroundColor: getValueBackground(value), color: getValueColor(value) }">{{ value }}</td>
+      </tr>
+    </tbody>
+  </template>
+</v-simple-table> 
     </v-card>
 
     <!-- Pitching Stats Table -->
@@ -76,14 +77,14 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left">Statistic</th>
-              <th class="text-left">Value</th>
+              <th class="statistic-cell">Statistic</th>
+        <th class="value-cell">Value</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(value, stat) in pitchingStats" :key="`pitching-${stat}`">
-              <td>{{ stat }}</td>
-              <td>{{ value }}</td>
+              <td class="statistic-cell">{{ stat }}</td>
+              <td class="value-cell">{{ value }}</td>
             </tr>
           </tbody>
         </template>
@@ -97,14 +98,14 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left">Statistic</th>
-              <th class="text-left">Value</th>
+              <th class="statistic-cell">Statistic</th>
+        <th class="value-cell">Value</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(value, stat) in battingStats" :key="`batting-${stat}`">
-              <td>{{ stat }}</td>
-              <td>{{ value }}</td>
+              <td class="statistic-cell">{{ stat }}</td>
+              <td class="value-cell">{{ value }}</td>
             </tr>
           </tbody>
         </template>
@@ -237,6 +238,16 @@ export default {
 </script>
 
 <style scoped>
+
+.statistic-cell {
+  font-weight: bold;
+  color: #333; /* Dark color for statistic names */
+}
+
+.value-cell {
+  background-color: #eee; /* Light grey background for values */
+  color: #666; /* Dark grey color for text */
+}
 .player-stats-container {
   max-width: 1200px;
   margin: auto;
