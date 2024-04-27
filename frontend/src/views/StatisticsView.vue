@@ -33,9 +33,9 @@
 
     <!-- Images Display Section -->
     <v-row justify="center" class="my-5">
-    <v-col v-for="image in images" :key="image" cols="12" sm="6" md="4">
-      <v-img :src="image" :alt="'Generated Image ' + image" class="my-2" contain></v-img>
-    </v-col>
+      <v-col v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
+    <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
+  </v-col>
   </v-row>
 
     <!-- Player Name Input and Fetch Stats Button -->
@@ -128,7 +128,11 @@ export default {
       fieldingStats: {},
       pitchingStats: {},
       battingStats: {},
-      images : ["C:/Users/davis/PitchTek/frontend/public/images/count_vs_description_heatmap.png", "C:/Users/davis/PitchTek/frontend/public/images/heatMapOFCounts.png" , "C:/Users/davis/PitchTek/frontend/public/images/pitchVeloLastGame.png"]
+      images: [
+        '/images/count_vs_description_heatmap.png',
+        '/images/heatMapOFCounts.png',
+        '/images/pitchVeloLastGame.png'
+      ]
     };
   },
   methods: {
