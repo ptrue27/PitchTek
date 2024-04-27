@@ -349,5 +349,6 @@ def get_player_batting_stats():
 @app.route('/<path:path>')
 def catch_all(path):
     if path and path != 'favicon.ico':
+        print(path)
         return send_from_directory(app.static_folder, path)
     return render_template('index.html')
