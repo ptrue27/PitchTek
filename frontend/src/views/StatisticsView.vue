@@ -128,7 +128,7 @@ export default {
       fieldingStats: {},
       pitchingStats: {},
       battingStats: {},
-      images : ["C:/Users/davis/PitchTek-2/frontend/public/images/count_vs_description_heatmap.png", "C:/Users/davis/PitchTek-2/frontend/public/images/heatMapOFCounts.png" , "C:/Users/davis/PitchTek-2/frontend/public/images/pitchVeloLastGame.png"]
+      images : ["C:/Users/davis/PitchTek/frontend/public/images/count_vs_description_heatmap.png", "C:/Users/davis/PitchTek/frontend/public/images/heatMapOFCounts.png" , "C:/Users/davis/PitchTek/frontend/public/images/pitchVeloLastGame.png"]
     };
   },
   methods: {
