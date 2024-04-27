@@ -348,7 +348,10 @@ def get_player_batting_stats():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    if path and path != 'favicon.ico':
-        print(path)
+    # Check if the path corresponds to a static file
+    static_path = os.path.join(app.static_folder, path)
+    if os.path.isfile(static_path):
         return send_from_directory(app.static_folder, path)
+    
+    # Catch all
     return render_template('index.html')
