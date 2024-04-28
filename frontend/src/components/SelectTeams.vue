@@ -99,6 +99,7 @@ export default {
             pitcherIds: roster.pitchers.ids,
             pitcherNames: roster.pitchers.names,
             score: 0,
+            id: teamId,
           };
           this.$store.commit("setHome", newHome);
         })
@@ -110,7 +111,9 @@ export default {
               pitcherIds: [], 
               pitcherNames: [],
               score: 0,
+              id: 0
             };
+            this.$store.commit("setHomeTeamName", "Select Team");
             this.$store.commit("setHome", newHome);
         });
     },
@@ -136,6 +139,7 @@ export default {
             pitcherIds: roster.pitchers.ids,
             pitcherNames: roster.pitchers.names,
             score: 0,
+            id: teamId,
           };
           this.$store.commit("setAway", newAway);
         })
@@ -147,7 +151,9 @@ export default {
               pitcherIds: [], 
               pitcherNames: [],
               score: 0,
+              id: 0,
             };
+            this.$store.commit("setAwayTeamName", "Select Team");
             this.$store.commit("setAway", newAway);
         });
     },
@@ -168,7 +174,7 @@ export default {
     },
     homeTeamName: {
       get() {
-        return this.$store.state.home.teamName;
+        return this.$store.state.home.name;
       },
       set(name) {
         this.$store.commit("setHomeTeamName", name);
@@ -184,7 +190,7 @@ export default {
     },
     awayTeamName: {
       get() {
-        return this.$store.state.away.teamName;
+        return this.$store.state.away.name;
       },
       set(name) {
         this.$store.commit("setAwayTeamName", name);

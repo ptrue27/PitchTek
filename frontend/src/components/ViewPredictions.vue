@@ -1,6 +1,6 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px; border: 1px solid #43A047;" 
-      elevation="3"
+    <v-card style="width: 100%; margin: 10px 10px; " 
+      elevation="3" class="card-border"
     >
       <!--Title-->
       <v-row class="border-bottom" style="margin-top: 0px; font-weight: bold">

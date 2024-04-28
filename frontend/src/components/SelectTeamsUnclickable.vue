@@ -35,8 +35,8 @@
             </p>
         </v-col>
         <v-col cols="2">
-            <v-select readonly="true"
-                :items="scores"
+            <v-select 
+                :readonly="true"
                 v-model="homeScore"
                 density="compact"
                 variant="solo-filled"
@@ -50,8 +50,8 @@
         
         <!--Away Score-->
         <v-col cols="2">
-            <v-select readonly="true"
-                :items="scores"
+            <v-select 
+                :readonly="true"
                 v-model="awayScore"
                 density="compact"
                 variant="solo-filled"
@@ -67,39 +67,36 @@
 </template>
 
 <script>
-
-
-export default {
-  props: {
-    storeSnapshot: {
-      type: Object,
-      required: true
-    }
-  },
-
-  computed: {
-    homeTeamName: {
-      get() {
-        return this.storeSnapshot.home_name
+  export default {
+    props: {
+      storeSnapshot: {
+        type: Object,
+        required: true
+      }
+    },
+    computed: {
+      homeTeamName: {
+        get() {
+          return this.storeSnapshot.home_name
+        },
+      },
+      homeScore: {
+        get() {
+          return this.storeSnapshot.home_score
+        },
+      },
+      awayTeamName: {
+        get() {
+          return this.storeSnapshot.away_name
+        },
+      },
+      awayScore: {
+        get() {
+          return this.storeSnapshot.away_score
+        },
       },
     },
-    homeScore: {
-      get() {
-        return this.storeSnapshot.home_score
-      },
-    },
-    awayTeamName: {
-      get() {
-        return this.storeSnapshot.away_name
-      },
-    },
-    awayScore: {
-      get() {
-        return this.storeSnapshot.away_score
-      },
-    },
-  },
-};
+  };
 </script>
 
 <style>

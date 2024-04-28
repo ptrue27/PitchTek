@@ -69,6 +69,16 @@
         History
       </v-btn>
 
+      <!--Account button-->
+      <v-btn
+        v-if="$store.state.isLoggedIn"
+        to="/account"
+        prepend-icon="mdi-account-circle"
+        variant="tonal" class="mr-5"
+      >
+        Account
+      </v-btn>
+
       <!--Logout button-->
       <v-btn
         v-if="$store.state.isLoggedIn"

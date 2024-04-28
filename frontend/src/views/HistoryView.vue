@@ -29,9 +29,9 @@ export default {
       // Capture the entire state of the Vuex store
       const storeSnapshot = {
         inning: this.inning,
-        home_name: this.home.teamName,
+        home_name: this.home.name,
         home_score: this.home.score,
-        away_name: this.away.teamName,
+        away_name: this.away.name,
         away_score: this.away.score,
         prediction_img: this.prediction.img,
         prediction_speed: this.prediction.speed,

@@ -1,6 +1,6 @@
 <template>
-      <v-card style="width: 100%; margin: 10px 10px; border: 1px solid #43A047;" 
-        elevation="3"
+      <v-card style="width: 100%; margin: 10px 10px;" 
+        elevation="3" class="card-border"
       >
         <v-row>
           <!--Input pitch column-->
@@ -13,16 +13,17 @@
                     <div>Record Game</div>
                 </v-col>
             </v-row>
-            <!--Game Select-->
+
+            <!--Season Select-->
             <v-row>
-              <v-col class="text-center">
+              <v-col cols="12" class="d-flex justify-center">
                 <v-select
                   :items="this.$store.state.season.names" 
                   v-model="season"
                   @update:modelValue="handleSeasonChange"
                   variant="solo-filled"
                   density="compact" 
-                  style="margin-top: 25px; margin-left: 36px"
+                  style="margin-top: 25px; max-width: 225px"
                   class="record-btn"
                   color="green-darken-1"
                 ></v-select>
@@ -31,11 +32,12 @@
 
             <!--Start/stop game record button-->
             <v-row style="margin-top: -15px;">
-              <v-col class="text-center">
+              <v-col cols="12" class="d-flex justify-center">
                 <v-btn
                     @click="handleGameButtonClick"
                     class="record-btn my-font mx-auto"
                     :color="recording ? 'red' : 'green-darken-1'"
+                    :disabled="isButtonDisabled"
                 >
                   <template v-if="recording">
                       <v-icon left>mdi-stop-circle</v-icon>
@@ -51,13 +53,13 @@
             
             <!--Input pitch dialog-->
             <v-row v-if="recording" style="margin-top: 20px;">
-              <v-col class="text-center">
+              <v-col cols="12" class="d-flex justify-center">
                 <InputPitch class="record-btn"/>
               </v-col>
             </v-row>
             
             <v-row v-else style="margin-top: 20px;">
-              <v-col class="text-center">
+              <v-col cols="12" class="d-flex justify-center">
                 <v-btn 
                     class="record-btn"
                     @click="this.$store.commit('resetDashboard')"
@@ -241,15 +243,43 @@
     },
     methods: {
       handleGameButtonClick() {
-        console.log('Now recording: ' + !this.recording);
         this.recording = !this.recording;
+        if (!this.recording) {
+          console.log("Stopped game")
+        } 
+        else {
+          const path = "http://" + this.$store.state.host + "/api/new_game";
+          const body = {
+            home_team_name: this.$store.state.home.name,
+            away_team_name: this.$store.state.away.name,
+            season_id: this.$store.state.season.id,
+          };
+          console.log(this.$store.state.season);
+
+          axios.post(path, body)
+              .then((res) => {
+                  const gameId = res.data.id;
+                  console.log("Started game: " + gameId);
+                  this.$store.commit("setGameId", gameId);
+              })
+              .catch((error) => {
+                  console.error("Error starting game: " + error);
+                  this.recording = !this.recording;
+              });
+        }
       },
       handleSeasonChange() {
+        // Set season id
+        const index = this.$store.state.season.names.indexOf(this.season);
+        const seasonId = this.$store.state.season.ids[index];
+        this.$store.commit("setSeasonId", seasonId);
+        console.log("Set season: " + this.$store.state.season.id);
+
         // Fill team selection lists
         const path = "http://" + this.$store.state.host + "/api/get_teams";
         const params = { 
           season_id: this.$store.state.season.id,
-          season_name: this.$store.state.season.name 
+          season_name: this.$store.state.season.name,
         };
         axios.get(path, { params })
             .then((res) => {
@@ -301,14 +331,7 @@
           return this.$store.state.season.name;
         },
         set(seasonName) {
-          const index = this.$store.state.season.names.indexOf(this.seasonName);
-          const seasonId = this.$store.state.season.ids[index];
-          const newSeason = {
-            name: seasonName,
-            id: seasonId
-          };
-          this.$store.commit("setSeason", newSeason);
-          console.log("Set season: " + this.$store.state.season.name)
+          this.$store.commit("setSeasonName", seasonName);
         },
       },
       recording: {
@@ -318,6 +341,10 @@
         set(newState) {
           this.$store.commit("setRecording", newState);
         },
+      },
+      isButtonDisabled() {
+          return (!this.recording && 
+            ((this.$store.state.away.id == 0) || (this.$store.state.home.id == 0)));
       },
     }
   };
@@ -352,5 +379,8 @@
   .out-ball-strike-text {
     margin-top: 3px;
     margin-right: 20px;
+  }
+  .card-border {
+    border: 2px solid #43A047;
   }
 </style>

@@ -29,8 +29,13 @@
 </template>
 
 <style>
-.dashboard-container {
+.dashboard-container-old {
   background-color: #c2ebc9;
+}
+.dashboard-container {
+    background-image: url('~@/assets/background.jpg');
+    background-repeat: repeat;
+    background-size: auto;
 }
 </style>
 

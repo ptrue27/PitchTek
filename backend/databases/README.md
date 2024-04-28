@@ -58,25 +58,43 @@ TEAMS (
 PITCHERS (
     id INTEGER PRIMARY KEY,
     team_id INTEGER FOREIGN KEY,
+    name TEXT(64),
+    games INTEGER,
+    batters INTEGER,
+    whip REAL,
+    era REAL,
+    kper9 REAL,
+    bbper9 REAL,
+    hits INTEGER,
+    hr INTEGER
 )
 
 BATTERS (
     id INTEGER PRIMARY KEY,
     team_id INTEGER FOREIGN KEY,
+    name TEXT(64),
+    games INTEGER,
+    pa INTEGER,
+    avg REAL,
+    obp REAL,
+    slg REAL,
+    ops REAL,
+    hits INTEGER,
+    hr INTEGER
 )
 
 GAMES (
     id INTEGER PRIMARY KEY,
     season_id INTEGER FOREIGN KEY,
     home_team_name TEXT(32),
-    away_team_key TEXT(32),
-    start_time TIMESTAMP,
+    away_team_name TEXT(32),
+    start_time TEXT(11),
 )
 
 GAMESTATES (
     id INTEGER PRIMARY KEY,
     game_id INTEGER FOREIGN KEY,
-    inning TEXT(2),
+    inning TEXT(3),
     home_name: TEXT(32),
     home_score: INTEGER,
     away_name: TEXT(32),
@@ -89,7 +107,6 @@ GAMESTATES (
     pitch_speed REAL,
     pitch_location INTEGER,
     pitch_type TEXT(32),
-    pitch
     outs: INTEGER,
     balls INTEGER,
     strikes INTEGER,

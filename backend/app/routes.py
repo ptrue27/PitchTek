@@ -1,9 +1,10 @@
 from app.get_prediction import Predictions_Class
-from app import app, user_manager, stats_api
-#import statsapi
-from flask import request, jsonify, render_template, send_from_directory
 from app.data_visualizer import DataVisualizer
+from app import app, user_manager, stats_api, sql_utils
+import statsapi
+from flask import request, jsonify, render_template, send_from_directory
 import os
+from datetime import datetime
 
 
 @app.route('/api/sign_up', methods=['POST'])
@@ -36,12 +37,14 @@ def get_teams():
     season_name = request.args.get("season_name")
     split_name = season_name.split()
 
-    # Get MLB teams
+    # Get MLB or custom teams
     if split_name[0] == "MLB":
         ids, names = stats_api.get_teams(int(split_name[1]))
-        return jsonify({"ids": ids, "names": names})
-    
-    return jsonify({"error": "Teams not found"}), 404
+    else:
+        ids, names = sql_utils.get_cols("TEAMS", ["id", "name"],
+                                        "season_id", season_id)
+        
+    return jsonify({"ids": ids, "names": names})
 
 
 @app.route('/api/get_roster', methods=['GET'])
@@ -50,12 +53,18 @@ def get_roster():
     season_name = request.args.get("season_name")
     split_name = season_name.split()
 
-    # Get MLB roster
+    # Get MLB or custom roster
     if split_name[0] == "MLB":
         pitchers, batters = stats_api.get_roster(team_id, int(split_name[1]))
-        return jsonify({"pitchers": pitchers, "batters": batters})
-
-    return jsonify({"error": "Roster not found"}), 404
+    else:
+        ids, names = sql_utils.get_cols("PITCHERS", ["id", "name"],
+                                        "team_id", team_id)
+        pitchers = {"ids": ids, "names": names}
+        ids, names = sql_utils.get_cols("BATTERS", ["id", "name"],
+                                        "team_id", team_id)
+        batters = {"ids": ids, "names": names}
+    
+    return jsonify({"pitchers": pitchers, "batters": batters})
 
 
 @app.route('/api/get_batter', methods=['GET'])
@@ -101,8 +110,36 @@ def get_versus():
     return jsonify({"error": "Versus statistics not found"}), 404
 
 
-@app.route('/make_prediction', methods=['GET'])
-def make_prediction():
+@app.route('/api/get_history', methods=['GET'])
+def get_history():
+    game_id = request.args.get("game_id")
+    game_states = sql_utils.get_records("GAMESTATES", "game_id",  game_id)
+    return jsonify({"game_states": game_states})
+
+
+@app.route('/api/get_games', methods=['GET'])
+def get_games():
+    season_id = request.args.get("season_id")
+    games = sql_utils.get_records("GAMES", "season_id", season_id, sort='DESC')
+    ids, names = [], []
+    for game in games:
+        ids.append(game["id"])
+        home, away = game["home_team_name"], game["away_team_name"]
+        names.append(f"{game["start_time"]} - {home} vs. {away}")
+    return jsonify({"ids": ids, "names": names})
+
+
+@app.route('/api/new_game', methods=['POST'])
+def new_game():
+    game = request.json
+    current_time = datetime.now()
+    game['start_time'] = current_time.strftime("%m/%d %I:%M")
+    game_id = sql_utils.insert_record("GAMES", game, get_id=True)
+    return jsonify({"id": game_id})
+
+
+@app.route('/new_prediction', methods=['POST'])
+def new_prediction():
     #predicter = Predictions_Class()
 
     # Extract keys associated with 'param1'
@@ -111,6 +148,8 @@ def make_prediction():
 
     #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
     #pitch_speed = predicter.get_speed(pitch_type)
+
+    # Predict next pitch
     prediction = {
         "img": "425794_CH_heat_map.jpg",
         "speed": 83.3,
@@ -118,6 +157,16 @@ def make_prediction():
         "confidence": 54.73,
         "type": " Changeup (CH)",
     }
+
+    # Store pitch data
+    game_state = dict(request.args)
+    game_state["prediction_img"] = prediction["img"]
+    game_state["prediction_speed"] = prediction["speed"]
+    game_state["prediction_location"] = prediction["location"]
+    game_state["prediction_confidence"] = prediction["confidence"]
+    game_state["prediction_type"] = prediction["type"]
+    #sql_utils.insert_record("GAMESTATES", game_state)
+
     return jsonify(prediction)
 
 '''
