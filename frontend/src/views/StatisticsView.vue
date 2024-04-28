@@ -19,8 +19,13 @@
             Select a file containing player statistics to upload and analyze.
           </v-card-text>
           <v-card-actions class="justify-center">
-            <input type="file" @change="file => uploadFile(file.target.files[0])" />
+            <input type="file" @change="uploadFile($event.target.files[0])" />
+
             <v-btn color="success" @click="generateImages">Generate Images</v-btn>
+           
+            <a href="C:/Users/davis/Documents/PitchTek/backend/assets/Pitch_Data_Template.csv" download="Pitch_Data_Template.csv">
+              <v-btn color="primary">Download Template</v-btn>
+            </a>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -28,9 +33,9 @@
 
     <!-- Images Display Section -->
     <v-row justify="center" class="my-5">
-    <v-col v-for="image in images" :key="image" cols="12" sm="6" md="4">
-      <v-img :src="image" :alt="'Generated Image ' + image" class="my-2" contain></v-img>
-    </v-col>
+      <v-col v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
+    <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
+  </v-col>
   </v-row>
 
     <!-- Player Name Input and Fetch Stats Button -->
@@ -47,21 +52,22 @@
     <v-card class="mt-5">
       <v-card-title class="green lighten-2 white--text">Fielding Stats</v-card-title>
       <v-simple-table>
-        <template v-slot:default>
-          <thead>
-            <tr>
-              <th class="text-left">Statistic</th>
-              <th class="text-left">Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(value, stat) in fieldingStats" :key="`fielding-${stat}`">
-              <td>{{ stat }}</td>
-              <td>{{ value }}</td>
-            </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
+  <template v-slot:default>
+    <thead>
+      <tr>
+        <th class="statistic-cell">Statistic</th>
+        <th class="value-cell">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(value, stat) in fieldingStats" :key="`fielding-${stat}`">
+        <!-- Use v-bind:style to dynamically change styles -->
+        <td :style="{ fontWeight: 'bold', color: getStatColor(stat) }">{{ stat }}</td>
+        <td :style="{ backgroundColor: getValueBackground(value), color: getValueColor(value) }">{{ value }}</td>
+      </tr>
+    </tbody>
+  </template>
+</v-simple-table> 
     </v-card>
 
     <!-- Pitching Stats Table -->
@@ -71,14 +77,14 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left">Statistic</th>
-              <th class="text-left">Value</th>
+              <th class="statistic-cell">Statistic</th>
+        <th class="value-cell">Value</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(value, stat) in pitchingStats" :key="`pitching-${stat}`">
-              <td>{{ stat }}</td>
-              <td>{{ value }}</td>
+              <td class="statistic-cell">{{ stat }}</td>
+              <td class="value-cell">{{ value }}</td>
             </tr>
           </tbody>
         </template>
@@ -92,14 +98,14 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left">Statistic</th>
-              <th class="text-left">Value</th>
+              <th class="statistic-cell">Statistic</th>
+        <th class="value-cell">Value</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(value, stat) in battingStats" :key="`batting-${stat}`">
-              <td>{{ stat }}</td>
-              <td>{{ value }}</td>
+              <td class="statistic-cell">{{ stat }}</td>
+              <td class="value-cell">{{ value }}</td>
             </tr>
           </tbody>
         </template>
@@ -122,11 +128,48 @@ export default {
       fieldingStats: {},
       pitchingStats: {},
       battingStats: {},
-      images : ["C:/Users/davis/PitchTek-2/frontend/public/images/count_vs_description_heatmap.png", "C:/Users/davis/PitchTek-2/frontend/public/images/heatMapOFCounts.png" , "C:/Users/davis/PitchTek-2/frontend/public/images/pitchVeloLastGame.png"]
+      images: [
+        '/images/count_vs_description_heatmap.png',
+        '/images/heatMapOFCounts.png',
+        '/images/pitchVeloLastGame.png'
+      ]
     };
   },
   methods: {
     uploadFile(file) {
+    // Create a new FileReader object
+    const reader = new FileReader();
+
+    // Define what happens when the file has been read
+    reader.onload = (e) => {
+      const content = e.target.result;
+      // Split the content by newline to count rows, consider CSV header
+      const rows = content.split('\n').filter(line => line.trim() !== '');
+      if (rows.length < 150) {
+        alert('Warning: The uploaded file contains less than 150 rows. This might affect the analysis accuracy.');
+      }
+
+      // Proceed to upload the file to the server
+      const formData = new FormData();
+      formData.append('file', file);
+      axios.post('http://localhost:5000/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        console.log(response.data.message);
+        // Additional actions based on successful upload, if needed
+      })
+      .catch(error => {
+        console.error('Error during file upload:', error);
+      });
+    };
+
+    // Trigger the file read
+    reader.readAsText(file);
+  },
+    /*uploadFile(file) {
       const formData = new FormData();
       formData.append('file', file);
 
@@ -142,7 +185,7 @@ export default {
       .catch(error => {
         console.error('Error during file upload:', error);
       });
-    },
+    }*/
     generateImages() {
   axios.post('http://' + this.$store.state.host + '/api/generate-images')
     .then(response => {
@@ -199,6 +242,16 @@ export default {
 </script>
 
 <style scoped>
+
+.statistic-cell {
+  font-weight: bold;
+  color: #333; /* Dark color for statistic names */
+}
+
+.value-cell {
+  background-color: #eee; /* Light grey background for values */
+  color: #666; /* Dark grey color for text */
+}
 .player-stats-container {
   max-width: 1200px;
   margin: auto;
