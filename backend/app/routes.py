@@ -1,9 +1,10 @@
 from app.get_prediction import Predictions_Class
-from app import app, user_manager, stats_api
-import statsapi
 from app.data_visualizer import DataVisualizer
+from app import app, user_manager, stats_api, sql_utils
+import statsapi
+from flask import request, jsonify, render_template, send_from_directory
 import os
-from flask import Flask, request, jsonify, send_from_directory
+from datetime import datetime
 from werkzeug.utils import secure_filename
 import pandas as pd
 import matplotlib
@@ -50,29 +51,48 @@ def logout():
 @app.route("/api/get_teams", methods=["GET"])
 def get_teams():
 
-    teams_dict = stats_api.get_table("TEAMS")
-    if teams_dict:
-        return jsonify(teams_dict)
+    # Get MLB or custom teams
+    if split_name[0] == "MLB":
+        ids, names = stats_api.get_teams(int(split_name[1]))
     else:
-        return jsonify({"error": "Teams not found"}), 404
+        ids, names = sql_utils.get_cols("TEAMS", ["id", "name"],
+                                        "season_id", season_id)
+        
+    return jsonify({"ids": ids, "names": names})
 
-@app.route('/api/get_roster/<int:id>', methods=['GET'])
-def get_roster(id):
-    batters_dict = stats_api.get_table("BATTERS", cols=["id", "name"], where=["team_id", id])
-    pitchers_dict = stats_api.get_table("PITCHERS", cols=["id", "name"], where=["team_id", id])
-    roster_dict = {"batters": batters_dict, "pitchers": pitchers_dict}
-    if batters_dict and pitchers_dict:
-        return jsonify(roster_dict)
-    else:
-        return jsonify({"error": "Roster not found"}), 404
 
-@app.route('/api/get_batter/<int:id>', methods=['GET'])
-def get_batter(id):
-    batter_dict = stats_api.get_row("BATTERS", id)
-    if batter_dict:
-        return jsonify(batter_dict)
+@app.route('/api/get_roster', methods=['GET'])
+def get_roster():
+    team_id = request.args.get("team_id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB or custom roster
+    if split_name[0] == "MLB":
+        pitchers, batters = stats_api.get_roster(team_id, int(split_name[1]))
     else:
-        return jsonify({"error": "Batter not found"}), 404
+        ids, names = sql_utils.get_cols("PITCHERS", ["id", "name"],
+                                        "team_id", team_id)
+        pitchers = {"ids": ids, "names": names}
+        ids, names = sql_utils.get_cols("BATTERS", ["id", "name"],
+                                        "team_id", team_id)
+        batters = {"ids": ids, "names": names}
+    
+    return jsonify({"pitchers": pitchers, "batters": batters})
+
+
+@app.route('/api/get_batter', methods=['GET'])
+def get_batter():
+    id = request.args.get("id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB batter
+    if split_name[0] == "MLB":
+        batter = stats_api.get_batter(id, int(split_name[1]))
+        return jsonify(batter)
+
+    return jsonify({"error": "Batter not found"}), 404
 
 @app.route('/api/get_pitcher/<int:id>', methods=['GET'])
 def get_pitcher(id):
@@ -83,12 +103,65 @@ def get_pitcher(id):
         return jsonify({"error": "Pitcher not found"}), 404
 
 
-@app.route('/make_prediction', methods=['GET'])
-def make_prediction():
+@app.route('/api/get_history', methods=['GET'])
+def get_history():
+    game_id = request.args.get("game_id")
+    game_states = sql_utils.get_records("GAMESTATES", "game_id",  game_id)
+    return jsonify({"game_states": game_states})
 
-    pitch_type = "Sinker (SI)"
-    pitch_speed = 92.7
-    return jsonify(pitch_type, pitch_speed)
+
+@app.route('/api/get_games', methods=['GET'])
+def get_games():
+    season_id = request.args.get("season_id")
+    games = sql_utils.get_records("GAMES", "season_id", season_id, sort='DESC')
+    ids, names = [], []
+    for game in games:
+        ids.append(game["id"])
+        home, away = game["home_team_name"], game["away_team_name"]
+        names.append(f"{game["start_time"]} - {home} vs. {away}")
+    return jsonify({"ids": ids, "names": names})
+
+
+@app.route('/api/new_game', methods=['POST'])
+def new_game():
+    game = request.json
+    current_time = datetime.now()
+    game['start_time'] = current_time.strftime("%m/%d %I:%M")
+    game_id = sql_utils.insert_record("GAMES", game, get_id=True)
+    return jsonify({"id": game_id})
+
+
+@app.route('/new_prediction', methods=['POST'])
+def new_prediction():
+    #predicter = Predictions_Class()
+
+    # Extract keys associated with 'param1'
+    #param1_keys = [key for key in request.args.keys() if key.startswith('param1')]
+    #param1_dict = {key.split('[', 1)[1][:-1]: request.args[key] for key in param1_keys}
+
+    #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
+    #pitch_speed = predicter.get_speed(pitch_type)
+
+    # Predict next pitch
+    prediction = {
+        "img": "425794_CH_heat_map.jpg",
+        "speed": 83.3,
+        "location": 4,
+        "confidence": 54.73,
+        "type": " Changeup (CH)",
+    }
+
+    # Store pitch data
+    game_state = dict(request.args)
+    game_state["prediction_img"] = prediction["img"]
+    game_state["prediction_speed"] = prediction["speed"]
+    game_state["prediction_location"] = prediction["location"]
+    game_state["prediction_confidence"] = prediction["confidence"]
+    game_state["prediction_type"] = prediction["type"]
+    #sql_utils.insert_record("GAMESTATES", game_state)
+
+    return jsonify(prediction)
+
 
 df_global = pd.DataFrame()
 
@@ -393,7 +466,11 @@ def get_player_batting_stats():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    if path and path != 'favicon.ico':
+    # Check if the path corresponds to a static file
+    static_path = os.path.join(app.static_folder, path)
+    if os.path.isfile(static_path):
         return send_from_directory(app.static_folder, path)
+    
+    # Catch all
     return render_template('index.html')
 

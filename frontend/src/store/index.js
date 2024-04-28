@@ -31,13 +31,14 @@ const defaultPitcher = {
     hr: '-',
 };
 const defaultTeam = {
+    id: 0,
+    name: "Select Team",
     batter: { ...defaultBatter },
     batterIds: [],
     batterNames: [],
     pitcher: { ...defaultPitcher },
     pitcherIds: [],
     pitcherNames: [],
-    teamName: "Select Team",
     score: 0,
 };
 const defaultMatchup = {
@@ -57,16 +58,29 @@ const defaultPrediction = {
     confidence: '-',
     type: '-',
 };
+const defaultManage = {
+    seasonName: "Select Season",
+    teamName: "Select Team",
+    gameName: "Select Game",
+    teamNames: [],
+    teamIds: [],
+    pitcherNames: [],
+    batterNames: [],
+    gameNames: [],
+    gameIds: [],
+    gameStates: [],
+};
 
 const store = createStore({
     state() {
         return {
             host: "localhost:5000", // development
-            //host: "pitchtek.pro", // production
+            // host: "pitchtek.pro", // production
             isLoggedIn: localStorage.getItem("token") !== null,
             recording: false,
             teamIds: [],
             teamNames: [],
+            gameId: 0,
             inning: "1∧",
             default: {
                 batter: { ...defaultBatter },
@@ -88,6 +102,7 @@ const store = createStore({
             balls: 0,
             strikes: 0,
             bases: [false, false, false],
+            manage: { ...defaultManage },
         }
     },
     mutations: {
@@ -102,9 +117,42 @@ const store = createStore({
         logout(state) {
             console.log("Logout: " + state.isLoggedIn);
             this.commit('resetDashboard');
+            state.manage = { ...defaultManage };
             localStorage.removeItem('token');
             state.isLoggedIn = false;
             state.season.name = "Select Season";
+        },
+        setGameId(state, gameId) {
+            state.gameId = gameId;
+        },
+        setManageSeason(state, season) {
+            state.manage.seasonName = season;
+            state.manage.teamName = "Select Team";
+            state.manage.gameName = "Select Game";
+            state.manage.pitcherNames = [];
+            state.manage.batterNames = [];
+            state.manage.gameStates = [];
+        },
+        setManageTeam(state, team) {
+            state.manage.teamName = team;
+        },
+        setManageGame(state, game) {
+            state.manage.gameName = game;
+        },
+        setManagerTeams(state, teams) {
+            state.manage.teamIds = teams.ids;
+            state.manage.teamNames = teams.names;
+        },
+        setManagerGames(state, games) {
+            state.manage.gameIds = games.ids;
+            state.manage.gameNames = games.names;
+        },
+        setManagerRoster(state, roster) {
+            state.manage.pitcherNames = roster.pitchers.names;
+            state.manage.batterNames = roster.batters.names;
+        },
+        setManagerGameStates(state, gameStates) {
+            state.manage.gameStates = gameStates;
         },
         setRecording(state, isRecording) {
             state.recording = isRecording;
@@ -119,10 +167,12 @@ const store = createStore({
                 state.matchup = { ...defaultMatchup };
             }
         },
-        setSeason(state, season) {
-            state.season.name = season.name;
-            state.season.id = season.id;
+        setSeasonName(state, seasonName) {
             this.commit('resetDashboard');
+            state.season.name = seasonName;
+        },
+        setSeasonId(state, seasonId) {
+            state.season.id = seasonId;
         },
         setTeamIds(state, ids) {
             state.teamIds = ids;
@@ -181,10 +231,10 @@ const store = createStore({
             }
         },
         setHomeTeamName(state, name) {
-            state.home.teamName = name;
+            state.home.name = name;
         },
         setAwayTeamName(state, name) {
-            state.away.teamName = name;
+            state.away.name = name;
         },
         setHomeScore(state, score) {
             state.home.score = score;
@@ -200,6 +250,7 @@ const store = createStore({
             state.home.pitcherIds = home.pitcherIds;
             state.home.pitcherNames = home.pitcherNames;
             state.home.score = home.score;
+            state.home.id = home.id;
             state.matchup = { ...defaultMatchup };
             if (state.inning.includes('∨')) {
                 state.current.batter = { ...defaultBatter };
@@ -220,6 +271,7 @@ const store = createStore({
             state.away.pitcherIds = away.pitcherIds;
             state.away.pitcherNames = away.pitcherNames;
             state.away.score = away.score;
+            state.away.id = away.id;
             state.matchup = { ...defaultMatchup };
             if (state.inning.includes('∧')) {
                 state.current.batter = { ...defaultBatter };

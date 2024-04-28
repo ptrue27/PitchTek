@@ -74,7 +74,6 @@
                             </v-col>
                         </v-row>
 
-
                         <!--Predict button-->
                         <v-row>
                             <v-col class="d-flex justify-center" style="margin-top: -10px; margin-left: -50px;">
@@ -90,7 +89,6 @@
                     </v-col>
                 </v-row>
 
-                
                 <!--Close button-->
                 <v-card-actions>
                     <v-spacer></v-spacer>
