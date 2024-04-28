@@ -173,7 +173,7 @@ export default {
       const formData = new FormData();
       formData.append('file', file);
 
-      axios.post('http://localhost:5000/api/upload', formData, {
+      axios.post('http://' + this.$store.state.host + '/api/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -187,7 +187,7 @@ export default {
       });
     }*/
     generateImages() {
-  axios.post('http://localhost:5000/api/generate-images')
+  axios.post('http://' + this.$store.state.host + '/api/generate-images')
     .then(response => {
       
       this.images = response.data.images;
@@ -207,7 +207,7 @@ export default {
       this.fetchBattingStats();
     },
     fetchFieldingStats() {
-      axios.get(`http://localhost:5000/api/player_fielding_stats`, { params: { player_name: this.playerName } })
+      axios.get('http://' + this.$store.state.host + '/api/player_fielding_stats', { params: { player_name: this.playerName } })
         .then(response => {
           this.fieldingStats = response.data.stats || {};
         })
@@ -217,7 +217,7 @@ export default {
         });
     },
     fetchPitchingStats() {
-      axios.get(`http://localhost:5000/api/player_pitching_stats`, { params: { player_name: this.playerName } })
+      axios.get('http://' + this.$store.state.host + '/api/player_pitching_stats', { params: { player_name: this.playerName } })
         .then(response => {
           this.pitchingStats = response.data.stats || {};
         })
@@ -227,7 +227,7 @@ export default {
         });
     },
     fetchBattingStats() {
-      axios.get(`http://localhost:5000/api/player_batting_stats`, { params: { player_name: this.playerName } })
+      axios.get('http://' + this.$store.state.host + '/api/player_batting_stats', { params: { player_name: this.playerName } })
         .then(response => {
           this.battingStats = response.data.stats || {};
         })

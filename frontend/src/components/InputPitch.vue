@@ -83,6 +83,7 @@
                                     class="mx-auto"
                                     @click="handlePredictButtonClick"
                                     color="green-darken-1"
+                                    :disabled="isButtonDisabled"
                                 >Save Pitch</v-btn>  
                             </v-col>
                         </v-row>
@@ -106,6 +107,7 @@
 <script>
     import axios from 'axios';
     import InputPitchLocation from "@/components/InputPitchLocation.vue";
+    import { mapState } from 'vuex';
 
     export default {
         components: {
@@ -130,19 +132,20 @@
                         "Splitter (FS)",
                         "Sweeper (ST)"],
                 speed: 0.0,
-                curr_pitcher_id: "NA",
             };
         },
         methods: {
             handlePredictButtonClick() {
                 console.log('Predict Button clicked!');
 
-                const path = 'http://localhost:5000/make_prediction';
-
-                axios.get(path, { params: this.gameState})
+                const path = 'http://' + this.$store.state.host + '/make_prediction';
+                const params = this.gameState;
+                axios.get(path, { params })
                 .then((res) => {
-                    console.log("Pitch Prediction Recieved: " + res.data)
-                    this.emitter.emit("ChangePitch", res.data)
+                    const prediction = res.data;
+                    console.log("Pitch Prediction Recieved: " + prediction);
+                    this.$store.commit("predict", prediction);
+                    this.emitter.emit("UpdateHistory");
                 })
                 .catch((error) => {
                     console.error(error);
@@ -154,21 +157,29 @@
             },
         },
         computed: {
+            ...mapState({
+                pitcherId: state => state.current.pitcher.id,
+                batterId: state => state.current.batter.id,
+                recording: state => state.recording,
+            }),
             gameState() {
                 return {
                     inning: this.$store.state.inning,
+                    batter: this.$store.state.current.batter.id,
+                    pitcher: this.$store.state.current.pitcher.id,
+                    outs: this.$store.state.outs,
+                    balls: this.$store.state.balls,
+                    strikes: this.$store.state.strikes,
+                    bases: this.$store.state.bases,
+                    pitchSpeed: this.speed,
+                    pitchType: this.type,
                 };
-            }
+            },
+            isButtonDisabled() {
+                return (!this.recording || !this.pitcherId || !this.batterId);
+            },
         },
-        mounted() {
 
-        // Sets current pitcher name/id and resets image
-        this.emitter.on("ChangePitcher2", pitcher_obj => {
-
-            this.curr_pitcher_id = pitcher_obj.id
-
-        });
-        },
     };
 </script>
 

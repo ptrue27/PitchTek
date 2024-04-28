@@ -11,7 +11,7 @@
             <v-text-field 
               type="text" 
               v-model="username" 
-              placeholder="Username" 
+              placeholder="Email" 
               class="my-text-input"
               :rules="usernameRules"
               ref="usernameInput"
@@ -71,9 +71,9 @@
         password: '',
         errorMessage: '',
         usernameRules: [
-          v => !!v || 'Username is required',
-          v => (v && v.length >= 3 && v.length <= 32) || 'Username must be between 3 and 32 characters',
-          v => /^[a-zA-Z0-9]*$/.test(v) || 'Username must contain only alphanumeric characters'
+          v => !!v || 'Email is required',
+          v => /.+@.+\..+/.test(v) || 'Email must be valid',
+          v => (v && v.length <= 64) || 'Email must be less than 64 characters'
         ],
         passwordRules: [
           v => !!v || 'Password is required',
@@ -103,7 +103,7 @@
           if (this.mode == "Login") {
             endpoint = "login"
           }
-          const path = "http://localhost:5000/api/" + endpoint;
+          const path = 'http://' + this.$store.state.host + '/api/' + endpoint;
           const response = await axios.post(path, {
             username: this.username,
             password: this.password
@@ -113,6 +113,7 @@
           // Check if request was successful
           if (response.status == 200 || response.status == 201) {
             this.errorMessage = '';
+            console.log("RESPONSE" + response)
             this.$store.commit("login", response.data);
             this.$router.push({ name: 'Dashboard' });
           } 
@@ -134,7 +135,7 @@
   
 <style>
   .error-message {
-    color: rgb(196, 46, 46);
+    color: rgb(182, 45, 45);
   }
   .login-card {
     padding: 20px;

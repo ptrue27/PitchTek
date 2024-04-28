@@ -21,6 +21,7 @@ os.makedirs(app.config['STATIC_FOLDER'], exist_ok=True)
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():
     data = request.get_json()
+
     token = user_manager.user_sign_up(data["username"], data["password"])
     if token:
         seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
@@ -28,15 +29,18 @@ def sign_up():
     else:
         return jsonify({'message': 'Username is unavailable'}), 400
 
+
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
+
     token = user_manager.user_login(data["username"], data["password"])
     if token:
         seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
         return jsonify({'message': 'User logged in successfully', 'seasons': seasons, 'token': token}), 200
     else:
         return jsonify({'message': 'Invalid username or password'}), 401
+
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
@@ -45,6 +49,7 @@ def logout():
 
 @app.route("/api/get_teams", methods=["GET"])
 def get_teams():
+
     teams_dict = stats_api.get_table("TEAMS")
     if teams_dict:
         return jsonify(teams_dict)
@@ -77,8 +82,10 @@ def get_pitcher(id):
     else:
         return jsonify({"error": "Pitcher not found"}), 404
 
+
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
+
     pitch_type = "Sinker (SI)"
     pitch_speed = 92.7
     return jsonify(pitch_type, pitch_speed)
@@ -234,6 +241,7 @@ def get_mlb_player_stats():
         print("Failed to fetch player stats: %s", str(e))
         return jsonify({"error": str(e)}), 500
     
+    
 @app.route("/api/player_pitching_stats", methods=['GET'])
 def get_player_pitching_stats():
     player_name = request.args.get('player_name')
@@ -335,6 +343,7 @@ def get_player_fielding_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
 @app.route("/api/player_batting_stats", methods=['GET'])
 def get_player_batting_stats():
     player_name = request.args.get('player_name')
@@ -379,4 +388,12 @@ def get_player_batting_stats():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    if path and path != 'favicon.ico':
+        return send_from_directory(app.static_folder, path)
+    return render_template('index.html')
 

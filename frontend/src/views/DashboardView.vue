@@ -30,7 +30,7 @@
 
 <style>
 .dashboard-container {
-  background-color: #C8E6C9;
+  background-color: #c2ebc9;
 }
 </style>
 

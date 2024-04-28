@@ -1,171 +1,59 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;" 
+    <v-card style="width: 100%; margin: 10px 10px; border: 1px solid #43A047;" 
       elevation="3"
     >
-      <!-- Displaying Paginated Data -->
-      <v-list>
-        <v-list-item-group>
-          <v-list-item v-for="item in currentData" :key="item.id">
-            <!-- Content for each row -->
-            <v-list-item-content>
-                <v-row>
-                    <v-col cols="5">
-                        <v-img :src=imageURL style="margin-top: 5px; margin-bottom: 5px"
-                        ></v-img>
-                    </v-col>
-                    <!--Innings and count-->
-                    <v-col cols="7">
-                        <!--Title-->
-
-                        <v-row>
-                            <v-col class="my-title">Confidence: {{item.confidence}}%</v-col>
-                        </v-row>
-                        <!--Pitch info-->
-                        <v-row>
-                            <v-col>Pitch type:</v-col>
-                            <v-col>{{pitchDict[item.type]}}</v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col>Speed:</v-col>
-                            <v-col>{{item.speed}} mph</v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col>Location:</v-col>
-                            <v-col>({{item.locationX}}, {{item.locationY}})</v-col>
-                        </v-row>
-                    </v-col>
-                </v-row>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-
-      <!-- Pagination Controls -->
-      <v-card-actions class="text-center border-top pt-3">
-        <v-row>
-          <v-col>
-            <v-btn
-                @click="prevPage"
-                :disabled="currentPage === 0"
-            >
-                <v-icon>mdi-chevron-left</v-icon>
-            </v-btn>
-            <span>{{ currentPage + 1 }}</span>
-            <v-btn @click="nextPage" :disabled="currentPage === pages.length - 1">
-                <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
+      <!--Title-->
+      <v-row class="border-bottom" style="margin-top: 0px; font-weight: bold">
+          <v-col class="text-center">
+              <div>Predicted Pitch</div>
           </v-col>
-        </v-row>
-      </v-card-actions>
+      </v-row>
+  
+      <v-row>
+        <!--Prediction image-->
+          <v-col cols="6">
+              <v-img :src=imageURL style="margin-top: -3px; margin-bottom: 7px; height: 392px;"
+              ></v-img>
+          </v-col>
+
+          <!--Predicted values-->
+          <v-col cols="6">
+              <v-row style="margin-top:60px;">
+                  <v-col class="predict-col">Confidence:</v-col>
+                  <v-col class="predict-data-col">{{ prediction.confidence }}%</v-col>
+              </v-row>
+              <v-row class="predict-row">
+                <v-col class="predict-col">Pitch type:</v-col>
+                <v-col class="predict-data-col">{{ prediction.type }}</v-col>
+              </v-row>
+              <v-row class="predict-row">
+                <v-col class="predict-col">Speed:</v-col>
+                <v-col class="predict-data-col">{{ prediction.speed }} mph</v-col>
+              </v-row>
+              <v-row class="predict-row">
+                <v-col class="predict-col">Location:</v-col>
+                <v-col class="predict-data-col">Zone {{ prediction.location }}</v-col>
+              </v-row>
+          </v-col>
+      </v-row>
 
     </v-card>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'my-component',
-  data() {
-    return {
-      pitchDict: {
-        FA:   "Fastball",
-        FF:   "Fastball",
-        FT:   "Fastball",
-        FC:   "Fastball (Cutter)",
-        FS:   "Splitter",
-        CH:   "Changeup",
-        CU:   "Curveball",
-        EP:   "Eephus",
-        FO:   "Forkball",
-        KN:   "Knuckleball",
-        KC:   "Knuckle-curve",
-        SC:   "Screwball",
-        SI:   "Sinker",
-        SL:   "Slider",
-        SV:   "Slurve",
-        ST:   "Sweeper",
-        PO:   "Pitch Out",
-        NA:   ""
-      },
-      image_path: "default_heat_map.jpg",
-      curr_pitcher_id: "NA",
-      currentimage : 0,
-      data: [
-        {id: 1, confidence: 'NA', type: 'NA', speed: 'NA', locationX: 'NA', locationY: 'NA'},
-        {id: 2, confidence: 'NA', type: '', speed: 'NA', locationX: 'NA', locationY: 'NA'},
-        {id: 3, confidence: '7.04', type: 'Slider', speed: 82.27, locationX: 78, locationY: 38},
-      ],
-      itemsPerPage: 1,
-      currentPage: 0,
-      pages: [],
-    };
-  },
-  created() {
-    this.pages = Array.from({ length: Math.ceil(this.data.length / this.itemsPerPage) }, (_, index) => {
-      const startIndex = index * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      return this.data.slice(startIndex, endIndex);
-    });
-  },
   computed: {
-    currentData() {
-      return this.pages[this.currentPage] || [];
-    },
-    predictionImgSrc() {
-      //return this.$store.state.predictionImgSrc
-      //console.log("predictionImgSrc called")
-      return require(this.imageURL)
-    },
+    ...mapState({
+        pitcherId: state => state.current.pitcher.id,
+        prediction: state => state.prediction,
+    }),
     imageURL(){
-      return require("@/assets/heat_maps/" + this.image_path)
+      return require("@/assets/heat_maps/" + this.prediction.img)
     },
   },
-  methods: {
-    prevPage() {
-      this.currentPage = Math.max(this.currentPage - 1, 0);
-    },
-    nextPage() {
-      this.currentPage = Math.min(this.currentPage + 1, this.data.length - 1);
-    },
-    /*checkFileExists(my_URL) {
-      fetch(my_URL)
-        .then(response => {
-          if (response.ok) {
-            console.log("this.fileExists = true; URL: ", my_URL)
-          } else {
-            console.log("this.fileExists = false; URL: ", my_URL)
-          }
-        })
-        .catch(error => {
-          console.error('Error checking file existence:', error);
-          console.log("this.fileExists = false; URL: ", my_URL)
-        });
-    }*/
-  },
-    mounted() {
-      this.emitter.on("ChangePitch", my_var => {
-        console.log('ChangePitch() called, with pitch:', my_var[0]);
-        this.data[0].type = my_var[0]
-        this.data[0].speed = my_var[1]
-
-        this.image_path = this.curr_pitcher_id + "_" + my_var[0] + "_heat_map.jpg"
-        console.log("this image: " + this.imageURL)
-      });
-
-      // Sets current pitcher name/id and resets image
-      this.emitter.on("ChangePitcher", pitcher_obj => {
-
-        // If heat maps for pitcher does not exist, make images
-        // this.checkFileExists("@/assets/heat_maps/default_heat_map.jpg")
-
-        this.curr_pitcher_id = pitcher_obj.id
-
-        // Set values to default
-        this.image_path = "default_heat_map.jpg"
-        this.data[0].type = ""
-        this.data[0].speed = ""
-
-      });
-    },
 };
 </script>
 
@@ -174,14 +62,22 @@ export default {
     border-top: 1px solid gray;
     background-color: #F2F2F2;
   }
-  .my-title {
-      white-space: nowrap;
-      text-align: center;
-  }
   .prediction-number {
       white-space: nowrap;
       text-align: center;
       font-size: 10px;
       padding-left: 2px;
+  }
+  .predict-col {
+    margin-left:50px;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .predict-data-row {
+    margin-left: 50px;
+    font-size: 18px;
+  }
+  .predict-row {
+    padding-top: 20px;
   }
 </style>
