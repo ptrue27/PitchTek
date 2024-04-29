@@ -3,9 +3,7 @@
     <!--Title-->
     <v-row>
         <v-col class="text-center d-flex justify-center">
-            <v-card 
-                class=" landing-v-card"
-            >
+            <v-card class="landing-v-card" elevation="3">
                 <h1 style="font-size: 45px; margin-top: 2px;">PitchTek.</h1>
                 <h3 style="margin-bottom: 8px;">Bringing machine learning to the diamond.</h3>
             </v-card> 
@@ -13,15 +11,16 @@
     </v-row>
 
     <!--User form-->
-    <v-row 
-      style="margin-top: 20px;"
-    >
-      <v-col 
-        cols="12"
-        class="d-flex justify-center"
-      >
+    <v-row style="margin-top: 20px;">
+      <v-col cols="4">
+        <v-img src="@/assets/pitcher_silhouette.png" height="275px"/>
+      </v-col>
+      <v-col cols="4" class="d-flex justify-center">
         <LoginUser />
       </v-col>
+        <v-col cols="4">
+          <v-img src="@/assets/batter_silhouette.png" height="325px"/>
+        </v-col>
     </v-row>
 
   </div>
@@ -39,7 +38,7 @@ export default {
 
 <style>
 .landing-v-card {
-  border: 2px solid #1B5E20;
+  border: 2px solid gray;
   margin-top: 150px; 
   width: 400px;
 }

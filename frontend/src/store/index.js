@@ -31,13 +31,14 @@ const defaultPitcher = {
     hr: '-',
 };
 const defaultTeam = {
+    id: 0,
+    name: "Select Team",
     batter: { ...defaultBatter },
     batterIds: [],
     batterNames: [],
     pitcher: { ...defaultPitcher },
     pitcherIds: [],
     pitcherNames: [],
-    teamName: "Select Team",
     score: 0,
 };
 const defaultMatchup = {
@@ -49,14 +50,37 @@ const defaultMatchup = {
     doubles: '-',
     triples: '-',
     hr: '-',
-}
+};
+const defaultPrediction = {
+    img: "default_heat_map.jpg",
+    speed: '-',
+    location: '-',
+    confidence: '-',
+    type: '-',
+};
+const defaultManage = {
+    seasonName: "Select Season",
+    teamName: "Select Team",
+    gameName: "Select Game",
+    teamNames: [],
+    teamIds: [],
+    pitcherNames: [],
+    batterNames: [],
+    gameNames: [],
+    gameIds: [],
+    gameStates: [],
+};
 
 const store = createStore({
     state() {
         return {
+            host: "localhost:5000", // development
+            // host: "pitchtek.pro", // production
             isLoggedIn: localStorage.getItem("token") !== null,
+            recording: false,
             teamIds: [],
             teamNames: [],
+            gameId: 0,
             inning: "1∧",
             default: {
                 batter: { ...defaultBatter },
@@ -67,48 +91,90 @@ const store = createStore({
             away: { ...defaultTeam },
             current: { ...defaultTeam },
             matchup: { ...defaultMatchup },
-            predictionImgSrc: "@/assets/strikezone.jpg",
-            seasons: localStorage.getItem("seasons") ? JSON.parse(localStorage.getItem("seasons")) : [],
-            season: "Select Season",
+            prediction: { ...defaultPrediction },
+            season: {
+                ids: localStorage.getItem("seasonIds") ? JSON.parse(localStorage.getItem("seasonIds")) : [],
+                names: localStorage.getItem("seasonNames") ? JSON.parse(localStorage.getItem("seasonNames")) : [],
+                id: 0,
+                name: "Select Season"
+            },
             outs: 0,
             balls: 0,
             strikes: 0,
             bases: [false, false, false],
+            manage: { ...defaultManage },
         }
     },
     mutations: {
         login(state, payload) {
-            state.seasons = payload.seasons;
-            localStorage.setItem('token', payload.token);
-            localStorage.setItem('seasons', JSON.stringify(payload.seasons));
             state.isLoggedIn = true;
+            localStorage.setItem('token', payload.token);
+            state.season.ids = payload.season_ids;
+            localStorage.setItem('seasonIds', JSON.stringify(payload.season_ids));
+            state.season.names = payload.season_names;
+            localStorage.setItem('seasonNames', JSON.stringify(payload.season_names));
         },
         logout(state) {
             console.log("Logout: " + state.isLoggedIn);
             this.commit('resetDashboard');
+            state.manage = { ...defaultManage };
             localStorage.removeItem('token');
+            localStorage.removeItem('seasonIds');
+            localStorage.removeItem('seasonNames');
             state.isLoggedIn = false;
-            state.season = "Select Season";
+            state.season.name = "Select Season";
         },
-        setMatchup(state, rand) {
-            if(rand) {
-                state.matchup = {     
-                    pa: rand,
-                    k: Math.floor(rand * .25),
-                    bb:  Math.floor(rand * .085),
-                    hits:  Math.floor(rand * .29),
-                    singles:  Math.floor(rand * .14),
-                    doubles:  Math.floor(rand * .05),
-                    triples:  Math.floor(rand * .03),
-                    hr:  Math.floor(rand * .07),
-                };
+        setGameId(state, gameId) {
+            state.gameId = gameId;
+        },
+        setManageSeason(state, season) {
+            state.manage.seasonName = season;
+            state.manage.teamName = "Select Team";
+            state.manage.gameName = "Select Game";
+            state.manage.pitcherNames = [];
+            state.manage.batterNames = [];
+            state.manage.gameStates = [];
+        },
+        setManageTeam(state, team) {
+            state.manage.teamName = team;
+        },
+        setManageGame(state, game) {
+            state.manage.gameName = game;
+        },
+        setManagerTeams(state, teams) {
+            state.manage.teamIds = teams.ids;
+            state.manage.teamNames = teams.names;
+        },
+        setManagerGames(state, games) {
+            state.manage.gameIds = games.ids;
+            state.manage.gameNames = games.names;
+        },
+        setManagerRoster(state, roster) {
+            state.manage.pitcherNames = roster.pitchers.names;
+            state.manage.batterNames = roster.batters.names;
+        },
+        setManagerGameStates(state, gameStates) {
+            state.manage.gameStates = gameStates;
+        },
+        setRecording(state, isRecording) {
+            state.recording = isRecording;
+        },
+        predict(state, prediction) {
+            state.prediction = prediction;
+        },
+        setMatchup(state, matchup) {
+            if(matchup) {
+                state.matchup = matchup;
             } else {
                 state.matchup = { ...defaultMatchup };
             }
         },
-        setSeason(state, season) {
-            state.season = season;
+        setSeasonName(state, seasonName) {
             this.commit('resetDashboard');
+            state.season.name = seasonName;
+        },
+        setSeasonId(state, seasonId) {
+            state.season.id = seasonId;
         },
         setTeamIds(state, ids) {
             state.teamIds = ids;
@@ -167,10 +233,10 @@ const store = createStore({
             }
         },
         setHomeTeamName(state, name) {
-            state.home.teamName = name;
+            state.home.name = name;
         },
         setAwayTeamName(state, name) {
-            state.away.teamName = name;
+            state.away.name = name;
         },
         setHomeScore(state, score) {
             state.home.score = score;
@@ -186,6 +252,7 @@ const store = createStore({
             state.home.pitcherIds = home.pitcherIds;
             state.home.pitcherNames = home.pitcherNames;
             state.home.score = home.score;
+            state.home.id = home.id;
             state.matchup = { ...defaultMatchup };
             if (state.inning.includes('∨')) {
                 state.current.batter = { ...defaultBatter };
@@ -206,6 +273,7 @@ const store = createStore({
             state.away.pitcherIds = away.pitcherIds;
             state.away.pitcherNames = away.pitcherNames;
             state.away.score = away.score;
+            state.away.id = away.id;
             state.matchup = { ...defaultMatchup };
             if (state.inning.includes('∧')) {
                 state.current.batter = { ...defaultBatter };
@@ -224,13 +292,14 @@ const store = createStore({
             state.away = { ...defaultTeam };
             state.current = { ...defaultTeam };
             state.matchup = { ...defaultMatchup };
-            state.predictionImgSrc = "@/assets/strikezone.jpg";
             state.outs = 0;
             state.balls = 0;
             state.strikes = 0;
             state.bases = [false, false, false];
+            state.prediction = { ...defaultPrediction };
         },
     },
+    
 });
 
 export default store

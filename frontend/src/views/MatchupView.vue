@@ -184,6 +184,7 @@
     
     methods: {
 
+
       analyzeDescriptions() {
     if (!this.selectedPlayer || !this.csvData) return;
 
@@ -193,6 +194,7 @@
 
     // Store the descriptions in a data property
     this.playerDescriptions = filteredDescriptions;
+
   },
     updatePitcherStats() {
       this.pitcherError = ''; // Reset error message each time the method is called
@@ -221,6 +223,7 @@
       }
 
     axios.get(`pitchtek.pro/api/player_batting_stats`, { params: { player_name: this.batterId } })
+
       .then(response => {
         if (!response.data || Object.keys(response.data).length === 0) {
           this.batterError = 'No data found for this Batter ID';

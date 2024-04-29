@@ -1,6 +1,6 @@
 <template>
-    <v-card style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;" 
-        elevation="3"
+    <v-card style="width: 100%; margin: 10px 10px;" 
+        elevation="3" class="card-border"
     >
         <!--Player select-->
         <v-row>
@@ -28,7 +28,7 @@
             <!--Counting stats-->
             <v-col cols="9" class="pr-2">
                 <!--Counting stats table-->
-                <v-row>
+                <v-row style="margin-bottom: -18px;">
                     <v-col>
                         <div>
                             <table class="stats-table">
@@ -54,7 +54,7 @@
                 </v-row>
 
                 <!--Rate stats table-->
-                <v-row style="margin-bottom: 5px;">
+                <v-row style="margin-bottom: 4px;">
                     <v-col>
                         <div>
                             <table class="stats-table" color="green-darken-1">
@@ -91,23 +91,42 @@ export default {
     methods: {
         handlePitcherChange() {
             const index = this.pitcherNames.indexOf(this.pitcher.name);
-            const id = this.pitcherIds[index];
-            const path = 'http://localhost:5000/api/get_pitcher/' + id;
+            const pitcherId = this.pitcherIds[index];
+            const path = 'http://' + this.$store.state.host + '/api/get_pitcher';
+            const params = {
+                id: pitcherId,
+                season_name: this.$store.state.season.name,
+            };
 
-            axios.get(path)
+            // Get pitcher stats
+            axios.get(path, { params })
                 .then((res) => {
                     const newPitcher = res.data;
-                    this.emitter.emit("ChangePitcher", newPitcher)
-                    this.emitter.emit("ChangePitcher2", newPitcher)
-                    if (this.batterId) {
-                        const rand = Math.floor(Math.random() * 50);
-                        this.$store.commit("setMatchup", rand);
-                    }
-                    else {
-                        this.$store.commit("setMatchup", 0);
-                    }
                     console.log("Changed pitcher: " + newPitcher.name + ", " + newPitcher.id);
                     this.$store.commit("setCurrentPitcher", newPitcher);
+                    
+                    // Get matchup stats
+                    if (this.batterId) {
+                        const path = 'http://' + this.$store.state.host + '/api/get_versus';
+                        const params = {
+                            pitcher_id: pitcherId,
+                            batter_id: this.batterId,
+                            season_name: this.$store.state.season.name,
+                        };
+                        axios.get(path, { params })
+                            .then((res) => {
+                                const matchupStats = res.data;
+                                console.log("Matchup: " + matchupStats);
+                                this.$store.commit("setMatchup", matchupStats);
+                            })
+                            .catch((error) => {
+                                console.error("Error retrieving versus stats: " + error);
+                                this.$store.commit("setMatchup", false);
+                            });
+                    }
+                    else {
+                        this.$store.commit("setMatchup", false);
+                    }
                 })
                 .catch((error) => {
                     console.error("Error changing pitcher: " + error);

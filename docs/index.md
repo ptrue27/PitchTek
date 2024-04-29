@@ -1,6 +1,6 @@
 # PitchTek: The Baseball Pitch Prediction Dashboard
 
-CS 426 Senior Project in Computer Science, Spring 2023 \
+CS 426 Senior Project in Computer Science, Spring 2024 \
 University of Nevada, Reno \
 Department of Computer Science and Engineering 
 

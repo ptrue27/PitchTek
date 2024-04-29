@@ -1,17 +1,17 @@
 <template>
-    <v-card class="login-card">
+    <v-card class="login-card card-border" elevation="3">
         <!--Title-->
-        <v-card-title class="text-center">
+        <v-card-title class="border-bottom text-center">
           {{ mode }}
         </v-card-title>
 
         <!--Username input-->
-        <v-row>
+        <v-row style="padding-left: 20px; padding-right: 20px; margin-top: 10px">
           <v-col>
             <v-text-field 
               type="text" 
               v-model="username" 
-              placeholder="Username" 
+              placeholder="Email" 
               class="my-text-input"
               :rules="usernameRules"
               ref="usernameInput"
@@ -21,7 +21,7 @@
         </v-row>
 
         <!--Password Input-->
-        <v-row>
+        <v-row style="padding-left: 20px; padding-right: 20px; margin-top: 10px">
           <v-col>
             <v-text-field 
               type="password" 
@@ -50,16 +50,18 @@
         </v-row>
 
         <!--Switch forms-->
-        <v-row>
+        <v-row style="margin-bottom: 5px;">
           <v-col class="text-center">
-            <button @click="switchMode" style="text-decoration: underline;">{{ unsetMode }}</button>
+            <button @click="switchMode" style="text-decoration: underline;">
+              {{ unsetMode }}
+            </button>
           </v-col>
         </v-row>
 
     </v-card>
   </template>
   
-  <script>
+<script>
   import axios from 'axios';
   
   export default {
@@ -71,9 +73,9 @@
         password: '',
         errorMessage: '',
         usernameRules: [
-          v => !!v || 'Username is required',
-          v => (v && v.length >= 3 && v.length <= 32) || 'Username must be between 3 and 32 characters',
-          v => /^[a-zA-Z0-9]*$/.test(v) || 'Username must contain only alphanumeric characters'
+          v => !!v || 'Email is required',
+          v => /.+@.+\..+/.test(v) || 'Email must be valid',
+          v => (v && v.length <= 64) || 'Email must be less than 64 characters'
         ],
         passwordRules: [
           v => !!v || 'Password is required',
@@ -103,41 +105,39 @@
           if (this.mode == "Login") {
             endpoint = "login"
           }
-          const path = "http://localhost:5000/api/" + endpoint;
+          const path = 'http://' + this.$store.state.host + '/api/' + endpoint;
           const response = await axios.post(path, {
             username: this.username,
             password: this.password
           });
-          console.log(response.data);
           
           // Check if request was successful
           if (response.status == 200 || response.status == 201) {
             this.errorMessage = '';
+            console.log("RESPONSE" + response.data)
             this.$store.commit("login", response.data);
             this.$router.push({ name: 'Dashboard' });
           } 
-          // Handle request failure
-          else {
-            this.errorMessage = response.data.message;
-          }
         } 
         
         // Handle error
         catch (error) {
           console.error('Error logging in user:', error);
           this.errorMessage = error.response.data.message;
+          if (this.$store.state.isLoggedIn) {
+            this.$store.commit("logout");
+          }
         }
       }
     }
   };
-  </script>
+</script>
   
 <style>
   .error-message {
-    color: rgb(196, 46, 46);
+    color: rgb(182, 45, 45);
   }
   .login-card {
-    padding: 20px;
     width: 300px;
   }
   .my-text-input {

@@ -1,36 +1,57 @@
 # PitchTek
-## CS 425 Team 23
-## Spring 2024
+### Project for CS 426, Spring 2024
+### University of Nevada, Reno
+### Team 23: Parker True, Davis Dunkley, Ethan Carroll
 
 ## Setup
 
 ### Frontend
 1. Download and install node.js
-2. Current working directory is `PitchTek\frontend`
-3. Install Vue packages 
+2. Navigate to **/PitchTek/frontend**
+3. Install Vue packages \
     ```npm install```
 
 ### Backend
-1. Download and install Python
-2. Current working directory is `PitchTek\backend`
-3. Create virtual environment 
-    ```python -m venv env```
-4. Activate virtual environment (Windows)
-    ```.\env\Scripts\activate```
-5. Install packages 
+1. Download and install Python3
+2. Navigate to **/PitchTek/backend**
+3. Create virtual environment \
+    ```python3 -m venv env```
+4. Activate virtual environment \
+    Windows: ```.\env\Scripts\activate``` \
+    Linux: ```source env/bin/activate```
+6. Install packages \
     ```pip install -r requirements.txt```
+7. Create **.env** file and fill in credentials
 
-## Run
+## Run for Development
 
 ### Frontend
-1. Current working directory is `PitchTek\frontend`
-2. Run the frontend 
+1. Navigate to **/PitchTek/frontend**
+2. Serve the frontend \
     ```npm run serve```
 
 ### Backend
 In a separate terminal...
-1. Current working directory is `PitchTek\backend`
-2. Activate virtual environment (Windows) 
-    ```.\env\Scripts\activate```
-3. Run the backend 
+1. Navigate to **/PitchTek/backend**
+2. Activate virtual environment \
+    Windows: ```.\env\Scripts\activate``` \
+    Linux: ```source env/bin/activate```
+3. Serve the backend \
     ```flask run --debug```
+
+## Run for Production
+
+### Frontend
+1. Navigate to **/PitchTek/frontend**
+2. Build the frontend \
+    ```npm run build```
+
+### Backend
+1. Navigate to **/PitchTek/backend**
+2. Activate virtual environment \
+    Windows: ```.\env\Scripts\activate``` \
+    Linux: ```source env/bin/activate```
+3. Retart Nginx \
+    ```sudo systemctl restart nginx```
+4. Restart Gunicorn \
+    ```sudo systemctl restart gunicorn```

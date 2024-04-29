@@ -69,6 +69,16 @@
         History
       </v-btn>
 
+      <!--Account button-->
+      <v-btn
+        v-if="$store.state.isLoggedIn"
+        to="/account"
+        prepend-icon="mdi-account-circle"
+        variant="tonal" class="mr-5"
+      >
+        Account
+      </v-btn>
+
       <!--Logout button-->
       <v-btn
         v-if="$store.state.isLoggedIn"
@@ -90,7 +100,7 @@ export default {
     async logoutUser() {
       try {
         // Make POST request
-        const path = 'http://localhost:5000/api/logout'
+        const path = 'http://' + this.$store.state.host + '/api/logout';
         const response = await axios.post(path);
         
         // Check if logout was successful

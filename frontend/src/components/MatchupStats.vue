@@ -1,16 +1,16 @@
 <template>
     <v-card
-        style="width: 100%; margin: 10px 10px; border: 2px solid #43A047;"
-        elevation="3"
+        style="width: 100%; margin: 10px 10px;"
+        elevation="3" class="card-border"
     >
         <v-row class="border-bottom" style="margin-top: 0px; font-weight: bold">
             <v-col class="text-center">
-                <div>{{ pitcherName }} vs. {{ batterName }}</div>
+                <div>Matchup History</div>
             </v-col>
         </v-row>
 
         <!--Matchup table-->
-        <v-row style="margin-top: 18px;">
+        <v-row style="margin-top: 18px; margin-bottom: -18px">
             <v-col style="margin-left: 30px; margin-right: -15px;">
                 <table class="stats-table">
                         <thead>
@@ -34,7 +34,7 @@
         </v-row>
 
         <!--Hits table-->
-        <v-row style="margin-bottom: 5px;">
+        <v-row style="margin-bottom: 4px;">
             <v-col style="margin-left: 30px; margin-right: -15px;">
                 <table class="stats-table">
                         <thead>

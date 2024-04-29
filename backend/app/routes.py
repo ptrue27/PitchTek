@@ -1,89 +1,188 @@
 from app.get_prediction import Predictions_Class
-from app import app, user_manager, stats_api
-import statsapi
 from app.data_visualizer import DataVisualizer
-import os
-from flask import Flask, request, jsonify, send_from_directory
-from werkzeug.utils import secure_filename
-import pandas as pd
+from app import app, user_manager, stats_api, sql_utils
+
+from datetime import datetime
+from flask import request, jsonify, render_template, send_from_directory
 import matplotlib
-matplotlib.use('Agg')  # Use the 'Agg' backend, which is non-interactive and does not require a GUI.
+import os
+import pandas as pd
+import statsapi
+from werkzeug.utils import secure_filename
+
+# Use the 'Agg' backend, which is non-interactive and does not require a GUI.
+matplotlib.use('Agg')  
 import matplotlib.pyplot as plt
 
 # Configure directories using environment variables or default to a relative path
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './uploads')
 app.config['STATIC_FOLDER'] = os.getenv('STATIC_FOLDER', './static')
 
-# Ensure the directory exists
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-os.makedirs(app.config['STATIC_FOLDER'], exist_ok=True)
+df_global = pd.DataFrame()
+
 
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():
     data = request.get_json()
-    token = user_manager.user_sign_up(data["username"], data["password"])
-    if token:
-        seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
-        return jsonify({'message': 'User signed up successfully', 'seasons': seasons, 'token': token}), 200
-    else:
-        return jsonify({'message': 'Username is unavailable'}), 400
+    res = user_manager.user_sign_up(data["username"], data["password"])
+    if res:
+        return jsonify(res), 200
+    return jsonify({'message': 'Username is unavailable'}), 400
+
 
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    token = user_manager.user_login(data["username"], data["password"])
-    if token:
-        seasons = ["2024 MLB", "2023 MLB", "2023 UNR", "2023 TMCC"]
-        return jsonify({'message': 'User logged in successfully', 'seasons': seasons, 'token': token}), 200
-    else:
-        return jsonify({'message': 'Invalid username or password'}), 401
+    res = user_manager.user_login(data["username"], data["password"])
+    if res:
+        return jsonify(res), 200
+    return jsonify({'message': 'Invalid username or password'}), 401
+
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
     user_manager.user_logout()
     return jsonify({'message': 'User logged out successfully'}), 200
 
+
 @app.route("/api/get_teams", methods=["GET"])
 def get_teams():
-    teams_dict = stats_api.get_table("TEAMS")
-    if teams_dict:
-        return jsonify(teams_dict)
+    season_id = request.args.get("season_id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB or custom teams
+    if split_name[0] == "MLB":
+        ids, names = stats_api.get_teams(int(split_name[1]))
     else:
-        return jsonify({"error": "Teams not found"}), 404
+        ids, names = sql_utils.get_cols("TEAMS", ["id", "name"],
+                                        "season_id", season_id)
+        
+    return jsonify({"ids": ids, "names": names})
 
-@app.route('/api/get_roster/<int:id>', methods=['GET'])
-def get_roster(id):
-    batters_dict = stats_api.get_table("BATTERS", cols=["id", "name"], where=["team_id", id])
-    pitchers_dict = stats_api.get_table("PITCHERS", cols=["id", "name"], where=["team_id", id])
-    roster_dict = {"batters": batters_dict, "pitchers": pitchers_dict}
-    if batters_dict and pitchers_dict:
-        return jsonify(roster_dict)
+
+@app.route('/api/get_roster', methods=['GET'])
+def get_roster():
+    team_id = request.args.get("team_id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB or custom roster
+    if split_name[0] == "MLB":
+        pitchers, batters = stats_api.get_roster(team_id, int(split_name[1]))
     else:
-        return jsonify({"error": "Roster not found"}), 404
+        ids, names = sql_utils.get_cols("PITCHERS", ["id", "name"],
+                                        "team_id", team_id)
+        pitchers = {"ids": ids, "names": names}
+        ids, names = sql_utils.get_cols("BATTERS", ["id", "name"],
+                                        "team_id", team_id)
+        batters = {"ids": ids, "names": names}
+    
+    return jsonify({"pitchers": pitchers, "batters": batters})
 
-@app.route('/api/get_batter/<int:id>', methods=['GET'])
-def get_batter(id):
-    batter_dict = stats_api.get_row("BATTERS", id)
-    if batter_dict:
-        return jsonify(batter_dict)
-    else:
-        return jsonify({"error": "Batter not found"}), 404
 
-@app.route('/api/get_pitcher/<int:id>', methods=['GET'])
-def get_pitcher(id):
-    pitcher_dict = stats_api.get_row("PITCHERS", id)
-    if pitcher_dict:
-        return jsonify(pitcher_dict)
-    else:
-        return jsonify({"error": "Pitcher not found"}), 404
+@app.route('/api/get_batter', methods=['GET'])
+def get_batter():
+    id = request.args.get("id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
 
-@app.route('/make_prediction', methods=['GET'])
-def make_prediction():
-    pitch_type = "Sinker (SI)"
-    pitch_speed = 92.7
-    return jsonify(pitch_type, pitch_speed)
+    # Get MLB batter
+    if split_name[0] == "MLB":
+        batter = stats_api.get_batter(id, int(split_name[1]))
+        return jsonify(batter)
 
-df_global = pd.DataFrame()
+    return jsonify({"error": "Batter not found"}), 404
+
+
+@app.route('/api/get_pitcher', methods=['GET'])
+def get_pitcher():
+    id = request.args.get("id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB pitcher
+    if split_name[0] == "MLB":
+        pitcher = stats_api.get_pitcher(id, int(split_name[1]))
+        return jsonify(pitcher)
+
+    return jsonify({"error": "Pitcher not found"}), 404
+
+
+@app.route('/api/get_versus', methods=['GET'])
+def get_versus():
+    pitcher_id = request.args.get("pitcher_id")
+    batter_id = request.args.get("batter_id")
+    season_name = request.args.get("season_name")
+    split_name = season_name.split()
+
+    # Get MLB pitcher
+    if split_name[0] == "MLB":
+        matchup = stats_api.get_versus(batter_id, pitcher_id)
+        return jsonify(matchup)
+
+    return jsonify({"error": "Versus statistics not found"}), 404
+
+
+@app.route('/api/get_history', methods=['GET'])
+def get_history():
+    game_id = request.args.get("game_id")
+    game_states = sql_utils.get_records("GAMESTATES", "game_id",  game_id)
+    return jsonify({"game_states": game_states})
+
+
+@app.route('/api/get_games', methods=['GET'])
+def get_games():
+    season_id = request.args.get("season_id")
+    games = sql_utils.get_records("GAMES", "season_id", season_id, sort='DESC')
+    ids, names = [], []
+    for game in games:
+        ids.append(game["id"])
+        home, away = game["home_team_name"], game["away_team_name"]
+        names.append(f"{game["start_time"]} - {home} vs. {away}")
+    return jsonify({"ids": ids, "names": names})
+
+
+@app.route('/api/new_game', methods=['POST'])
+def new_game():
+    game = request.json
+    current_time = datetime.now()
+    game['start_time'] = current_time.strftime("%m/%d %I:%M")
+    game_id = sql_utils.insert_record("GAMES", game, get_id=True)
+    return jsonify({"id": game_id})
+
+
+@app.route('/new_prediction', methods=['POST'])
+def new_prediction():
+    #predicter = Predictions_Class()
+
+    # Extract keys associated with 'param1'
+    #param1_keys = [key for key in request.args.keys() if key.startswith('param1')]
+    #param1_dict = {key.split('[', 1)[1][:-1]: request.args[key] for key in param1_keys}
+
+    #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
+    #pitch_speed = predicter.get_speed(pitch_type)
+
+    # Predict next pitch
+    prediction = {
+        "img": "425794_CH_heat_map.jpg",
+        "speed": 83.3,
+        "location": 4,
+        "confidence": 54.73,
+        "type": " Changeup (CH)",
+    }
+
+    # Store pitch data
+    game_state = request.json
+    game_state["prediction_img"] = prediction["img"]
+    game_state["prediction_speed"] = prediction["speed"]
+    game_state["prediction_location"] = prediction["location"]
+    game_state["prediction_confidence"] = prediction["confidence"]
+    game_state["prediction_type"] = prediction["type"]
+    #sql_utils.insert_record("GAMESTATES", game_state)
+
+    return jsonify(prediction)
+
 
 @app.route('/get_latest_at_bat', methods=['GET'])
 def get_latest_at_bat():
@@ -98,6 +197,7 @@ def get_latest_at_bat():
         'description': latest_at_bat['des']
     }
     return jsonify(data)
+
 @app.route('/api/download-template', methods=['GET'])
 def download_template():
     try:
@@ -112,6 +212,7 @@ def download_template():
         return send_from_directory(directory_path, filename, as_attachment=True)
     except Exception as e:
         return jsonify({"error": "File not found or server error", "message": str(e)}), 500
+
 @app.route('/upload_csv', methods=['POST'])
 def upload_csv():
     global df_global
@@ -120,6 +221,7 @@ def upload_csv():
     df_global['player_from_des'] = df_global['des'].apply(lambda x: ' '.join(x.split()[:2]))
     players = df_global['player_from_des'].unique().tolist()
     return jsonify(players)
+
 
 @app.route('/fetch_latest_at_bat_plot', methods=['GET'])
 def fetch_latest_at_bat_plot():
@@ -177,10 +279,10 @@ def fetch_latest_at_bat_plot():
     return jsonify({'image_url': f'static/{filename}'})
 
 
-
 @app.route('/get_latest_image', methods=['GET'])
 def get_latest_image():
     return send_from_directory(app.config['STATIC_FOLDER'], 'latest_at_bat_plot.png')
+
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
@@ -196,14 +298,11 @@ def upload_file():
     latest_uploaded_file = save_path
     return jsonify({'message': 'File uploaded successfully'}), 200
 
+
 @app.route('/images/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-# Other API endpoints...
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 @app.route('/api/generate-images', methods=['POST'])
 def generate_images_route():
@@ -246,6 +345,7 @@ def get_mlb_player_stats():
     except Exception as e:
         print("Failed to fetch player stats: %s", str(e))
         return jsonify({"error": str(e)}), 500
+    
     
 @app.route("/api/player_pitching_stats", methods=['GET'])
 def get_player_pitching_stats():
@@ -348,6 +448,7 @@ def get_player_fielding_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
 @app.route("/api/player_batting_stats", methods=['GET'])
 def get_player_batting_stats():
     player_name = request.args.get('player_name')
@@ -393,3 +494,14 @@ def get_player_batting_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    # Check if the path corresponds to a static file
+    static_path = os.path.join(app.static_folder, path)
+    if os.path.isfile(static_path):
+        return send_from_directory(app.static_folder, path)
+    
+    # Catch all
+    return render_template('index.html')

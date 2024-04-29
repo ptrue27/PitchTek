@@ -176,7 +176,9 @@ export default {
       const formData = new FormData();
       formData.append('file', file);
 
+
       axios.post('pitchtek.pro/api/upload', formData, {
+
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -190,7 +192,9 @@ export default {
       });
     }*/
     generateImages() {
+
   axios.post('pitchtek.pro/api/generate-images')
+
     .then(response => {
      this.Showimages = true;
       this.images = response.data.images;
@@ -211,6 +215,7 @@ export default {
     },
     fetchFieldingStats() {
       axios.get(`pitchtek.pro/api/player_fielding_stats`, { params: { player_name: this.playerName } })
+
         .then(response => {
           this.fieldingStats = response.data.stats || {};
         })
@@ -220,7 +225,9 @@ export default {
         });
     },
     fetchPitchingStats() {
+
       axios.get(`pitchtek.pro/api/player_pitching_stats`, { params: { player_name: this.playerName } })
+
         .then(response => {
           this.pitchingStats = response.data.stats || {};
         })
@@ -230,7 +237,9 @@ export default {
         });
     },
     fetchBattingStats() {
+
       axios.get(`pitchtek.pro/api/player_batting_stats`, { params: { player_name: this.playerName } })
+
         .then(response => {
           this.battingStats = response.data.stats || {};
         })

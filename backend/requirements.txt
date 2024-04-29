@@ -4,8 +4,10 @@ flask-cors
 flask-jwt-extended
 flask-login
 flask-sqlalchemy
+gunicorn
 joblib
 matplotlib
+MLB-StatsAPI
 pandas
 plotly
 python-dotenv
