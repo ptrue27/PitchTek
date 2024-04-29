@@ -98,7 +98,20 @@ def get_latest_at_bat():
         'description': latest_at_bat['des']
     }
     return jsonify(data)
-
+@app.route('/api/download-template', methods=['GET'])
+def download_template():
+    try:
+        # Define the directory where the file is stored
+        directory_path = os.path.join(app.config['STATIC_FOLDER'], 'assets')
+        
+        # Define the filename
+        filename = 'Pitch_Data_Template.csv'
+        
+        # Serve the file with the correct directory and filename
+        print(directory_path,filename)
+        return send_from_directory(directory_path, filename, as_attachment=True)
+    except Exception as e:
+        return jsonify({"error": "File not found or server error", "message": str(e)}), 500
 @app.route('/upload_csv', methods=['POST'])
 def upload_csv():
     global df_global

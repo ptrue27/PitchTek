@@ -1,14 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 class DataVisualizer:
 
     def __init__(self, csv_file_path):
-        self.csv_file_path = 'C:/Users/davis/PitchTek-2/uploads/first_pitch.csv'
+        self.csv_file_path = csv_file_path
         self.df = pd.read_csv(csv_file_path)
         self.generate_images()
-        
 
     def generate_images(self):
         self._generate_heatmap_of_counts()
@@ -27,7 +27,7 @@ class DataVisualizer:
         plt.ylabel('Count (Balls-Strikes)')
         plt.xticks(rotation=45)
 
-        save_path = 'C:/Users/davis/PitchTek-2/frontend/src/assets/heatMapOFCounts.png'
+        save_path = os.path.join(os.getenv('FRONTEND_ASSETS_PATH', 'frontend/src/assets'), 'heatMapOfCounts.png')
         plt.savefig(save_path)
         plt.close()
 
@@ -43,7 +43,7 @@ class DataVisualizer:
         plt.ylabel('Count (Balls-Strikes)')
         plt.xticks(rotation=45, ha='right')
         
-        save_path = 'C:/Users/davis/PitchTek-2/frontend/src/assets/count_vs_description_heatmap.png'
+        save_path = os.path.join(os.getenv('FRONTEND_ASSETS_PATH', 'frontend/src/assets'), 'countVsDescriptionHeatmap.png')
         plt.savefig(save_path)
         plt.close()
 
@@ -71,8 +71,6 @@ class DataVisualizer:
         plt.legend(title='Pitch Type')
         plt.grid(True)
 
-        save_path = 'C:/Users/davis/PitchTek-2/frontend/src/assets/pitchVeloLastGame.png'
+        save_path = os.path.join(os.getenv('FRONTEND_ASSETS_PATH', 'frontend/src/assets'), 'pitchVelocityLastGame.png')
         plt.savefig(save_path)
-        
-        
 

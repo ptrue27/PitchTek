@@ -23,9 +23,7 @@
 
             <v-btn color="success" @click="generateImages">Generate Images</v-btn>
            
-            <a href="C:/Users/davis/Documents/PitchTek/backend/assets/Pitch_Data_Template.csv" download="Pitch_Data_Template.csv">
-              <v-btn color="primary">Download Template</v-btn>
-            </a>
+            <v-btn color="primary" @click="downloadTemplate">Download Template</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -34,7 +32,7 @@
     <!-- Images Display Section -->
     <v-row justify="center" class="my-5">
       <v-col v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
-    <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
+    <v-img v-show = "Showimages" :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
   </v-col>
   </v-row>
 
@@ -128,6 +126,7 @@ export default {
       fieldingStats: {},
       pitchingStats: {},
       battingStats: {},
+      Showimages: false,
       images: [
         '/images/count_vs_description_heatmap.png',
         '/images/heatMapOFCounts.png',
@@ -144,7 +143,7 @@ export default {
     reader.onload = (e) => {
       const content = e.target.result;
       // Split the content by newline to count rows, consider CSV header
-      const rows = content.split('\n').filter(line => line.trim() !== '');
+      const rows = content.split('/n').filter(line => line.trim() !== '');
       if (rows.length < 150) {
         alert('Warning: The uploaded file contains less than 150 rows. This might affect the analysis accuracy.');
       }
@@ -152,7 +151,7 @@ export default {
       // Proceed to upload the file to the server
       const formData = new FormData();
       formData.append('file', file);
-      axios.post('http://localhost:5000/api/upload', formData, {
+      axios.post('pitchtek.pro/api/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -169,11 +168,15 @@ export default {
     // Trigger the file read
     reader.readAsText(file);
   },
+  downloadTemplate() {
+        window.location.href = 'pitchtek.pro/api/download-template';
+    },
+
     /*uploadFile(file) {
       const formData = new FormData();
       formData.append('file', file);
 
-      axios.post('http://localhost:5000/api/upload', formData, {
+      axios.post('pitchtek.pro/api/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -187,9 +190,9 @@ export default {
       });
     }*/
     generateImages() {
-  axios.post('http://localhost:5000/api/generate-images')
+  axios.post('pitchtek.pro/api/generate-images')
     .then(response => {
-      
+     this.Showimages = true;
       this.images = response.data.images;
     })
     .catch(error => {
@@ -207,7 +210,7 @@ export default {
       this.fetchBattingStats();
     },
     fetchFieldingStats() {
-      axios.get(`http://localhost:5000/api/player_fielding_stats`, { params: { player_name: this.playerName } })
+      axios.get(`pitchtek.pro/api/player_fielding_stats`, { params: { player_name: this.playerName } })
         .then(response => {
           this.fieldingStats = response.data.stats || {};
         })
@@ -217,7 +220,7 @@ export default {
         });
     },
     fetchPitchingStats() {
-      axios.get(`http://localhost:5000/api/player_pitching_stats`, { params: { player_name: this.playerName } })
+      axios.get(`pitchtek.pro/api/player_pitching_stats`, { params: { player_name: this.playerName } })
         .then(response => {
           this.pitchingStats = response.data.stats || {};
         })
@@ -227,7 +230,7 @@ export default {
         });
     },
     fetchBattingStats() {
-      axios.get(`http://localhost:5000/api/player_batting_stats`, { params: { player_name: this.playerName } })
+      axios.get(`pitchtek.pro/api/player_batting_stats`, { params: { player_name: this.playerName } })
         .then(response => {
           this.battingStats = response.data.stats || {};
         })
