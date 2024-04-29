@@ -20,6 +20,8 @@ app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './uploads')
 app.config['STATIC_FOLDER'] = os.getenv('STATIC_FOLDER', './static')
 
 df_global = pd.DataFrame()
+HOST = "localhost:5000" # development
+# HOST = "pitchtek.pro" # deployment
 
 
 @app.route('/api/sign_up', methods=['POST'])
@@ -366,9 +368,9 @@ def generate_images_route():
 
     # Assuming your Flask app runs on localhost:5000, construct the URLs for the images
     image_urls = [
-        'http://localhost:5000/images/heatMapOFCounts.png',
-        'http://localhost:5000/images/count_vs_description_heatmap.png',
-        'http://localhost:5000/images/pitchVeloLastGame.png'
+        f'http://{HOST}/images/heatMapOFCounts.png',
+        f'http://{HOST}/images/count_vs_description_heatmap.png',
+        f'http://{HOST}/images/pitchVeloLastGame.png'
     ]
 
     # Return these URLs in the response
