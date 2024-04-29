@@ -77,8 +77,8 @@ const defaultAccount = {
 const store = createStore({
     state() {
         return {
-            host: "localhost:5000", // development
-            // host: "pitchtek.pro", // production
+            //host: "localhost:5000", // development
+            host: "pitchtek.pro", // production
             isLoggedIn: localStorage.getItem("token") !== null,
             recording: false,
             teamIds: [],
