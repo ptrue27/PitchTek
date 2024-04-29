@@ -142,7 +142,7 @@ def get_games():
     for game in games:
         ids.append(game["id"])
         home, away = game["home_team_name"], game["away_team_name"]
-        names.append(f"{game["start_time"]} - {home} vs. {away}")
+        names.append(f"{game['start_time']} - {home} vs. {away}")
     return jsonify({"ids": ids, "names": names})
 
 

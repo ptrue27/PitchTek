@@ -116,10 +116,6 @@
 import axios from 'axios';
 
 export default {
-  components: {
-     
-  },
-
   data() {
     return {
       playerName: '',
@@ -151,7 +147,8 @@ export default {
       // Proceed to upload the file to the server
       const formData = new FormData();
       formData.append('file', file);
-      axios.post('pitchtek.pro/api/upload', formData, {
+      const host = "http://" + this.$store.state.host + "/api/upload";
+      axios.post(host, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -169,39 +166,18 @@ export default {
     reader.readAsText(file);
   },
   downloadTemplate() {
-        window.location.href = 'pitchtek.pro/api/download-template';
+        window.location.href = "http://" + this.$store.state.host + "/api/download-template";
     },
-
-    /*uploadFile(file) {
-      const formData = new FormData();
-      formData.append('file', file);
-
-
-      axios.post('pitchtek.pro/api/upload', formData, {
-
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+  generateImages() {
+    const host = "http://" + this.$store.state.host + "/api/generate-images";
+    axios.post(host)
       .then(response => {
-        console.log(response.data.message);
-        // Additional actions based on successful upload, if needed
+      this.Showimages = true;
+        this.images = response.data.images;
       })
       .catch(error => {
-        console.error('Error during file upload:', error);
+        console.error('Error generating images:', error);
       });
-    }*/
-    generateImages() {
-
-  axios.post('pitchtek.pro/api/generate-images')
-
-    .then(response => {
-     this.Showimages = true;
-      this.images = response.data.images;
-    })
-    .catch(error => {
-      console.error('Error generating images:', error);
-    });
 },
     fetchPlayerStats() {
       if (!this.playerName.trim()) {
@@ -214,7 +190,8 @@ export default {
       this.fetchBattingStats();
     },
     fetchFieldingStats() {
-      axios.get(`pitchtek.pro/api/player_fielding_stats`, { params: { player_name: this.playerName } })
+      const host = "http://" + this.$store.state.host + "player_fielding_stats";
+      axios.get(host, { params: { player_name: this.playerName } })
 
         .then(response => {
           this.fieldingStats = response.data.stats || {};
@@ -225,8 +202,8 @@ export default {
         });
     },
     fetchPitchingStats() {
-
-      axios.get(`pitchtek.pro/api/player_pitching_stats`, { params: { player_name: this.playerName } })
+      const host = "http://" + this.$store.state.host + "player_pitching_stats";
+      axios.get(host, { params: { player_name: this.playerName } })
 
         .then(response => {
           this.pitchingStats = response.data.stats || {};
@@ -237,8 +214,8 @@ export default {
         });
     },
     fetchBattingStats() {
-
-      axios.get(`pitchtek.pro/api/player_batting_stats`, { params: { player_name: this.playerName } })
+      const host = "http://" + this.$store.state.host + "player_batting_stats";
+      axios.get(host, { params: { player_name: this.playerName } })
 
         .then(response => {
           this.battingStats = response.data.stats || {};

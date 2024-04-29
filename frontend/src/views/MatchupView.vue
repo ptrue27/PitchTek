@@ -203,7 +203,8 @@
         return;
       }
 
-      axios.get(`pitchtek.pro/api/player_pitching_stats`, { params: { player_name: this.pitcherId } })
+      const host = "http://" + this.$store.state.host + "/api/player_pitching_stats";
+      axios.get(host, { params: { player_name: this.pitcherId } })
         .then(response => {
           if (!response.data || Object.keys(response.data).length === 0) {
             this.pitcherError = 'No data found for this Pitcher ID';
@@ -222,7 +223,8 @@
         return;
       }
 
-    axios.get(`pitchtek.pro/api/player_batting_stats`, { params: { player_name: this.batterId } })
+    const host = "http://" + this.$store.state.host + "/api/player_batting_stats";
+    axios.get(host, { params: { player_name: this.batterId } })
 
       .then(response => {
         if (!response.data || Object.keys(response.data).length === 0) {
@@ -240,7 +242,8 @@
       const formData = new FormData();
       formData.append('file', file);
 
-      axios.post('pitchtek.pro/upload_csv', formData)
+      const host = "http://" + this.$store.state.host + "/api/upload_csv";
+      axios.post(host, formData)
         .then(response => {
           this.players = response.data;
         })
@@ -248,7 +251,8 @@
     },
     fetchLatestAtBatPlot() {
       const timestamp = new Date().getTime();
-      axios.get(`pitchtek.pro/fetch_latest_at_bat_plot`, { params: { player_name: this.selectedPlayer } })
+      const host = "http://" + this.$store.state.host + "/api/fetch_latest_at_bat_plot";
+      axios.get(host, { params: { player_name: this.selectedPlayer } })
         .then(response => {
           this.generatedImageUrl = `${response.data.image_url}?t=${timestamp}`;
           this.showImage = true;
