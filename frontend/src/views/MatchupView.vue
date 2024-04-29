@@ -239,7 +239,7 @@
   },
   handleFileUpload(event) {
       const file = event.target.files[0];
-      const formData = new FormData();
+      let formData = new FormData();
       formData.append('file', file);
 
       const host = "http://" + this.$store.state.host + "/api/upload_csv";
