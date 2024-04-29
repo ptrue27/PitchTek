@@ -190,7 +190,7 @@ export default {
       this.fetchBattingStats();
     },
     fetchFieldingStats() {
-      const host = "http://" + this.$store.state.host + "player_fielding_stats";
+      const host = "http://" + this.$store.state.host + "/api/player_fielding_stats";
       axios.get(host, { params: { player_name: this.playerName } })
 
         .then(response => {
@@ -202,7 +202,7 @@ export default {
         });
     },
     fetchPitchingStats() {
-      const host = "http://" + this.$store.state.host + "player_pitching_stats";
+      const host = "http://" + this.$store.state.host + "/api/player_pitching_stats";
       axios.get(host, { params: { player_name: this.playerName } })
 
         .then(response => {
@@ -214,7 +214,7 @@ export default {
         });
     },
     fetchBattingStats() {
-      const host = "http://" + this.$store.state.host + "player_batting_stats";
+      const host = "http://" + this.$store.state.host + "/api/player_batting_stats";
       axios.get(host, { params: { player_name: this.playerName } })
 
         .then(response => {

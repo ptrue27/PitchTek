@@ -251,6 +251,7 @@ def get_latest_at_bat():
     }
     return jsonify(data)
 
+
 @app.route('/api/download-template', methods=['GET'])
 def download_template():
     try:
@@ -265,6 +266,7 @@ def download_template():
         return send_from_directory(directory_path, filename, as_attachment=True)
     except Exception as e:
         return jsonify({"error": "File not found or server error", "message": str(e)}), 500
+
 
 @app.route('/upload_csv', methods=['POST'])
 def upload_csv():
