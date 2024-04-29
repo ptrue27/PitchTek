@@ -58,10 +58,13 @@ const defaultPrediction = {
     confidence: '-',
     type: '-',
 };
-const defaultManage = {
+const defaultAccount = {
     seasonName: "Select Season",
+    seasonId: 0,
     teamName: "Select Team",
+    teamId: 0,
     gameName: "Select Game",
+    gameId: 0,
     teamNames: [],
     teamIds: [],
     pitcherNames: [],
@@ -93,16 +96,17 @@ const store = createStore({
             matchup: { ...defaultMatchup },
             prediction: { ...defaultPrediction },
             season: {
-                ids: localStorage.getItem("seasonIds") ? JSON.parse(localStorage.getItem("seasonIds")) : [],
-                names: localStorage.getItem("seasonNames") ? JSON.parse(localStorage.getItem("seasonNames")) : [],
                 id: 0,
-                name: "Select Season"
+                name: "Select Season",
+                ids: localStorage.getItem("seasonIds") ? 
+                    JSON.parse(localStorage.getItem("seasonIds")) : [],
+                names: localStorage.getItem("seasonNames") ? 
+                    JSON.parse(localStorage.getItem("seasonNames")) : [],
             },
-            outs: 0,
             balls: 0,
             strikes: 0,
             bases: [false, false, false],
-            manage: { ...defaultManage },
+            account: { ...defaultAccount },
         }
     },
     mutations: {
@@ -115,46 +119,115 @@ const store = createStore({
             localStorage.setItem('seasonNames', JSON.stringify(payload.season_names));
         },
         logout(state) {
-            console.log("Logout: " + state.isLoggedIn);
-            this.commit('resetDashboard');
-            state.manage = { ...defaultManage };
+            // Update localStorage
             localStorage.removeItem('token');
             localStorage.removeItem('seasonIds');
             localStorage.removeItem('seasonNames');
+
+            // Update store
+            this.commit('resetDashboard');
             state.isLoggedIn = false;
-            state.season.name = "Select Season";
+            state.season = {
+                id: 0,
+                name: "Select Season",
+                ids: [],
+                names: [],
+            };
+            state.account = { ...defaultAccount };
         },
-        setGameId(state, gameId) {
-            state.gameId = gameId;
+        setAccountSeason(state, seasonName) {
+            state.account = { ...defaultAccount };
+            state.account.seasonName = seasonName;
+            const index = state.season.names.indexOf(seasonName);
+            state.account.seasonId = state.season.ids[index];
         },
-        setManageSeason(state, season) {
-            state.manage.seasonName = season;
-            state.manage.teamName = "Select Team";
-            state.manage.gameName = "Select Game";
-            state.manage.pitcherNames = [];
-            state.manage.batterNames = [];
-            state.manage.gameStates = [];
+        addSeason(state, season) {
+            // Update localStorage
+            let seasonIds = JSON.parse(localStorage.getItem("seasonIds"));
+            seasonIds.push(season.id);
+            localStorage.setItem("seasonIds", JSON.stringify(seasonIds));
+            let seasonNames = JSON.parse(localStorage.getItem("seasonNames"));
+            seasonIds.push(season.name);
+            localStorage.setItem("seasonNames", JSON.stringify(seasonNames));
+            
+            // Update store
+            state.season.ids.push(season.id);
+            state.season.names.push(season.name);
         },
-        setManageTeam(state, team) {
-            state.manage.teamName = team;
+        deleteSeason(state, season) {
+            // Update localStorage
+            let seasonIds = JSON.parse(localStorage.getItem("seasonIds"));
+            seasonIds = seasonIds.filter(i => i != season.id);
+            localStorage.setItem("seasonIds", JSON.stringify(seasonIds));
+            let seasonNames = JSON.parse(localStorage.getItem("seasonNames"));
+            seasonNames = seasonNames.filter(i => i != season.name);
+            localStorage.setItem("seasonNames", JSON.stringify(seasonNames));
+            
+            // Update store
+            state.season.ids = seasonIds;
+            state.season.names = seasonNames;
+            state.account = { ...defaultAccount };
+
+            // Update Dashboard
+            if (state.season.id == season.id) {
+                this.commit('resetDashboard');
+                state.recording = false;
+                state.season.id = 0;
+                state.season.name = "Select Season"
+            }
         },
-        setManageGame(state, game) {
-            state.manage.gameName = game;
+        setAccountTeams(state, teams) {
+            state.account.teamIds = teams.ids;
+            state.account.teamNames = teams.names;
         },
-        setManagerTeams(state, teams) {
-            state.manage.teamIds = teams.ids;
-            state.manage.teamNames = teams.names;
+        setAccountTeam(state, teamName) {
+            state.account.teamName = teamName;
+            const index = state.account.teamNames.indexOf(teamName);
+            state.account.teamId = state.account.teamIds[index];
         },
-        setManagerGames(state, games) {
-            state.manage.gameIds = games.ids;
-            state.manage.gameNames = games.names;
+        addTeam(state, team) {
+            // Update Account
+            state.account.teamIds.push(team.id);
+            state.account.teamNames.push(team.name);
+
+            // Update Dashboard
+            if(state.season.id == state.account.seasonId) {
+                state.teamIds.push(team.id);
+                state.teamNames.push(team.name);
+            }
         },
-        setManagerRoster(state, roster) {
-            state.manage.pitcherNames = roster.pitchers.names;
-            state.manage.batterNames = roster.batters.names;
+        deleteTeam(state, team) {
+            // Update Account
+            const teamIds = state.account.teamIds.filter(i => i != team.id);
+            state.account.teamIds = teamIds;
+            const teamNames = state.account.teamNames.filter(i => i != team.name);
+            state.account.teamNames = teamNames;
+            state.account.teamName = "Select Team";
+            state.account.teamId = 0;
+            state.account.pitcherIds = [];
+            state.account.pitcherNames = [];
+            state.account.batterIds = [];
+            state.account.batterNames = [];
+
+            // Update Dashboard
+            if(state.season.id == state.account.seasonId) {
+                state.teamIds = teamIds;
+                state.teamNames = teamNames;
+            }
         },
-        setManagerGameStates(state, gameStates) {
-            state.manage.gameStates = gameStates;
+        setAccountRoster(state, roster) {
+            state.account.pitcherNames = roster.pitchers.names;
+            state.account.batterNames = roster.batters.names;
+        },
+        setAccountGames(state, games) {
+            state.account.gameIds = games.ids;
+            state.account.gameNames = games.names;
+        },
+        setAccountGame(state, game) {
+            state.account.gameName = game;
+        },
+        setAccountGameStates(state, gameStates) {
+            state.account.gameStates = gameStates;
         },
         setRecording(state, isRecording) {
             state.recording = isRecording;
@@ -168,6 +241,9 @@ const store = createStore({
             } else {
                 state.matchup = { ...defaultMatchup };
             }
+        },
+        setGameId(state, gameId) {
+            state.gameId = gameId;
         },
         setSeasonName(state, seasonName) {
             this.commit('resetDashboard');
@@ -200,7 +276,6 @@ const store = createStore({
                 state.current.pitcherIds = state.home.pitcherIds;
                 state.current.pitcherNames = state.home.pitcherNames;
             }
-
         },
         setOuts(state, outs) {
             state.outs = outs;
@@ -297,6 +372,19 @@ const store = createStore({
             state.strikes = 0;
             state.bases = [false, false, false];
             state.prediction = { ...defaultPrediction };
+        },
+    },
+    created() {
+        // Load data from localStorage
+        const storedName = localStorage.getItem("userName");
+        if (storedName) {
+          this.userName = storedName;  // Restore from localStorage
+        }
+    },
+    methods: {
+        saveUserName() {
+          // Save to localStorage
+          localStorage.setItem("userName", this.userName);
         },
     },
     

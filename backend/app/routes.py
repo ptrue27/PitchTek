@@ -4,6 +4,7 @@ from app import app, user_manager, stats_api, sql_utils
 
 from datetime import datetime
 from flask import request, jsonify, render_template, send_from_directory
+from flask_jwt_extended import get_jwt_identity, jwt_required
 import matplotlib
 import os
 import pandas as pd
@@ -182,6 +183,56 @@ def new_prediction():
     #sql_utils.insert_record("GAMESTATES", game_state)
 
     return jsonify(prediction)
+
+
+@app.route('/api/new_season', methods=['POST'])
+@jwt_required()
+def new_season():
+    season = request.json
+    season["user_id"] = get_jwt_identity()
+
+    # Handle season already exists
+    if sql_utils.record_exists("SEASONS", season):
+        return jsonify({"msg": "Season name already exists"}), 404
+    
+    # Add season to database
+    season_id = sql_utils.insert_record("SEASONS", season, get_id=True)
+    return jsonify({"id": season_id})
+
+
+@app.route('/api/delete_season', methods=['POST'])
+@jwt_required()
+def delete_season():
+    season = request.json
+    season["user_id"] = get_jwt_identity()
+
+    # Delete from database
+    season_id = sql_utils.delete_record("SEASONS", season, get_id=True)
+    return jsonify({"id": season_id})
+
+
+@app.route('/api/new_team', methods=['POST'])
+@jwt_required()
+def new_team():
+    team = request.json
+
+    # Handle team already exists
+    if sql_utils.record_exists("TEAMS", team):
+        return jsonify({"msg": "Team name already exists"}), 404
+    
+    # Add team to database
+    team_id = sql_utils.insert_record("TEAMS", team, get_id=True)
+    return jsonify({"id": team_id})
+
+
+@app.route('/api/delete_team', methods=['POST'])
+@jwt_required()
+def delete_team():
+    team = request.json
+
+    # Delete from database
+    team_id = sql_utils.delete_record("TEAMS", team, get_id=True)
+    return jsonify({"id": team_id})
 
 
 @app.route('/get_latest_at_bat', methods=['GET'])

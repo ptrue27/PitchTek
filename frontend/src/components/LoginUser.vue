@@ -122,8 +122,8 @@
         
         // Handle error
         catch (error) {
-          console.error('Error logging in user:', error);
           this.errorMessage = error.response.data.message;
+          console.error('Error logging in user:', this.errorMessage);
           if (this.$store.state.isLoggedIn) {
             this.$store.commit("logout");
           }
