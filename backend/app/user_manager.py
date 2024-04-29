@@ -1,9 +1,11 @@
 from app import db, login
 from app.models import User
 from app import sql_utils
-import sqlalchemy as sa
-from flask_login import login_user, logout_user
+
+from datetime import timedelta
 from flask_jwt_extended import create_access_token
+from flask_login import login_user, logout_user
+import sqlalchemy as sa
 
 
 @login.user_loader
@@ -46,7 +48,7 @@ def user_login(username, password):
     # Handle login success
     if user and user.check_password(password):
         login_user(user)
-        token = create_access_token(identity=user.id)
+        token = create_access_token(identity=user.id, expires_delta=timedelta(hours=3))
         ids, names = sql_utils.get_cols("SEASONS", ["id", "name"], 
                                         "user_id",  user.id, sort="DESC")
         return {

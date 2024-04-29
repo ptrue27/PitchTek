@@ -74,6 +74,63 @@ def insert_record(table, record, get_id=False):
         return new_season_id
     
     conn.close()
+
+
+def record_exists(table, record):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(os.path.join(Config.DB_DIR, Config.APP_DB))
+    cursor = conn.cursor()
+
+    # SQL query to check if a record exists
+    keys, vals = record.keys(), list(record.values())
+    check_query = f"""
+        SELECT COUNT(1)
+        FROM {table}
+        WHERE {" AND ".join([f"{col} = ?" for col in keys])}
+    """
+    
+    # Execute the query with the given value
+    cursor.execute(check_query, vals)
+    record_count = cursor.fetchone()[0]
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    # If the count is greater than 0, the record exists
+    return record_count > 0
+
+
+def delete_record(table, record, get_id=False):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(os.path.join(Config.DB_DIR, Config.APP_DB))
+    cursor = conn.cursor()
+
+    if get_id:
+        # SQL query to get a record
+        keys, vals = record.keys(), list(record.values())
+        check_query = f"""
+            SELECT id
+            FROM {table}
+            WHERE {" AND ".join([f"{col} = ?" for col in keys])}
+        """
+        cursor.execute(check_query, vals)
+        record_id = cursor.fetchone()[0]
+
+    # SQL query to delete a record
+    del_query = f"""
+        DELETE FROM {table}
+        WHERE {" AND ".join([f"{col} = ?" for col in keys])}
+    """
+    cursor.execute(del_query, vals)
+    conn.commit()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+
+    if get_id:
+        return record_id
    
 
 def print_table(table_name, num_rows=None):
