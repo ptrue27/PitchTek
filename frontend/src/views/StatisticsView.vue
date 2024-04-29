@@ -60,7 +60,7 @@
     <tbody>
       <tr v-for="(value, stat) in fieldingStats" :key="`fielding-${stat}`">
         <!-- Use v-bind:style to dynamically change styles -->
-        <td :style="{ fontWeight: 'bold', color: getStatColor(stat) }">{{ stat }}</td>
+        <td :style="{ fontWeight: 'bold' }">{{ stat }}</td>
         <td :style="{ backgroundColor: getValueBackground(value), color: getValueColor(value) }">{{ value }}</td>
       </tr>
     </tbody>
