@@ -119,6 +119,8 @@ const store = createStore({
             this.commit('resetDashboard');
             state.manage = { ...defaultManage };
             localStorage.removeItem('token');
+            localStorage.removeItem('seasonIds');
+            localStorage.removeItem('seasonNames');
             state.isLoggedIn = false;
             state.season.name = "Select Season";
         },

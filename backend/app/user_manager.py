@@ -25,7 +25,7 @@ def user_sign_up(username, password):
     db.session.commit()
 
     # Add default list to SEASONS table
-    season_names = ["MLB 2024", "MLB 2023", "MLB 2022"]
+    season_names = ["MLB 2020", "MLB 2021", "MLB 2022", "MLB 2023", "MLB 2024"]
     for season_name in season_names:
         record = {
             "user_id": new_user.id,

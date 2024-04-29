@@ -136,9 +136,8 @@
             handlePredictButtonClick() {
                 console.log('Predict Button clicked!');
 
-                const path = 'http://' + this.$store.state.host + '/make_prediction';
-                const params = this.gameState;
-                axios.get(path, { params })
+                const path = 'http://' + this.$store.state.host + '/new_prediction';
+                axios.post(path, this.gameState)
                 .then((res) => {
                     const prediction = res.data;
                     console.log("Pitch Prediction Recieved: " + prediction);
