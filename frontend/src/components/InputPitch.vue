@@ -161,15 +161,22 @@
             }),
             gameState() {
                 return {
+                    game_id: this.$store.state.gameId,
                     inning: this.$store.state.inning,
-                    batter: this.$store.state.current.batter.id,
-                    pitcher: this.$store.state.current.pitcher.id,
+                    home_name: this.$store.state.home.name,
+                    home_score: this.$store.state.home.score,
+                    away_name: this.$store.state.away.name,
+                    away_score: this.$store.state.away.score,
                     outs: this.$store.state.outs,
                     balls: this.$store.state.balls,
                     strikes: this.$store.state.strikes,
-                    bases: this.$store.state.bases,
-                    pitchSpeed: this.speed,
-                    pitchType: this.type,
+                    base_first: this.$store.state.bases[0],
+                    base_second: this.$store.state.bases[1],
+                    base_third: this.$store.state.bases[2],
+                    pitcher_name: this.$store.state.current.pitcher.name,
+                    pitcher_img: this.$store.state.current.pitcher.img,
+                    batter_name: this.$store.state.current.batter.name,
+                    batter_img: this.$store.state.current.batter.img,
                 };
             },
             isButtonDisabled() {

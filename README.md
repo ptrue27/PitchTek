@@ -1,6 +1,6 @@
 # PitchTek
-Project for CS 426, Spring 2024
-University of Nevada, Reno
+Project for CS 426, Spring 2024 \
+University of Nevada, Reno \
 Team 23: Parker True, Davis Dunkley, Ethan Carroll
 
 ## Setup

@@ -61,9 +61,24 @@
 
               <!-- Scrollable panel -->
               <v-card-text>
-                <v-list class="scroll-panel-player">
+                <!-- Display a message if the list is empty -->
+                <div v-if="pitcherNames.length === 0" style="height: 212px;">
+                  <v-row style="padding-top: 77px;">
+                    <v-col class="d-flex justify-center">
+                      <v-card style="width: 175px;"
+                          class="small-deletion-button" color="red-lighten-5"
+                      >
+                        <p style="padding-top: 5px; padding-bottom: 5px">
+                          No pitchers available.
+                        </p>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </div>
+                <!-- Display the list if it's not empty -->
+                <v-list class="scroll-panel-player" v-else>
                   <v-list-item style="font-weight: bold;"
-                    v-for="(pitcher, index) in this.$store.state.account.pitcherNames"
+                    v-for="(pitcher, index) in pitcherNames"
                     :key="index"
                   >
                     {{ pitcher }}
@@ -82,9 +97,24 @@
 
               <!-- Scrollable panel -->
               <v-card-text>
-                <v-list class="scroll-panel-player">
+                <!-- Display a message if the list is empty -->
+                <div v-if="batterNames.length === 0" style="height: 212px;">
+                  <v-row style="padding-top: 77px;">
+                    <v-col class="d-flex justify-center">
+                      <v-card style="width: 175px;"
+                          class="small-deletion-button" color="red-lighten-5"
+                      >
+                        <p style="padding-top: 5px; padding-bottom: 5px">
+                          No batters available.
+                        </p>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </div>
+                <!-- Display the list if it's not empty -->
+                <v-list class="scroll-panel-player" v-else>
                   <v-list-item style="font-weight: bold;"
-                    v-for="(batter, index) in this.$store.state.account.batterNames"
+                    v-for="(batter, index) in batterNames"
                     :key="index"
                   >
                     {{ batter }}
@@ -105,7 +135,7 @@
 
             <!--Game Select-->
             <v-row>
-              <v-col cols="12" class="d-flex justify-center">
+              <v-col cols="8" class="d-flex justify-center">
                 <v-select
                   :items="this.$store.state.account.gameNames" 
                   v-model="gameName"
@@ -116,17 +146,43 @@
                   color="green-darken-1"
                 ></v-select>
               </v-col>
+              <v-col cols="4" class="d-flex justify-start">
+                <v-btn text="Current Game"
+                  style="margin-top: 25px;"
+                  variant="outlined"
+                  color="green-darken-1"
+                  @click="handleCurrentGameClick"
+                />
+              </v-col>
             </v-row>
 
-            <v-row>
+            <v-row style="padding-right: 10px; border-top: gray 2px solid; margin-top: -10px;">
               <v-col>
-                <v-list class="scroll-panel-prediction">
-                  <v-list-item v-for="(componentData, index) in components" 
+                <!--Empty message-->        
+                <div v-if="gameStates.length === 0" 
+                  class="empty-list-message" style="height: 658px;"
+                >
+                  <v-row style="padding-top: 250px;">
+                    <v-col class="d-flex justify-center">
+                      <v-card style="width: 175px; "
+                          class="small-deletion-button" color="red-lighten-5"
+                      >
+                        <p style="padding-top: 5px; padding-bottom: 5px">
+                          No pitches available.
+                        </p>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </div>
+
+                <!--Gamestates list-->
+                <v-list v-else class="scroll-panel-prediction">
+                  <v-list-item v-for="(gameState, index) in gameStates" 
                     :key="index" 
                     class="component"
                   >
-                    <my-custom-component :storeSnapshot="componentData" />
-                </v-list-item>
+                    <my-custom-component :storeSnapshot="gameStates[index]" />
+                  </v-list-item>
                 </v-list>
               </v-col>
             </v-row>
@@ -155,7 +211,70 @@
     },
     data() {
       return {
-        components: [],
+        components_two: [{
+          inning: "1∧",
+          home_name: "San Francisco Giants",
+          home_score: 7,
+          away_name: "Los Angeles Dodgers",
+          away_score: 2,
+          prediction_img: "default_heat_map.jpg",
+          prediction_speed: 88.9,
+          prediction_location: 4,
+          prediction_confidence: 67.45,
+          prediction_type: "Slider (SL)",
+          outs: 1,
+          balls: 2,
+          strikes: 2,
+          base_first: true,
+          base_second: false,
+          base_third: true,
+          pitcher_name: "Logan Webb",
+          pitcher_img: "",
+          batter_name: "Mookie Betts",
+          batter_img: "",
+        },{
+          inning: "1∧",
+          home_name: "San Francisco Giants",
+          home_score: 7,
+          away_name: "Los Angeles Dodgers",
+          away_score: 2,
+          prediction_img: "default_heat_map.jpg",
+          prediction_speed: 88.9,
+          prediction_location: 4,
+          prediction_confidence: 67.45,
+          prediction_type: "Slider (SL)",
+          outs: 1,
+          balls: 2,
+          strikes: 2,
+          base_first: true,
+          base_second: false,
+          base_third: true,
+          pitcher_name: "Logan Webb",
+          pitcher_img: "",
+          batter_name: "Mookie Betts",
+          batter_img: "",
+        },{
+          inning: "1∧",
+          home_name: "San Francisco Giants",
+          home_score: 7,
+          away_name: "Los Angeles Dodgers",
+          away_score: 2,
+          prediction_img: "default_heat_map.jpg",
+          prediction_speed: 88.9,
+          prediction_location: 4,
+          prediction_confidence: 67.45,
+          prediction_type: "Slider (SL)",
+          outs: 1,
+          balls: 2,
+          strikes: 2,
+          base_first: true,
+          base_second: false,
+          base_third: true,
+          pitcher_name: "Logan Webb",
+          pitcher_img: "",
+          batter_name: "Mookie Betts",
+          batter_img: "",
+        }],
       };
     },
     methods: {
@@ -176,6 +295,10 @@
             .catch((error) => {
                 console.error("Error loading game: " + error);
             });
+      },
+      handleCurrentGameClick() {
+        this.$store.commit("setAccountGameStates", this.$store.state.gameStates);
+        this.$store.commit("setAccountGame", "Current");
       },
       handleSeasonChange() {
         // Fill team selection list
@@ -203,7 +326,7 @@
 
         axios.get(path, { params })
             .then((res) => {
-                const games = res.data;
+                let games = res.data;
                 console.log("Loaded games: " + games.ids.length);
                 this.$store.commit("setAccountGames", games);
             })
@@ -233,42 +356,21 @@
               console.error("Error loading roster for " + teamId + ": " + error);
           });
       },
-      addComponent() {
-        // Capture the entire state of the Vuex store
-        const storeSnapshot = {
-          inning: this.inning,
-          home_name: this.home.name,
-          home_score: this.home.score,
-          away_name: this.away.name,
-          away_score: this.away.score,
-          prediction_img: this.prediction.img,
-          prediction_speed: this.prediction.speed,
-          prediction_location: this.prediction.location,
-          prediction_confidence: this.prediction.confidence,
-          prediction_type: this.prediction.type,
-          outs: this.outs,
-          balls: this.balls,
-          strikes: this.strikes,
-          base_first: this.bases[0],
-          base_second: this.bases[1],
-          base_third: this.bases[2],
-          pitcher_name: this.current.pitcher.name,
-          pitcher_img: this.current.pitcher.img,
-          batter_name: this.current.batter.name,
-          batter_img: this.current.batter.img,
-        };
-        // Push the store snapshot into components array
-        this.components.unshift(storeSnapshot);
-      }
-    },
-    created() {
-      this.emitter.on('UpdateHistory', this.addComponent);
     },
     computed: {
       ...mapState(['inning', 'home', 'away',
         'prediction', 'outs', 'balls', 'strikes', 'bases', 'current']),
       seasonNames() {
         return this.$store.state.season.names;
+      },
+      pitcherNames() {
+        return this.$store.state.account.pitcherNames; 
+      },
+      batterNames() {
+        return this.$store.state.account.batterNames; 
+      },
+      gameStates() {
+        return this.$store.state.account.gameStates; 
       },
       seasonName: {
         get() {
@@ -304,7 +406,7 @@
   overflow-y: auto;
 }
 .scroll-panel-prediction {
-  height: 625px;
+  height: 646px;
   overflow-y: auto;
 }
 </style>
