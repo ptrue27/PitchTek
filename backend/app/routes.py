@@ -357,26 +357,46 @@ def upload_file():
 @app.route('/images/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+@app.route('/api/generate-heatmap-counts', methods=['GET'])
+def generate_heatmap_counts():
+    visualizer = DataVisualizer(df_global)  # Assuming df_global is your DataFrame
+    img_data = visualizer.generate_heatmap_of_counts()
+    return send_file(img_data, mimetype='image/png', as_attachment=False)
 
+@app.route('/api/generate-heatmap-description', methods=['GET'])
+def generate_heatmap_description():
+    visualizer = DataVisualizer(df_global)
+    img_data = visualizer.generate_count_vs_description_heatmap()
+    return send_file(img_data, mimetype='image/png', as_attachment=False)
+
+@app.route('/api/generate-velocity-chart', methods=['GET'])
+def generate_velocity_chart():
+    visualizer = DataVisualizer(df_global)
+    img_data = visualizer.generate_pitch_velocity_chart()
+    return send_file(img_data, mimetype='image/png', as_attachment=False)
+
+
+import base64
+
+def encode_image(img_bytes):
+    return base64.b64encode(img_bytes.getvalue()).decode('utf-8')
 
 @app.route('/api/generate-images', methods=['POST'])
 def generate_images_route():
-    print(" test: ", latest_uploaded_file)
+    global latest_uploaded_file
     if latest_uploaded_file is None:
         return jsonify({'error': 'No file has been uploaded yet'}), 400
 
-    # Initialize your DataVisualizer with the uploaded file
-    visualizer = DataVisualizer(latest_uploaded_file)
-
-    # Assuming your Flask app runs on localhost:5000, construct the URLs for the images
-    image_urls = [
-        f'http://{HOST}/images/heatMapOFCounts.png',
-        f'http://{HOST}/images/count_vs_description_heatmap.png',
-        f'http://{HOST}/images/pitchVeloLastGame.png'
-    ]
-
-    # Return these URLs in the response
-    return jsonify({'message': 'Images generated successfully', 'images': image_urls})
+    try:
+        visualizer = DataVisualizer(latest_uploaded_file)
+        images = {
+            'heatmap_counts': encode_image(visualizer.generate_heatmap_of_counts()),
+            'heatmap_description': encode_image(visualizer.generate_count_vs_description_heatmap()),
+            'velocity_chart': encode_image(visualizer.generate_pitch_velocity_chart())
+        } 
+        return jsonify(images)
+    except Exception as e:
+        return jsonify({'error': 'Failed to generate images', 'message': str(e)}), 500
 
 
 @app.route("/api/mlb_player_stats", methods=['GET'])

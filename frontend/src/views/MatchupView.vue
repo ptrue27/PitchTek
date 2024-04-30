@@ -242,7 +242,7 @@
       const formData = new FormData();
       formData.append('file', file);
 
-      const host = "http://" + this.$store.state.host + "/api/upload_csv";
+      host = "http://" + this.$store.state.host + "/api/upload_csv";
       axios.post(host, formData)
         .then(response => {
           this.players = response.data;
