@@ -175,7 +175,11 @@ export default {
   axios.post(host)
     .then(response => {
       this.Showimages = true; // Make sure this only happens if successful
-      this.images = response.data.images; // Assuming the server returns an array of image URLs or base64 encoded images
+      this.images = [
+        response.data.heatmap_counts,
+        response.data.heatmap_description,
+        response.data.velocity_chart
+      ];
       console.log('Images generated:', this.images);
     })
     .catch(error => {
