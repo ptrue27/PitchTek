@@ -164,7 +164,8 @@
                     balls: this.$store.state.balls,
                     release_speed: this.$store.state.release_speed,
                     plate_x: this.$store.state.plate_x,
-                    plate_z: this.$store.state.plate_z
+                    plate_z: this.$store.state.plate_z,
+                    pitcher_id: this.$store.state.default.pitcher
                 };
             }
         },

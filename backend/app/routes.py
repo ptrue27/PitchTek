@@ -4,6 +4,7 @@ from app import app, user_manager, stats_api
 from flask import request, jsonify, render_template, send_from_directory
 from app.data_visualizer import DataVisualizer
 import os
+from pitch_predictions import make_prediction
 
 
 @app.route('/api/sign_up', methods=['POST'])
