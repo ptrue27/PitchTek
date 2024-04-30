@@ -81,47 +81,51 @@ def visualize_prediction_with_error(pitch_type, location, error):
     plt.show()
 
 
+
 def main():
-    csv_path = 'C:/Users/davis/PitchTek/uploads/first_pitch.csv'
+    csv_path = 'backend/uploads/file.csv'
     data, label_encoder = load_and_preprocess_data(csv_path)
     global X_train, y_train
     X = data[['release_speed', 'plate_x', 'plate_z', 'balls', 'strikes']]
     y = data['pitch_type_encoded']
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     model = train_model(X_train, y_train)
 
-    try:
-        release_speed = float(input("Enter the release speed of the pitch (mph): "))
-        if release_speed < 0 or release_speed > 110:
-            raise ValueError("Release speed must be between 0 and 110 mph.")
+    while True:
+        try:
+            release_speed = float(input("Enter the release speed of the pitch (mph) or type 'quit' to exit: "))
+            if str(release_speed).lower() == 'quit':
+                break
+            if release_speed < 0 or release_speed > 110:
+                raise ValueError("Release speed must be between 0 and 110 mph.")
 
-        plate_x = float(input("Enter the last pitch's plate_x position: "))
-        if plate_x < -4 or plate_x > 4:
-            raise ValueError("Plate X position must be between -4 and 4.")
+            plate_x = float(input("Enter the last pitch's plate_x position: "))
+            if plate_x < -4 or plate_x > 4:
+                raise ValueError("Plate X position must be between -4 and 4.")
 
-        plate_z = float(input("Enter the last pitch's plate_z position: "))
-        if plate_z < 0 or plate_z > 6:
-            raise ValueError("Plate Z position must be between 0 and 6.")
+            plate_z = float(input("Enter the last pitch's plate_z position: "))
+            if plate_z < 0 or plate_z > 6:
+                raise ValueError("Plate Z position must be between 0 and 6.")
 
-        balls = int(input("Enter the current number of balls: "))
-        if balls < 0 or balls > 4:
-            raise ValueError("Number of balls must be between 0 and 4.")
+            balls = int(input("Enter the current number of balls: "))
+            if balls < 0 or balls > 4:
+                raise ValueError("Number of balls must be between 0 and 4.")
 
-        strikes = int(input("Enter the current number of strikes: "))
-        if strikes < 0 or strikes > 3:
-            raise ValueError("Number of strikes must be between 0 and 3.")
+            strikes = int(input("Enter the current number of strikes: "))
+            if strikes < 0 or strikes > 3:
+                raise ValueError("Number of strikes must be between 0 and 3.")
 
-        pitch_type, location, error = predict_and_estimate_error(
-            model, label_encoder, release_speed, plate_x, plate_z, balls, strikes)
-        visualize_prediction_with_error(pitch_type, location, error)
+            pitch_type, location, error = predict_and_estimate_error(
+                model, label_encoder, release_speed, plate_x, plate_z, balls, strikes)
+            visualize_prediction_with_error(pitch_type, location, error)
 
-        # Predict the most likely next pitch type based on the count
-        next_pitch_type = predict_next_pitch_type(data, balls, strikes)
-        print(f"The most likely next pitch type is: {next_pitch_type}")
+            # Predict the most likely next pitch type based on the count
+            next_pitch_type = predict_next_pitch_type(data, balls, strikes)
+            print(f"The most likely next pitch type is: {next_pitch_type}")
 
-    except ValueError as e:
-        print(f"Input error: {e}")
+        except ValueError as e:
+            print(f"Input error: {e}")
+
 
 if __name__ == "__main__":
     main()
