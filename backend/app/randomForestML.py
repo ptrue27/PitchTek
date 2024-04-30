@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from matplotlib.patches import Ellipse
-
+from sklearn.metrics import accuracy_score
 
 def load_and_preprocess_data(csv_path):
     data = pd.read_csv(csv_path)
@@ -21,7 +21,6 @@ def train_model(X, y):
     model = RandomForestClassifier(random_state=42)
     model.fit(X, y)
     return model
-
 
 def predict_and_estimate_error(model, label_encoder, release_speed, plate_x, plate_z, balls, strikes):
     global X_train, y_train  # Ensure these are defined globally
@@ -41,6 +40,8 @@ def predict_and_estimate_error(model, label_encoder, release_speed, plate_x, pla
     plate_z_std = similar_pitches['plate_z'].std()
     plate_x_error = plate_x_std
     plate_z_error = plate_z_std
+
+    # Returning the pitch type, location as a tuple, and errors as another tuple
     return pitch_type, (plate_x_mean, plate_z_mean), (plate_x_error, plate_z_error)
 
 
@@ -85,17 +86,25 @@ def visualize_prediction_with_error(pitch_type, location, error):
 def main():
     csv_path = 'backend/uploads/file.csv'
     data, label_encoder = load_and_preprocess_data(csv_path)
-    global X_train, y_train
+    global X_train, y_train, X_test, y_test
     X = data[['release_speed', 'plate_x', 'plate_z', 'balls', 'strikes']]
     y = data['pitch_type_encoded']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     model = train_model(X_train, y_train)
 
-    while True:
-        try:
-            release_speed = float(input("Enter the release speed of the pitch (mph) or type 'quit' to exit: "))
-            if str(release_speed).lower() == 'quit':
+    # Calculate accuracy on the test set
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred) * 100
+    print(f"Model accuracy on test data: {accuracy:.2f}%")
+
+        
+    try:
+        while True:
+            release_speed_input = input("Enter the release speed of the pitch (mph) or type 'quit' to exit: ")
+            if release_speed_input.lower() == 'quit':
                 break
+
+            release_speed = float(release_speed_input)
             if release_speed < 0 or release_speed > 110:
                 raise ValueError("Release speed must be between 0 and 110 mph.")
 
@@ -123,9 +132,7 @@ def main():
             next_pitch_type = predict_next_pitch_type(data, balls, strikes)
             print(f"The most likely next pitch type is: {next_pitch_type}")
 
-        except ValueError as e:
-            print(f"Input error: {e}")
-
-
+    except ValueError as e:
+        print(f"Input error: {e}")
 if __name__ == "__main__":
     main()
