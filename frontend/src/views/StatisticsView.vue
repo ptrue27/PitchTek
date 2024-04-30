@@ -31,9 +31,11 @@
 
     <!-- Images Display Section -->
     <v-row justify="center" class="my-5">
-  <v-col v-if="Showimages" v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
-    <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
-  </v-col>
+  <template v-if="Showimages">
+    <v-col v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
+      <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
+    </v-col>
+  </template>
 </v-row>
 
     <!-- Player Name Input and Fetch Stats Button -->
