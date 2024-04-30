@@ -3,8 +3,9 @@ from app.data_visualizer import DataVisualizer
 from app import app, user_manager, stats_api, sql_utils
 
 from datetime import datetime
-from flask import request, jsonify, render_template, send_from_directory
+from flask import request, jsonify, render_template, send_from_directory, Response
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
 import os
 import pandas as pd
@@ -262,63 +263,50 @@ def upload_csv():
     players = df_global['player_from_des'].unique().tolist()
     return jsonify(players)
 
-
 @app.route('/api/fetch_latest_at_bat_plot', methods=['GET'])
 def fetch_latest_at_bat_plot():
-    player_name = request.args.get('player_name')
-    if not player_name:
-        return jsonify({'error': 'Player name parameter is missing'}), 400
+    try:
+        player_name = request.args.get('player_name')
+        if not player_name:
+            return jsonify({'error': 'Player name parameter is missing'}), 400
 
-    if df_global.empty or 'player_from_des' not in df_global.columns:
-        return jsonify({'error': 'No data available or incorrect data format'}), 400
+        if df_global.empty or 'player_from_des' not in df_global.columns:
+            return jsonify({'error': 'No data available or incorrect data format'}), 400
 
-    mask = df_global['player_from_des'].str.contains(player_name, na=False)
-    if not mask.any():
-        return jsonify({'error': 'Player not found in data'}), 404
+        mask = df_global['player_from_des'].str.contains(player_name, na=False)
+        if not mask.any():
+            return jsonify({'error': 'Player not found in data'}), 404
 
-    start_index = mask[mask].index[0]
-    end_index = mask[start_index:].idxmin() if False in mask[start_index:].values else None
+        start_index = mask[mask].index[0]
+        end_index = mask[start_index:].idxmin() if False in mask[start_index:].values else None
 
-    # Subset the data for the player
-    player_data = df_global[start_index:end_index]
-    player_data = player_data[player_data['des'] == player_data.loc[start_index, 'des']]
+        player_data = df_global[start_index:end_index]
+        player_data = player_data[player_data['des'] == player_data.loc[start_index, 'des']]
 
-    if player_data.empty:
-        return jsonify({'error': 'No data found for this player'}), 404
+        if player_data.empty:
+            return jsonify({'error': 'No data found for this player'}), 404
 
-    latest_at_bat = player_data.iloc[-1]
+        # Generate plot
+        fig, ax = plt.subplots()
+        ax.scatter(player_data['plate_x'], player_data['plate_z'], color='blue')
+        strike_zone_bottom = 1.5
+        strike_zone_top = 3.5
+        plate_width = 1.42
+        ax.add_patch(plt.Rectangle((-plate_width/2, strike_zone_bottom), plate_width, strike_zone_top - strike_zone_bottom, fill=False, color='red', lw=2))
+        for i, point in enumerate(player_data.itertuples(), 1):
+            ax.annotate(str(i), (point.plate_x, point.plate_z), textcoords="offset points", xytext=(0,10), ha='center')
+        ax.set_xlim(-3, 3)
+        ax.set_ylim(0, 5)
+        ax.set_title(f"{latest_at_bat['des']}")
+        ax.set_xlabel('Plate X')
+        ax.set_ylabel('Plate Z')
 
-    # Generate plot
-    fig, ax = plt.subplots()
-    ax.scatter(player_data['plate_x'], player_data['plate_z'], color='blue')
-
-    # Adding a strike zone box
-    strike_zone_bottom = 1.5
-    strike_zone_top = 3.5
-    plate_width = 1.42
-    ax.add_patch(plt.Rectangle((-plate_width/2, strike_zone_bottom), plate_width, strike_zone_top - strike_zone_bottom, fill=False, color='red', lw=2))
-
-    # Annotating points
-    for i, point in enumerate(player_data.itertuples(), 1):
-        ax.annotate(str(i), (point.plate_x, point.plate_z), textcoords="offset points", xytext=(0,10), ha='center')
-
-    ax.set_xlim(-3, 3)
-    ax.set_ylim(0, 5)
-    ax.set_title(f"{latest_at_bat['des']}")
-    ax.set_xlabel('Plate X')
-    ax.set_ylabel('Plate Z')
-
-    # Save the plot to a file
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    base_directory = os.path.dirname(os.path.dirname(os.path.dirname(current_directory)))
-    filename = "latest_at_bat.png"
-    file_path = os.path.join(base_directory, 'Pitchtek/frontend/src/assets/static/', filename)
-    plt.savefig(file_path)
-    plt.close(fig)
-
-    return jsonify({'image_url': f'static/{filename}'})
-
-
+        output = BytesIO()
+        FigureCanvas(fig).print_png(output)
+        plt.close(fig)
+        return Response(output.getvalue(), mimetype='image/png')
+    except Exception as e:
+        return jsonify({'error': 'Server error', 'message': str(e)}), 500
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
     global latest_uploaded_file
