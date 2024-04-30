@@ -62,8 +62,8 @@
     <tbody>
       <tr v-for="(value, stat) in fieldingStats" :key="`fielding-${stat}`">
         <!-- Use v-bind:style to dynamically change styles -->
-        <td :style="{ fontWeight: 'bold' }">{{ stat }}</td>
-        <td :style="{ backgroundColor: getValueBackground(value), color: getValueColor(value) }">{{ value }}</td>
+        <td class="statistic-cell">{{ stat }}</td>
+        <td class="value-cell">{{ value }}</td>
       </tr>
     </tbody>
   </template>
@@ -139,34 +139,52 @@ export default {
 
     // Define what happens when the file has been read
     reader.onload = (e) => {
-      const content = e.target.result;
-      // Split the content by newline to count rows, consider CSV header
-      const rows = content.split('/n').filter(line => line.trim() !== '');
-      if (rows.length < 150) {
-        alert('Warning: The uploaded file contains less than 150 rows. This might affect the analysis accuracy.');
-      }
+        const content = e.target.result;
+        // Split the content by newline to process each row
+        const rows = content.split('\n').filter(line => line.trim() !== '');
+        // Check the headers and remove any quotes
+        const headers = rows[0].split(',').map(header => header.trim().replace(/['"]/g, ''));
 
-      // Proceed to upload the file to the server
-      const formData = new FormData();
-      formData.append('file', file);
-      const host = "http://" + this.$store.state.host + "/api/upload";
-      axios.post(host, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+        // Define required column names
+        const requiredColumns = ['pitch_type', 'game_date', 'release_speed','plate_x','plate_z','events']; // Add your specific column names here
+        // Determine which required columns are missing
+        const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+
+        // Check if all required columns are present
+        if (missingColumns.length > 0) {
+            alert('Warning: The uploaded file is missing the following required column(s): ' + missingColumns.join(', '));
+            return; // Stop further processing if the required columns are not found
         }
-      })
-      .then(response => {
-        console.log(response.data.message);
-        // Additional actions based on successful upload, if needed
-      })
-      .catch(error => {
-        console.error('Error during file upload:', error);
-      });
+
+        // Check the row count (considering the first row as header)
+        if (rows.length - 1 < 150) {
+            alert('Warning: The uploaded file contains less than 150 rows. This might affect the analysis accuracy.');
+        }
+
+        
+          // Proceed to upload the file to the server
+          const formData = new FormData();
+          formData.append('file', file);
+          const host = "http://" + this.$store.state.host + "/api/upload";
+          axios.post(host, formData, {
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          })
+          .then(response => {
+              console.log(response.data.message);
+              // Additional actions based on successful upload, if needed
+          })
+          .catch(error => {
+              console.error('Error during file upload:', error);
+          });
+        
     };
 
-    // Trigger the file read
+    // Read the file as a text
     reader.readAsText(file);
-  },
+},
+
   downloadTemplate() {
         window.location.href = "http://" + this.$store.state.host + "/api/download-template";
     },
@@ -242,18 +260,19 @@ export default {
 
 .statistic-cell {
   font-weight: bold;
-  color: #333; /* Dark color for statistic names */
+  color: #f1f1f1; /* Dark color for statistic names */
+  background-color: #004409; /* Light grey background for values */
 }
 
 .value-cell {
   background-color: #eee; /* Light grey background for values */
-  color: #666; /* Dark grey color for text */
+  color: #0c0505; /* Dark grey color for text */
 }
 .player-stats-container {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
-  background: rgba(240, 255, 244, 0.3); /* Subtle green background */
+  background: rgba(240, 255, 244, 0.103); /* Subtle green background */
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -264,7 +283,7 @@ export default {
 }
 
 .v-simple-table tbody tr:nth-child(odd) {
-  background-color: rgba(144, 238, 144, 0.3); /* Light green for odd rows */
+  background-color: rgba(24, 253, 24, 0.3); /* Light green for odd rows */
 }
 
 .v-simple-table tbody tr:hover {

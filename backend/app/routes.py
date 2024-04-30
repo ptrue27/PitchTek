@@ -20,8 +20,8 @@ app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './uploads')
 app.config['STATIC_FOLDER'] = os.getenv('STATIC_FOLDER', './static')
 
 df_global = pd.DataFrame()
-HOST = "localhost:5000" # development
-# HOST = "pitchtek.pro" # deployment
+#HOST = "localhost:5000" # development
+HOST = "pitchtek.pro" # deployment
 
 
 @app.route('/api/sign_up', methods=['POST'])
@@ -304,7 +304,7 @@ def fetch_latest_at_bat_plot():
 
     ax.set_xlim(-3, 3)
     ax.set_ylim(0, 5)
-    ax.set_title(f"Latest at-bat: {latest_at_bat['des']}")
+    ax.set_title(f"{latest_at_bat['des']}")
     ax.set_xlabel('Plate X')
     ax.set_ylabel('Plate Z')
 

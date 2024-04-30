@@ -22,42 +22,45 @@
           solo
           class="mt-3"
         ></v-autocomplete>
-        <v-btn color="primary" @click="fetchLatestAtBatPlot">Show Latest At-Bat Plot</v-btn>
-        
-        <v-col cols="12" sm="8" md="6">
-        <v-img v-if="showImage"
-              src="@/assets/static/latest_at_bat.png"
-              alt="Latest At-Bat Plot">
-        </v-img>
+        <v-btn color="primary" v-if="selectedPlayer" @click="fetchLatestAtBatPlot">Show Latest At-Bat Plot</v-btn>
       </v-col>
+      <v-col cols="12" sm="8" md="6" class="d-flex justify-center">
+        <v-img v-if="showImage"
+               src="@/assets/static/latest_at_bat.png"
+               alt="Latest At-Bat Plot">
+        </v-img>
       </v-col>
     </v-row>
   </v-container>
-
     <v-container fluid>
       <v-row justify="center">
         <v-col cols="12" class="text-center">
           <div class="display-2 font-weight-bold mb-6">Baseball Statistics</div>
         </v-col>
       </v-row>
-      
-      <v-row>
-        <v-col cols="12" md="6">
-          <v-card class="pa-4 mx-auto elevation-6" outlined>
-            <v-text-field v-model="pitcherId" label="Pitcher ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
-            
-            <v-alert v-if="pitcherError" type="error" class="mt-2">{{ pitcherError }}</v-alert>
-          </v-card>
-        </v-col>
+   
+      <v-container fluid>
+  <v-row justify="center">
+    <!-- Aligning pitcher stats card with an image below -->
+    <v-col cols="12" md="6">
+      <v-card class="pa-4 mx-auto elevation-6" outlined>
+        <v-text-field v-model="pitcherId" label="Pitcher ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
+        <v-btn color="primary" @click="updatePitcherStats">Fetch Pitcher Stats</v-btn>
+        <v-alert v-if="pitcherError" type="error" class="mt-2">{{ pitcherError }}</v-alert>
+      </v-card>
+    </v-col>
 
-        <v-col cols="12" md="6">
-          <v-card class="pa-4 mx-auto elevation-6" outlined>
-            <v-text-field v-model="batterId" label="Batter ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
-            
-            <v-alert v-if="batterError" type="error" class="mt-2">{{ batterError }}</v-alert>
-          </v-card>
-        </v-col>
-      </v-row>
+    <!-- Aligning batter stats card with an image below -->
+    <v-col cols="12" md="6">
+      <v-card class="pa-4 mx-auto elevation-6" outlined>
+        <v-text-field v-model="batterId" label="Batter ID" outlined dense solo-inverted solo class="mb-2"></v-text-field>
+        <v-btn color="primary" @click="updateBatterStats">Fetch Batter Stats</v-btn>
+        <v-alert v-if="batterError" type="error" class="mt-2">{{ batterError }}</v-alert>
+      </v-card>
+    </v-col>
+  </v-row>
+</v-container>
+
 
       <v-row>
         <v-col cols="12" md="6">
@@ -196,45 +199,46 @@
     this.playerDescriptions = filteredDescriptions;
 
   },
-    updatePitcherStats() {
-      this.pitcherError = ''; // Reset error message each time the method is called
-      if (!this.pitcherId.trim()) {
-        this.pitcherError = 'Please enter a Pitcher ID';
-        return;
-      }
+  
+  updatePitcherStats() {
+    this.pitcherError = ''; // Reset any existing error message
+    if (!this.pitcherId.trim()) {
+      return;
+    }
 
-      const host = "http://" + this.$store.state.host + "/api/player_pitching_stats";
-      axios.get(host, { params: { player_name: this.pitcherId } })
-        .then(response => {
-          if (!response.data || Object.keys(response.data).length === 0) {
-            this.pitcherError = 'No data found for this Pitcher ID';
-          } else {
-            this.pitcherStats = response.data;
-          }
-        })
-        .catch(error => {
-          this.pitcherError = 'Failed to fetch data: ' + error.message;
-        });
-    },
-    updateBatterStats() {
-      this.batterError = ''; // Reset error message each time the method is called
-      if (!this.batterId.trim()) {
-        this.batterError = 'Please enter a Batter ID';
-        return;
-      }
+    const host = "http://" + this.$store.state.host + "/api/player_pitching_stats";
+    axios.get(host, { params: { player_name: this.pitcherId } })
+      .then(response => {
+        if (!response.data || Object.keys(response.data).length === 0) {
+          alert('No statistics found for the entered Pitcher ID. Please check the ID and try again.');
+        } else {
+          this.pitcherStats = response.data;
+        }
+      })
+      .catch(error => {
+        alert('Failed to fetch data: ' + error.message);
+      });
+  },
+
+  updateBatterStats() {
+    this.batterError = ''; // Reset any existing error message
+    if (!this.batterId.trim()) {
+   
+      return;
+    }
 
     const host = "http://" + this.$store.state.host + "/api/player_batting_stats";
     axios.get(host, { params: { player_name: this.batterId } })
-
       .then(response => {
         if (!response.data || Object.keys(response.data).length === 0) {
-          this.batterError = 'No data found for this Batter ID';
+          alert('No statistics t found for the entered Batter ID. Please check the ID and try again.');
+        
         } else {
           this.batterStats = response.data;
         }
       })
       .catch(error => {
-        this.batterError = 'Error fetching batter data: ' + error.message;
+        alert('Error fetching batter data: ' + error.message);
       });
   },
   handleFileUpload(event) {
@@ -407,24 +411,7 @@ analyzeOutings() {
         );
       },
   watch: {
-    pitcherId(newVal, oldVal) {
-      if (newVal.trim() !== oldVal.trim()) {
-        this.updatePitcherStats();
-      }
-    },
-    batterId(newVal, oldVal) {
-      if (newVal.trim() !== oldVal.trim()) {
-        this.updateBatterStats();
-      }
-    },
-    selectedPlayer(newVal) {
-      if (newVal && this.nameIndexMap.has(newVal)) {
-        const playerData = this.nameIndexMap.get(newVal);
-        this.selectedImageUrl = playerData.imageUrl || this.placeholderImageUrl;
-      } else {
-        this.selectedImageUrl = this.placeholderImageUrl; // Clear if no valid selection or before any selection
-    }
-  },
+    
   }
 };
   </script>
@@ -541,7 +528,7 @@ analyzeOutings() {
 
   .statistic-cell {
   font-weight: bold;
-  color: #333; /* Dark color for statistic names */
+  color: #ffffff; /* Dark color for statistic names */
 }
 
 .value-cell {
