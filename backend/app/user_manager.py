@@ -13,6 +13,7 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+# Handle new user signup process
 def user_sign_up(username, password):
     # Check if user exists
     query = sa.select(User).where(User.username.like(username))
@@ -26,7 +27,7 @@ def user_sign_up(username, password):
     db.session.add(new_user)
     db.session.commit()
 
-    # Add default list to SEASONS table
+    # Add default list of seasons
     season_names = ["MLB 2020", "MLB 2021", "MLB 2022", "MLB 2023", "MLB 2024"]
     for season_name in season_names:
         record = {
@@ -39,13 +40,13 @@ def user_sign_up(username, password):
     user_login(username, password)
 
 
+# Handle user login process
 def user_login(username, password):
-
     # Retrieve user from database
     query = sa.select(User).where(User.username.like(username))
     user = db.session.scalars(query).first()
 
-    # Handle login success
+    # Check username and password match
     if user and user.check_password(password):
         login_user(user)
         token = create_access_token(identity=user.id, expires_delta=timedelta(hours=3))
@@ -60,6 +61,7 @@ def user_login(username, password):
     return None
 
 
+# Handle user logout process
 def user_logout():
     logout_user()
     return True

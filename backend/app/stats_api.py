@@ -7,6 +7,7 @@ import datetime
 mlb = mlbstatsapi.Mlb()
 
 
+# Get list of MLB teams
 def get_teams(year):
     ids, names = [], []
     for team in mlb.get_teams(season=year):
@@ -15,32 +16,38 @@ def get_teams(year):
     return ids, names
 
 
+# Get list of pitchers and batters from an MLB team
 def get_roster(team_id, year):
-        current_time = datetime.datetime.now()
-        if year == current_time.year: 
-            formatted_date = current_time.strftime("%m/%d/%Y")
-        else:
-            formatted_date = f"10/01/{year}"
-            
-        roster = mlb.get_team_roster(team_id, date=formatted_date)
-        pitcher_ids, pitcher_names = [], []
-        batter_ids, batter_names = [], []
+    # Get date to check roster
+    current_time = datetime.datetime.now()
+    if year == current_time.year: 
+        formatted_date = current_time.strftime("%m/%d/%Y")
+    else:
+        formatted_date = f"10/01/{year}"
+        
+    # Get full roster
+    roster = mlb.get_team_roster(team_id, date=formatted_date)
+    pitcher_ids, pitcher_names = [], []
+    batter_ids, batter_names = [], []
 
-        for player in roster:
-            if player.primaryposition.code == '1':
-                pitcher_ids.append(player.id)
-                pitcher_names.append(player.fullname)
-                if player.fullname == "Shohei Ohtani":
-                    batter_ids.append(player.id)
-                    batter_names.append(player.fullname)
-            else:
+    for player in roster:
+        # Get pitcher stats
+        if player.primaryposition.code == '1':
+            pitcher_ids.append(player.id)
+            pitcher_names.append(player.fullname)
+            if player.fullname == "Shohei Ohtani":
                 batter_ids.append(player.id)
                 batter_names.append(player.fullname)
-                
-        return {"ids": pitcher_ids, "names": pitcher_names}, \
-               {"ids": batter_ids, "names": batter_names}
+        # Get batter stats
+        else:
+            batter_ids.append(player.id)
+            batter_names.append(player.fullname)
+            
+    return {"ids": pitcher_ids, "names": pitcher_names}, \
+            {"ids": batter_ids, "names": batter_names}
 
 
+# Get statistics of an MLB pitcher
 def get_pitcher(id, year):
     data = mlb.get_player_stats(id, stats=["season"], groups=["pitching"], season=year)
     data = data["pitching"]["season"].splits[0]
@@ -60,6 +67,7 @@ def get_pitcher(id, year):
     }
 
 
+# Get statistics of an MLB batter
 def get_batter(id, year):
     data = mlb.get_player_stats(id, stats=["season"], groups=["hitting"], season=year)
     data = data["hitting"]["season"].splits[0]
@@ -79,6 +87,7 @@ def get_batter(id, year):
     }
 
 
+# Get player vs. player matchup statistics
 def get_versus(batter_id, pitcher_id):
     # Retrieve versus stats
     hydrate = f'stats(group=[hitting],type=[vsPlayer],opposingPlayerId={pitcher_id},sportId=1)'
@@ -86,7 +95,7 @@ def get_versus(batter_id, pitcher_id):
     data = statsapi.get('person', params)
     splits = data['people'][0]['stats'][0]['splits']
 
-    # Handle no history
+    # Handle nonexistent history
     if len(splits) == 0:
         return {"pa": '-', "k": '-', "bb": '-', "hits": '-', "singles": '-',
                 "doubles": '-', "triples": '-', "hr": '-',
@@ -107,6 +116,7 @@ def get_versus(batter_id, pitcher_id):
     }
 
 
+# Get image URL of an MLB player
 def get_image_url(mlb_id):
     espn_id = Lookup.from_mlb_ids([mlb_id])['espn_id']
     if len(espn_id.values) > 0 and not pd.isna(espn_id.values)[0]:
