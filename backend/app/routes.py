@@ -3,8 +3,9 @@ from app.data_visualizer import DataVisualizer
 from app import app, user_manager, stats_api, sql_utils
 
 from datetime import datetime
-from flask import request, jsonify, render_template, send_from_directory
+from flask import request, jsonify, render_template, send_from_directory, Response
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
 import os
 import pandas as pd
@@ -308,16 +309,13 @@ def fetch_latest_at_bat_plot():
     ax.set_xlabel('Plate X')
     ax.set_ylabel('Plate Z')
 
-    # Save the plot to a file
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    base_directory = os.path.dirname(os.path.dirname(os.path.dirname(current_directory)))
-    filename = "latest_at_bat.png"
-    file_path = os.path.join(base_directory, 'Pitchtek/frontend/src/assets/static/', filename)
-    plt.savefig(file_path)
+    # Convert plot to PNG image
+    output = BytesIO()
+    FigureCanvas(fig).print_png(output)
     plt.close(fig)
 
-    return jsonify({'image_url': f'static/{filename}'})
-
+    # Serve PNG image
+    return Response(output.getvalue(), mimetype='image/png')
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
