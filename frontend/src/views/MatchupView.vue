@@ -257,15 +257,20 @@
   const host = `http://${this.$store.state.host}/api/fetch_latest_at_bat_plot`;
   axios.get(host, { params: { player_name: this.selectedPlayer }, responseType: 'blob' })
     .then(response => {
-      // Create a URL for the blob object
       const urlCreator = window.URL || window.webkitURL;
       this.generatedImageUrl = urlCreator.createObjectURL(response.data);
       this.showImage = true;
     })
     .catch(error => {
       console.error("Error fetching latest at-bat plot:", error);
+      if (error.response && error.response.data) {
+        alert(`Error: ${error.response.data.error}`);
+      } else {
+        alert("Unknown error occurred. Please try again.");
+      }
     });
 },
+
 analyzePitcherData() {
   if (this.selectedPitcherIndex === null || !this.csvData) return;
 
