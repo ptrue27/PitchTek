@@ -20,7 +20,7 @@ app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './uploads')
 app.config['STATIC_FOLDER'] = os.getenv('STATIC_FOLDER', './static')
 
 df_global = pd.DataFrame()
-HOST = "localhost:5000" # development
+HOST = "localhost:8080" # development
 # HOST = "pitchtek.pro" # deployment
 
 
