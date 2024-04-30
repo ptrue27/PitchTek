@@ -254,23 +254,18 @@
         .catch(error => console.error('Failed to upload file:', error));
     },
     fetchLatestAtBatPlot() {
-  const host = `http://${this.$store.state.host}/api/fetch_latest_at_bat_plot`;
-  axios.get(host, { params: { player_name: this.selectedPlayer }, responseType: 'blob' })
-    .then(response => {
-      const urlCreator = window.URL || window.webkitURL;
-      this.generatedImageUrl = urlCreator.createObjectURL(response.data);
-      this.showImage = true;
-    })
-    .catch(error => {
-      console.error("Error fetching latest at-bat plot:", error);
-      if (error.response && error.response.data) {
-        alert(`Error: ${error.response.data.error}`);
-      } else {
-        alert("Unknown error occurred. Please try again.");
-      }
-    });
-},
-
+      const timestamp = new Date().getTime();
+      const host = "http://" + this.$store.state.host + "/api/fetch_latest_at_bat_plot";
+      axios.get(host, { params: { player_name: this.selectedPlayer } })
+        .then(response => {
+          this.generatedImageUrl = `${response.data.image_url}?t=${timestamp}`;
+          this.showImage = true;
+        })
+        .catch(error => {
+          console.error("Error fetching latest at-bat plot:", error);
+        });
+        
+    },
 analyzePitcherData() {
   if (this.selectedPitcherIndex === null || !this.csvData) return;
 
