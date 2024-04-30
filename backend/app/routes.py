@@ -20,8 +20,8 @@ app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './uploads')
 app.config['STATIC_FOLDER'] = os.getenv('STATIC_FOLDER', './static')
 
 df_global = pd.DataFrame()
-HOST = "localhost:5000" # development
-# HOST = "pitchtek.pro" # deployment
+# HOST = "localhost:5000" # development
+HOST = "pitchtek.pro" # deployment
 
 
 @app.route('/api/sign_up', methods=['POST'])
@@ -237,6 +237,21 @@ def delete_team():
     return jsonify({"id": team_id})
 
 
+@app.route('/get_latest_at_bat', methods=['GET'])
+def get_latest_at_bat():
+    player_name = request.args.get('player_name')
+    if not player_name or df_global.empty:
+        return jsonify({'error': 'No data or player name provided'}), 400
+    player_data = df_global[df_global['player_from_des'] == player_name]
+    latest_at_bat = player_data.iloc[-1]  # assuming the data is ordered chronologically
+    data = {
+        'plate_x': latest_at_bat['plate_x'],
+        'plate_z': latest_at_bat['plate_z'],
+        'description': latest_at_bat['des']
+    }
+    return jsonify(data)
+
+
 @app.route('/api/download-template', methods=['GET'])
 def download_template():
     try:
@@ -253,7 +268,7 @@ def download_template():
         return jsonify({"error": "File not found or server error", "message": str(e)}), 500
 
 
-@app.route('/api/upload_csv', methods=['POST'])
+@app.route('/upload_csv', methods=['POST'])
 def upload_csv():
     global df_global
     file = request.files['file']
@@ -263,7 +278,7 @@ def upload_csv():
     return jsonify(players)
 
 
-@app.route('/api/fetch_latest_at_bat_plot', methods=['GET'])
+@app.route('/fetch_latest_at_bat_plot', methods=['GET'])
 def fetch_latest_at_bat_plot():
     player_name = request.args.get('player_name')
     if not player_name:
@@ -317,6 +332,11 @@ def fetch_latest_at_bat_plot():
     plt.close(fig)
 
     return jsonify({'image_url': f'static/{filename}'})
+
+
+@app.route('/get_latest_image', methods=['GET'])
+def get_latest_image():
+    return send_from_directory(app.config['STATIC_FOLDER'], 'latest_at_bat_plot.png')
 
 
 @app.route('/api/upload', methods=['POST'])
