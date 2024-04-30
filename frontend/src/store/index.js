@@ -60,7 +60,7 @@ const defaultPrediction = {
 };
 const defaultAccount = {
     seasonName: "Select Season",
-    seasonId: 0,
+    seasonId: 0, 
     teamName: "Select Team",
     teamId: 0,
     gameName: "Select Game",
