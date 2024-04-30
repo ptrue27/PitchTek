@@ -159,13 +159,15 @@
         },
         computed: {
             gameState() {
+
                 return {
                     strikes: this.$store.state.strikes,
                     balls: this.$store.state.balls,
                     release_speed: this.$store.state.release_speed,
                     plate_x: this.$store.state.plate_x,
                     plate_z: this.$store.state.plate_z,
-                    pitcher_id: this.$store.state.default.pitcher
+                    pitcher_id: this.$store.state.inning.includes('∨') ?
+                        this.$store.state.away.pitcher.id : this.$store.state.home.pitcher.id
                 };
             }
         },

@@ -4,7 +4,7 @@ from app import app, user_manager, stats_api
 from flask import request, jsonify, render_template, send_from_directory
 from app.data_visualizer import DataVisualizer
 import os
-from pitch_predictions import make_prediction
+#from pitch_predictions import make_prediction
 
 
 @app.route('/api/sign_up', methods=['POST'])
@@ -80,12 +80,14 @@ def make_prediction():
 
     # Assuming you're passing variables via query parameters in a GET request
     variable1 = request.args.to_dict()
-    inning = request.args.get("inning")
-    print(inning)
+    #inning = request.args.get("inning")
+    #print(inning)
 
     # Do something with the variables
     print("all args:", variable1)
 
+    current_directory = os.getcwd()
+    print("Current directory:", current_directory)
 
     predictions = [{
         "img": "425794_CH_heat_map.jpg",
