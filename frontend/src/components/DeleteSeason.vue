@@ -32,14 +32,14 @@
                         </v-col>
                     </v-row>
                     <v-row style="margin-top: 10px; font-size: 18px; text-decoration: underline;">
-                        <v-col cols="8" class="d-flex justify-center" 
+                        <v-col cols="6" class="d-flex justify-end" 
                             style="padding-right: 20px; margin-top: 5px"
                         >
                             <strong>{{ this.$store.state.account.seasonName }}</strong>
                         </v-col>
 
-                        <!--Save button-->
-                        <v-col cols="4" style="padding-right: 35px; margin-top: 0px;">
+                        <!--Delete button-->
+                        <v-col cols="6" style="padding-right: 35px; margin-top: 0px;">
                             <v-btn
                                 prepend-icon="mdi-trash-can"
                                 class="mx-auto"
@@ -57,7 +57,6 @@
                         </v-col>
                     </v-row>
                 </v-col>
-
             </v-row>
 
             <!--Close button-->

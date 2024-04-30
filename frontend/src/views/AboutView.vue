@@ -26,7 +26,7 @@
           PitchTek is a baseball analytics application that allows users to view player statistics, record a game’s progress,
           and predict upcoming pitch classifications using a proprietary machine learning model. The main Dashboard displays
           a high-level overview of the predictions and relevant baseball statistics pertaining to a game’s current state, while
-          the Statistics and History pages allow users to visualize and further explore the data.
+          the Matchup and Statistics pages allow users to visualize and further explore the data.
         </p>
         <p style="text-indent: 2em;">
           As a tool, PitchTek offers lots of different systems to help analyze a baseball game. The primary focus is our machine

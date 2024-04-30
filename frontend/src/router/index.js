@@ -4,7 +4,6 @@ import AboutView from "./../views/AboutView.vue";
 import DashboardView from "./../views/DashboardView.vue";
 import MatchupView from "./../views/MatchupView.vue";
 import StatisticsView from "./../views/StatisticsView.vue";
-import HistoryView from "./../views/HistoryView.vue";
 import AccountView from "./../views/AccountView.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 import store from './../store';
@@ -36,12 +35,6 @@ const routes = [
     path: "/statistics",
     name: "Statistics",
     component: StatisticsView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/history",
-    name: "History",
-    component: HistoryView,
     meta: { requiresAuth: true },
   },
   {
