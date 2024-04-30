@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     loadGraphContent() {
-      const filePath = `C:/Users/davis/PitchTek-3/frontend/src/dataVisual/release_speed.html`; // Construct the file path based on the fileName prop
+      const filePath = `/frontend/src/dataVisual/release_speed.html`; // Construct the file path based on the fileName prop
       fetch(filePath)
         .then((response) => response.text())
         .then((htmlContent) => {
