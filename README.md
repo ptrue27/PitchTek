@@ -1,14 +1,14 @@
 # PitchTek
-### Project for CS 426, Spring 2024
-### University of Nevada, Reno
-### Team 23: Parker True, Davis Dunkley, Ethan Carroll
+Project for CS 426, Spring 2024
+University of Nevada, Reno
+Team 23: Parker True, Davis Dunkley, Ethan Carroll
 
 ## Setup
 
 ### Frontend
-1. Download and install node.js
+1. Download and install Node.js
 2. Navigate to **/PitchTek/frontend**
-3. Install Vue packages \
+3. Install packages \
     ```npm install```
 
 ### Backend
@@ -31,7 +31,6 @@
     ```npm run serve```
 
 ### Backend
-In a separate terminal...
 1. Navigate to **/PitchTek/backend**
 2. Activate virtual environment \
     Windows: ```.\env\Scripts\activate``` \
@@ -45,12 +44,6 @@ In a separate terminal...
 1. Navigate to **/PitchTek/frontend**
 2. Build the frontend \
     ```npm run build```
-
-### Backend
-1. Navigate to **/PitchTek/backend**
-2. Activate virtual environment \
-    Windows: ```.\env\Scripts\activate``` \
-    Linux: ```source env/bin/activate```
 3. Retart Nginx \
     ```sudo systemctl restart nginx```
 4. Restart Gunicorn \
