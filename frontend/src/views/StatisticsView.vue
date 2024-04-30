@@ -31,10 +31,10 @@
 
     <!-- Images Display Section -->
     <v-row justify="center" class="my-5">
-      <v-col v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
-    <v-img v-show = "Showimages" :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
+  <v-col v-if="Showimages" v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
+    <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
   </v-col>
-  </v-row>
+</v-row>
 
     <!-- Player Name Input and Fetch Stats Button -->
     <v-row align="center" justify="center">
@@ -168,16 +168,18 @@ export default {
   downloadTemplate() {
         window.location.href = "http://" + this.$store.state.host + "/api/download-template";
     },
-  generateImages() {
-    const host = "http://" + this.$store.state.host + "/api/generate-images";
-    axios.post(host)
-      .then(response => {
-      this.Showimages = true;
-        this.images = response.data.images;
-      })
-      .catch(error => {
-        console.error('Error generating images:', error);
-      });
+    generateImages() {
+  const host = `http://${this.$store.state.host}/api/generate-images`;
+  axios.post(host)
+    .then(response => {
+      this.Showimages = true; // Make sure this only happens if successful
+      this.images = response.data.images; // Assuming the server returns an array of image URLs or base64 encoded images
+      console.log('Images generated:', this.images);
+    })
+    .catch(error => {
+      console.error('Error generating images:', error);
+      alert('Failed to generate images.'); // Provide feedback to the user
+    });
 },
     fetchPlayerStats() {
       if (!this.playerName.trim()) {
