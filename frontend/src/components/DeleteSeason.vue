@@ -1,5 +1,5 @@
 <template>
-    <v-dialog width="500" v-model="dialog">
+    <v-dialog width="400" v-model="dialog">
         <template v-slot:activator="{ props: activatorProps }">
             <!-- Small Circular Addition Button -->
             <v-chip 
@@ -18,16 +18,35 @@
             <v-card-title class="border-bottom">Delete Season</v-card-title>
 
             <!--Delete Season Warning-->
-            <v-row style="margin-top: 15px;">
-                <v-col cols="7" class="text-center">
+            <v-row style="margin-top: 5px;">
+                <v-col class="text-center">
+                    <!--Warning-->
                     <v-row>
-                        <v-col style="font-size: 18px;">
-                            <p>Warning! This season will be permanantly deleted:</p>
+                        <v-col class="d-flex justify-center">
+                            <v-card style="width: 70%; font-size: 14px;"
+                                class="small-deletion-button" color="red-lighten-5"
+                            >
+                                <p><strong>Warning!</strong><br>
+                                The following season will be permanently deleted.</p>
+                            </v-card>
                         </v-col>
                     </v-row>
-                    <v-row style="margin-top: 0px; font-size: 18px;">
-                        <v-col>
+                    <v-row style="margin-top: 10px; font-size: 18px; text-decoration: underline;">
+                        <v-col cols="8" class="d-flex justify-center" 
+                            style="padding-right: 20px; margin-top: 5px"
+                        >
                             <strong>{{ this.$store.state.account.seasonName }}</strong>
+                        </v-col>
+
+                        <!--Save button-->
+                        <v-col cols="4" style="padding-right: 35px; margin-top: 0px;">
+                            <v-btn
+                                prepend-icon="mdi-trash-can"
+                                class="mx-auto"
+                                @click="handleDelete"
+                                color="red-darken-1"
+                                :disabled="isButtonDisabled"
+                            >Delete</v-btn>  
                         </v-col>
                     </v-row>
                     
@@ -39,16 +58,6 @@
                     </v-row>
                 </v-col>
 
-            <!--Save button-->
-                <v-col cols="5" style="padding-right: 30px; margin-top: 27px;">
-                    <v-btn
-                        prepend-icon="mdi-trash-can"
-                        class="mx-auto"
-                        @click="handleDelete"
-                        color="red-darken-1"
-                        :disabled="isButtonDisabled"
-                    >Delete</v-btn>  
-                </v-col>
             </v-row>
 
             <!--Close button-->

@@ -1,7 +1,9 @@
 <template>
-  <v-card style="width: 100%; margin: 10px; border: 2px solid #43A047;" elevation="3">
+  <v-card style="width: 100%; margin: 10px;" 
+    elevation="3" class="card-border"
+  >
     <v-card-text>
-      <v-row>
+      <v-row style="margin-top: -16px; margin-bottom: -16px; margin-left: -16px;">
         <!-- First Column with Text -->
         <!--Game state column-->
         <v-col cols="4" style="border-right: 2px solid #43A047;">
@@ -9,12 +11,56 @@
             <!--Team selection and score-->
             <v-row style="border-bottom: 2px solid #43A047;">
               <v-col>
-                <SelectTeams :storeSnapshot="storeSnapshot" />
+                <!--Team selection-->
+                <v-row class="text-center" style="margin-bottom: -40px; margin-left: 3px; margin-top: 3px; margin-right: 3px;">
+                    <!--Input home team-->
+                    <v-col cols="5" style="font-size: 16px">
+                        {{storeSnapshot.home_name}}
+                    </v-col>
+                    <v-col cols="2" class="text-center" style="padding-top: 15px;">
+                        vs.
+                      </v-col>
+                    <!--Input away team-->
+                    <v-col cols="5" style="font-size: 16px;">
+                        {{storeSnapshot.away_name}}
+                    </v-col>
+                </v-row>
+                          
+                <!--Score input-->
+                <v-row style="margin-bottom: 5px; margin-top: 40px">
+                    <!--Home Score-->
+                    <v-col cols="3" style="margin-top: 15px;" align="right">
+                        <p class="home-away" style="margin-right: 30px;">
+                            Home
+                        </p>
+                    </v-col>
+                    <v-col cols="2">
+                  <select disabled class="vuetify-like-dropdown">
+                    <option selected>{{storeSnapshot.home_score}}</option>
+                  </select>
+                    </v-col>
+
+                    <v-col cols="2" class="score-spacer text-center" style="margin-top: 10px;">
+                        <p>-</p>
+                    </v-col>
+                    
+                    <!--Away Score-->
+                    <v-col cols="2">
+                  <select disabled class="vuetify-like-dropdown">
+                    <option selected>{{storeSnapshot.away_score}}</option>
+                  </select>
+                    </v-col>
+                    <v-col cols="3" style="margin-top: 15px;" align="left">
+                        <p class="home-away" style="margin-left: 30px;">
+                            Away
+                        </p>
+                    </v-col>
+                </v-row>
               </v-col>
             </v-row>
 
             <!--Runners on Base/Count and Inning Row-->
-            <v-row style="margin-top: 25px; margin-bottom: 3px;">
+            <v-row style="margin-top: 35px; margin-bottom: 3px; padding-right: 25px;">
               <!--Runners on base-->
               <v-col cols="5" class="d-flex flex-column justify-center">
                 <v-div>
@@ -150,22 +196,33 @@
         </v-col>
 
         <!-- Second Column -->
-        <v-col cols="12" md="3">
-          <v-row align="center" justify="center">
-            <v-col cols="5" class="text-center">
-              <v-img v-if="storeSnapshot.pitcher_img"
-                :src="storeSnapshot.pitcher_img"
-                style="border: 1px solid black;"
-                class="align-self-center"
-              ></v-img>
-              <div><b>Pitcher</b></div>
-              <div>{{storeSnapshot.pitcher_name}}</div>
+        <v-col cols="2">
+          <v-row>
+            <v-col>
+                <v-img v-if="storeSnapshot.pitcher_img"
+                  :src="storeSnapshot.pitcher_img"
+                  style="height: 125px;"
+                  class="align-self-center"
+                ></v-img>
+                <v-img v-else
+                  src="@/assets/silhouette.png"
+                  style="height: 125px;"
+                  class="align-self-center"
+                ></v-img>
+                <div><b>Pitcher</b></div>
+                <div>{{storeSnapshot.pitcher_name}}</div>
             </v-col>
-            <v-col cols="2" class="text-center">vs</v-col>
-            <v-col cols="5" class="text-center">
+          </v-row>
+          <v-row style="margin-top: 0px;">
+            <v-col>
               <v-img v-if="storeSnapshot.batter_img"
                 :src="storeSnapshot.batter_img"
-                style="border: 1px solid black;"
+                style="height: 125px;"
+                class="align-self-center"
+              ></v-img>
+              <v-img v-else
+                src="@/assets/silhouette.png"
+                style="height: 125px;"
                 class="align-self-center"
               ></v-img>
               <div><b>Batter</b></div>
@@ -175,14 +232,16 @@
         </v-col>
 
         <!-- Third Column with Image -->
-        <v-col cols="12" md="3" class="image-container">
+        <v-col cols="3" class="previous-prediction-image-container">
           <img :src="imageURL" alt="Pitch prediction heatmap"/>
         </v-col>
 
         <!-- Fourth Column with Text -->
-        <v-col cols="2">
+        <v-col cols="3" style="border-right: #43A047 solid 6px;">
           <v-row style="margin-top: 25px;">
-            <v-col class="predict-col">Confidence:</v-col>
+            <v-col class="predict-col">
+              Confidence:
+            </v-col>
             <v-col class="predict-data-col">{{ storeSnapshot.prediction_confidence }}%</v-col>
           </v-row>
           <v-row class="predict-row">
@@ -205,12 +264,7 @@
 
 
 <script>
-import SelectTeams from "@/components/SelectTeamsUnclickable.vue";
-
 export default {
-  components: {
-    SelectTeams
-  },
   props: {
     storeSnapshot: {
       type: Object,
@@ -247,18 +301,16 @@ export default {
 </script>
 
 <style>
-.image-container img {
-  height: 300px;
+.previous-prediction-image-container img {
+  height: 350px;
   width: auto;
 }
-.image-container {
+.previous-prediction-image-container {
   flex: 1;
 }
-
 .unclickable {
   pointer-events: none; /* Clicks won't register, but all styles remain */
 }
-
 .vuetify-like-dropdown {
   font-family: 'Roboto', sans-serif; /* Vuetify default font */
   border: 1px solid rgb(0, 0, 0); /* Mimic Vuetify's border */

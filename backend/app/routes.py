@@ -182,7 +182,7 @@ def new_prediction():
     game_state["prediction_location"] = prediction["location"]
     game_state["prediction_confidence"] = prediction["confidence"]
     game_state["prediction_type"] = prediction["type"]
-    #sql_utils.insert_record("GAMESTATES", game_state)
+    sql_utils.insert_record("GAMESTATES", game_state)
 
     return jsonify(prediction)
 

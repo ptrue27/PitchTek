@@ -95,6 +95,7 @@ const store = createStore({
             current: { ...defaultTeam },
             matchup: { ...defaultMatchup },
             prediction: { ...defaultPrediction },
+            gameStates: [],
             season: {
                 id: 0,
                 name: "Select Season",
@@ -231,9 +232,35 @@ const store = createStore({
         },
         setRecording(state, isRecording) {
             state.recording = isRecording;
+            if (!isRecording) {
+                state.gameId = 0;
+                state.gameStates = [];
+            }
         },
         predict(state, prediction) {
             state.prediction = prediction;
+            state.gameStates.push({
+                inning: state.inning,
+                home_name: state.home.name,
+                home_score: state.home.score,
+                away_name: state.away.name,
+                away_score: state.away.score,
+                prediction_img: prediction.img,
+                prediction_speed: prediction.speed,
+                prediction_location: prediction.location,
+                prediction_confidence: prediction.confidence,
+                prediction_type: prediction.type,
+                outs: state.outs,
+                balls: state.balls,
+                strikes: state.strikes,
+                base_first: state.bases[0],
+                base_second: state.bases[1],
+                base_third: state.bases[2],
+                pitcher_name: state.current.pitcher.name,
+                pitcher_img: state.current.pitcher.img,
+                batter_name: state.current.batter.name,
+                batter_img: state.current.batter.img,
+            });
         },
         setMatchup(state, matchup) {
             if(matchup) {
@@ -372,6 +399,8 @@ const store = createStore({
             state.strikes = 0;
             state.bases = [false, false, false];
             state.prediction = { ...defaultPrediction };
+            state.gameId = 0;
+            state.gameStates = [];
         },
     },
     created() {
