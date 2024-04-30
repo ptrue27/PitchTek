@@ -1,4 +1,4 @@
-<template>
+  <template>
   <v-container fluid class="mb-5">
     <v-row justify="center">
       <v-col cols="12" class="text-center">
@@ -26,7 +26,7 @@
       </v-col>
       <v-col cols="12" sm="8" md="6" class="d-flex justify-center">
         <v-img v-if="showImage"
-               :src="generatedImageUrl"
+               src="@/assets/static/latest_at_bat.png"
                alt="Latest At-Bat Plot">
         </v-img>
       </v-col>
@@ -254,21 +254,18 @@
         .catch(error => console.error('Failed to upload file:', error));
     },
     fetchLatestAtBatPlot() {
-  const host = `http://${this.$store.state.host}/api/fetch_latest_at_bat_plot`;
-  axios.get(host, {
-    params: {
-      player_name: this.selectedPlayer
-    }
-  })
-  .then(response => {
-    this.generatedImageUrl = `${response.data.image_url}?t=${new Date().getTime()}`;
-    this.showImage = true;
-  })
-  .catch(error => {
-    console.error("Error fetching latest at-bat plot:", error);
-    alert('Failed to fetch latest at-bat plot.');
-  });
-},
+      const timestamp = new Date().getTime();
+      const host = "http://" + this.$store.state.host + "/api/fetch_latest_at_bat_plot";
+      axios.get(host, { params: { player_name: this.selectedPlayer } })
+        .then(response => {
+          this.generatedImageUrl = `${response.data.image_url}?t=${timestamp}`;
+          this.showImage = true;
+        })
+        .catch(error => {
+          console.error("Error fetching latest at-bat plot:", error);
+        });
+        
+    },
 analyzePitcherData() {
   if (this.selectedPitcherIndex === null || !this.csvData) return;
 
