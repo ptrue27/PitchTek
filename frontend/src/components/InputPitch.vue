@@ -146,6 +146,8 @@
                 .catch((error) => {
                     console.error(error);
                 });
+                this.speed = 0.0;
+                this.type = "Select Pitch";
                 this.dialog = false;
             },
             handlePitchTypeChange() {

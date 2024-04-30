@@ -15,9 +15,20 @@
         </p>
       </v-card>
 
-      <v-card class="container" style="margin-top: 15px; border: 1px solid #43A047;" elevation="3">
+      <v-card class="container" elevation="3"
+        style="margin-top: 15px; border: 1px solid #43A047;"
+      >
         <h2 style="margin-top: -5px;">Make Predictions with PitchTek</h2>
-        <p>Step 1:</p>
+        <ol style="padding-left: 15px;">
+          <li>Select a season. The 5 most recent MLB seasons are available by default.</li>
+          <li>Select a home team and away team.</li>
+          <li>Click the <strong>Start Game</strong> button.</li>
+          <li>Ensure the game state is up-to-date (score, runners, inning, count).</li>
+          <li>Click the <strong>Record Pitch</strong> button.</li>
+          <li>Input the previous pitch's data if available.</li>
+          <li>Click the <strong>Save Pitch</strong> button.</li>
+          <li>View the predicted upcoming pitch on the Dashboard.</li>
+        </ol>
       </v-card>
 
       <v-card class="container" style="margin-top: 15px; border: 1px solid #43A047;" elevation="3">
