@@ -2,7 +2,7 @@
 import sqlite3
 import os
 import pandas as pd
-from experiments.create_and_export_DT_model import create_dt
+from create_and_export_DT_model import create_dt
 
 def get_already_made_models():
 
@@ -21,7 +21,7 @@ def get_already_made_models():
 def make_models():
 
     # Connect to the SQLite database
-    conn = sqlite3.connect('databases\pitches.db')
+    conn = sqlite3.connect('..\databases\pitches.db')
     cursor = conn.cursor()
 
     # Step 2: Retrieve the list of tables from the database schema
@@ -52,4 +52,5 @@ def main():
 
     make_models()
 
-main()
+if __name__ == "__main__":
+    main()

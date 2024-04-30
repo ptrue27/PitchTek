@@ -1,16 +1,14 @@
 import pandas as pd
-import numpy as np
+import sqlite3
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from matplotlib.patches import Ellipse
+import joblib
 
+def load_and_preprocess_data(data):
 
-def load_and_preprocess_data(csv_path):
-
-    # how to work in other inputs
-    data = pd.read_csv(csv_path)
     data = data[['release_speed', 'plate_x', 'plate_z',
                  'balls', 'strikes', 'pitch_type']].dropna()
 
@@ -85,11 +83,13 @@ def visualize_prediction_with_error(pitch_type, location, error):
     plt.show()
 
 
-def main():
+def make_prediction(pitcher_id):
 
-    # load data in and encode.
-    csv_path = r'C:\Users\ecarr\PycharmProjects\PitchTek\uploads\first_pitch.csv'
-    data, label_encoder = load_and_preprocess_data(csv_path)
+    conn = sqlite3.connect('..\databases\pitches.db')
+    data = pd.read_sql_query(f"SELECT * FROM \"{pitcher_id}\";", conn)
+    conn.close()
+
+    data, label_encoder = load_and_preprocess_data(data)
 
     global X_train, y_train
     X = data[['release_speed', 'plate_x', 'plate_z', 'balls', 'strikes']]
@@ -98,11 +98,6 @@ def main():
         X, y, test_size=0.2, random_state=42)
     model = train_model(X_train, y_train)
 
-    #release_speed = float(input("Enter the release speed of the pitch (mph): "))
-    #plate_x = float(input("Enter the last pitch's plate_x position: "))
-    #plate_z = float(input("Enter the last pitch's plate_z position: "))
-    #balls = int(input("Enter the current number of balls: "))
-    #strikes = int(input("Enter the current number of strikes: "))
 
     release_speed = 90
     plate_x = 0
@@ -113,7 +108,7 @@ def main():
     pitch_type, location, error = predict_and_estimate_error(
         model, label_encoder, release_speed, plate_x, plate_z, balls, strikes)
 
-    visualize_prediction_with_error(pitch_type, location, error)
+    #visualize_prediction_with_error(pitch_type, location, error)
 
     # Predict the most likely next pitch type based on the count
     next_pitch_type = predict_next_pitch_type(data, balls, strikes)
@@ -122,4 +117,4 @@ def main():
     print(f"error: {error}")
 
 if __name__ == "__main__":
-    main()
+    make_prediction("434378")

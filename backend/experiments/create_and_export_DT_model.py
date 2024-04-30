@@ -1,20 +1,10 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import joblib
-from sklearn.impute import SimpleImputer
-
-def read_in_data(file_path, cols):
-
-    # Read in data
-    df = pd.read_csv(file_path)
-
-    # Extract columns that I need
-    df = df[cols]
-
-    return df
+import sqlite3
 
 
 def encode_dataframe(df):
@@ -40,7 +30,7 @@ def encode_dataframe(df):
 def train(X_train, y_train):
 
     # Train the classifier
-    dt_classifier = DecisionTreeClassifier()
+    dt_classifier = RandomForestClassifier(random_state=42)
     dt_classifier.fit(X_train, y_train)
 
     return dt_classifier
@@ -52,9 +42,9 @@ def get_accuracy(dt_classifier, X_test, y_test):
     print(f"Accuracy: {accuracy}")
 
 
-def create_dt(df, name):
+def create_dt(df, id):
 
-    cols = ["pitch_type", "outs_when_up", "strikes", "balls"]
+    cols = ["pitch_type", 'release_speed', 'plate_x', 'plate_z', 'balls', 'strikes']
 
     # extract necessary columns
     df = df[cols]
@@ -79,25 +69,19 @@ def create_dt(df, name):
     get_accuracy(dt_classifier, X_test, y_test)
 
     # Export DT
-    model_filename = "decision_tree_models/" + str(name[0]) + '.joblib'
-    joblib.dump(dt_classifier, model_filename)
+    model_fileid = "../random_forest_models/" + str(id) + '.joblib'
+    joblib.dump(dt_classifier, model_fileid)
 
 def main():
 
-    '''# First pitches
-    create_dt(path='../uploads/first_pitch.csv',
-              cols=["pitch_type","outs_when_up", "inning", "stand", "away_team", "home_score", "away_score"])
+    conn = sqlite3.connect('..\databases\pitches.db')
+    id = 434378
+    df = pd.read_sql_query(f"SELECT * FROM \"{id}\";", conn)
 
-    # Following pitches
-    create_dt(path='../uploads/subsequent_pitches.csv',
-              cols=["pitch_type","outs_when_up", "inning", "stand", "away_team", "home_score", "away_score",
-                    "pitch_number", "previous_pitch_type", "previous_pitch_result"])'''
+    create_dt(df, id)
 
-    # All pitches
-    create_dt(df='../uploads/434378_pitch_data.csv',
-              #cols=["pitch_type", "outs_when_up", "inning", "home_score", "away_score", "strikes", "balls"],
-              name="434378")
+    conn.close()
 
 
-
-######
+if __name__ == "__main__":
+    main()

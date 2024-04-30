@@ -76,14 +76,6 @@ def get_pitcher(id):
 
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
-    #predicter = Predictions_Class()
-
-    # Extract keys associated with 'param1'
-    #param1_keys = [key for key in request.args.keys() if key.startswith('param1')]
-    #param1_dict = {key.split('[', 1)[1][:-1]: request.args[key] for key in param1_keys}
-
-    #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
-    #pitch_speed = predicter.get_speed(pitch_type)
 
     # Assuming you're passing variables via query parameters in a GET request
     variable1 = request.args.to_dict()
