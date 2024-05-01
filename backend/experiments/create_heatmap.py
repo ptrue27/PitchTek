@@ -8,14 +8,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import matplotlib.patches as patches
-from matplotlib.patches import Ellipse
+import random
 import os
 
 
 def get_dataframe(id):
 
     # Connect to SQLite database
-    conn = sqlite3.connect('../databases/pitches.db')
+    conn = sqlite3.connect('databases/pitches.db')
 
     # Create a cursor object to execute SQL queries
     cursor = conn.cursor()
@@ -40,7 +40,7 @@ def get_dataframe(id):
     return df
 
 # Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
-def make_heat_map(pitch_type, player_id, location, error):
+def make_heat_map(pitch_type, player_id, location):
 
     df = get_dataframe(player_id)
 
@@ -69,7 +69,7 @@ def make_heat_map(pitch_type, player_id, location, error):
 
     # Create horizontal lines
     for i in range(1, 3):
-        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.73, color='black', linestyle='-')
+        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.72, color='black', linestyle='-')
 
     # Create vertical lines
     for i in range(1, 3):
@@ -77,10 +77,7 @@ def make_heat_map(pitch_type, player_id, location, error):
 
 
     # Add Pitch Location Prediction + Error Zone
-    plt.plot(location[0], location[1], 'bo')
-    error_ellipse = Ellipse(
-        xy=location, width=2*error[0], height=2*error[0], edgecolor='b', fc='None', lw=2)
-    plt.gca().add_patch(error_ellipse)
+    plt.plot(location[0], location[1], 'bo', markersize=30, alpha=0.5)
 
     # Remove the x and y-axis
     #plt.axis('off')
@@ -97,15 +94,16 @@ def make_heat_map(pitch_type, player_id, location, error):
     plt.yticks([])
 
     # Display the plot
-    plt.show()
+    #plt.show()
 
     #Export the plot
-    #directory = r"..\..\frontend\src\assets\heat_maps_v2"
-    #file_name = f"{player_id}_{pitch_type}_heat_map.jpg"
-    #file_path = os.path.join(directory, file_name)
-    #plt.savefig(file_path, bbox_inches='tight', pad_inches=0.1)
+    random_number = random.randint(0, 100000)
+    directory = r"..\frontend\src\assets\heat_maps_v2"
+    file_name = f"{player_id}_{pitch_type}_heat_map_{random_number}.jpg"
+    file_path = os.path.join(directory, file_name)
+    plt.savefig(file_path, bbox_inches='tight', pad_inches=0.1, dpi=500)
 
-    #return file_name
+    return file_name
 
 
 # This function is used to create the default strike zone
@@ -139,7 +137,7 @@ def create_default_strike_zone():
 
     # Create vertical lines
     for i in range(1, 3):
-        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
+        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.78, color='black', linestyle='-')
 
     # Remove tics
     plt.xticks([])
@@ -153,7 +151,7 @@ def create_default_strike_zone():
     plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
 
-def main():
+def runtime_main():
 
     id = "434378"
     location = [0.5615384615384615, 1.9673992673992675]
@@ -161,5 +159,6 @@ def main():
     make_heat_map("FF", id, location, error)
 
 
-main()
+
+
 

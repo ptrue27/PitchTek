@@ -1,11 +1,9 @@
-from app.get_prediction import Predictions_Class
 from app import app, user_manager, stats_api
-#import statsapi
+import statsapi
 from flask import request, jsonify, render_template, send_from_directory
 from app.data_visualizer import DataVisualizer
-import os
-#from pitch_predictions import make_prediction
-
+from app.pitch_predictions import RF_prediction
+from experiments.create_heatmap import make_heat_map
 
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():
@@ -78,31 +76,36 @@ def get_pitcher(id):
 @app.route('/make_prediction', methods=['GET'])
 def make_prediction():
 
-    # Assuming you're passing variables via query parameters in a GET request
-    variable1 = request.args.to_dict()
-    #inning = request.args.get("inning")
-    #print(inning)
+    # unpack game state variables
+    release_speed = float(request.args.get("release_speed"))
+    plate_x = float(request.args.get("plate_x"))
+    plate_z = float(request.args.get("plate_z"))
+    balls = int(request.args.get("balls"))
+    strikes = int(request.args.get("strikes"))
+    pitcher_id = int(request.args.get("pitcher_id"))
 
-    # Do something with the variables
-    print("all args:", variable1)
+    # get pitch predictions
+    pitch_type, location, error, average_release_speed\
+        = RF_prediction(release_speed, plate_x, plate_z, balls, strikes, pitcher_id)
 
-    current_directory = os.getcwd()
-    print("Current directory:", current_directory)
+    # generate image and get image name
+    file_name = make_heat_map(pitch_type, pitcher_id, location)
+
 
     predictions = [{
-        "img": "425794_CH_heat_map.jpg",
-        "speed": 83.9,
-        "location": 9,
+        "img": file_name,
+        "speed": round(average_release_speed, 1),
+        "location": location,
         "confidence": 154.73,
-        "type": " Changeup (CH)",
+        "type": pitch_type,
         }, {
-        "img": "425844_SI_heat_map.jpg",
+        "img": file_name,
         "speed": 92.3,
         "location": 7,
         "confidence": 32.80,
         "type": "Sinker (SI)",
         }, {
-        "img": "425794_CU_heat_map.jpg",
+        "img": file_name,
         "speed": 88.2,
         "location": 7,
         "confidence": 12.06,
@@ -176,7 +179,7 @@ def get_mlb_player_stats():
             if player_name == player['fullName'].lower().strip():
                 matched_player = player
                 break
-        
+
         if matched_player:
             player_id = matched_player['id']
             stats = statsapi.player_stat_data(player_id, type='career')  # Adjust the type or season as needed
@@ -186,8 +189,8 @@ def get_mlb_player_stats():
     except Exception as e:
         print("Failed to fetch player stats: %s", str(e))
         return jsonify({"error": str(e)}), 500
-    
-    
+
+
 @app.route("/api/player_pitching_stats", methods=['GET'])
 def get_player_pitching_stats():
     player_name = request.args.get('player_name')
@@ -236,8 +239,8 @@ def get_player_pitching_stats():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-    
+
+
 @app.route("/api/player_fielding_stats", methods=['GET'])
 def get_player_fielding_stats():
     player_name = request.args.get('player_name')
@@ -258,8 +261,8 @@ def get_player_fielding_stats():
 
             # Specified fielding stats keys
             desired_stats_keys = [
-                'gamesPlayed', 'gamesStarted', 'assists', 'putOuts', 'errors', 'chances', 
-                'fielding', 'rangeFactorPerGame', 'rangeFactorPer9Inn', 'innings', 'games', 
+                'gamesPlayed', 'gamesStarted', 'assists', 'putOuts', 'errors', 'chances',
+                'fielding', 'rangeFactorPerGame', 'rangeFactorPer9Inn', 'innings', 'games',
                 'doublePlays', 'triplePlays', 'throwingErrors'
             ]
 
@@ -288,7 +291,7 @@ def get_player_fielding_stats():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 
 @app.route("/api/player_batting_stats", methods=['GET'])
 def get_player_batting_stats():

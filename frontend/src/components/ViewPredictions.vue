@@ -110,9 +110,9 @@ export default {
     },
     imageURLs(){
       return [
-        require("@/assets/heat_maps/" + this.predictions[0].img),
-        require("@/assets/heat_maps/" + this.predictions[1].img),
-        require("@/assets/heat_maps/" + this.predictions[2].img),
+        require("@/assets/heat_maps_v2/" + this.predictions[0].img),
+        require("@/assets/heat_maps_v2/" + this.predictions[1].img),
+        require("@/assets/heat_maps_v2/" + this.predictions[2].img),
       ]
     },
   },

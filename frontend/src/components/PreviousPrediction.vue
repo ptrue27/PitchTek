@@ -227,7 +227,7 @@ export default {
   },
   computed: {
     imageURL() {
-      return require("@/assets/heat_maps/" + this.storeSnapshot.predictions[0].img )
+      return require("@/assets/heat_maps_v2/" + this.storeSnapshot.predictions[0].img )
     },
 
   },

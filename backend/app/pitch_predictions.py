@@ -83,9 +83,9 @@ def visualize_prediction_with_error(pitch_type, location, error):
     plt.show()
 
 
-def make_prediction(pitcher_id):
+def RF_prediction(release_speed, plate_x, plate_z, balls, strikes, pitcher_id):
 
-    conn = sqlite3.connect('..\databases\pitches.db')
+    conn = sqlite3.connect('databases\pitches.db')
     data = pd.read_sql_query(f"SELECT * FROM \"{pitcher_id}\";", conn)
     conn.close()
 
@@ -99,12 +99,6 @@ def make_prediction(pitcher_id):
     model = train_model(X_train, y_train)
 
 
-    release_speed = 90
-    plate_x = 0
-    plate_z = 0
-    balls = 0
-    strikes = 0
-
     pitch_type, location, error = predict_and_estimate_error(
         model, label_encoder, release_speed, plate_x, plate_z, balls, strikes)
 
@@ -112,9 +106,13 @@ def make_prediction(pitcher_id):
 
     # Predict the most likely next pitch type based on the count
     next_pitch_type = predict_next_pitch_type(data, balls, strikes)
-    print(f"The most likely next pitch type is: {next_pitch_type}")
-    print(f"location: {location}")
-    print(f"error: {error}")
+
+    # calculate average speed for pitch type
+    filtered_data = data.loc[data['pitch_type'] == next_pitch_type]
+    average_release_speed = filtered_data['release_speed'].mean()
+
+    return next_pitch_type, location, error, average_release_speed
+
 
 if __name__ == "__main__":
-    make_prediction("434378")
+    RF_prediction(85,0,0,0,0,"434378")
