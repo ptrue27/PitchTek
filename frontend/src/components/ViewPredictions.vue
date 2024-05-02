@@ -110,11 +110,21 @@ export default {
       return this.pages[this.currentPage] || [];
     },
     imageURLs(){
-      return [
-        require("@/assets/heat_maps_v2/" + this.predictions[0].img),
-        require("@/assets/heat_maps_v2/" + this.predictions[1].img),
-        require("@/assets/heat_maps_v2/" + this.predictions[2].img),
-      ]
+      try {
+        return [
+          require("@/assets/heat_maps_v2/" + this.predictions[0].img),
+          require("@/assets/heat_maps_v2/" + this.predictions[1].img),
+          require("@/assets/heat_maps_v2/" + this.predictions[2].img),
+        ]
+      }  catch (error){
+        console.error('Error loading image URLs:', error);
+                return [
+          require("@/assets/heat_maps_v2/default_heat_map.jpg"),
+          require("@/assets/heat_maps_v2/default_heat_map.jpg"),
+          require("@/assets/heat_maps_v2/default_heat_map.jpg"),
+        ]
+      }
+
     },
   },
   methods: {
