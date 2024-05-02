@@ -136,6 +136,8 @@
             handlePredictButtonClick() {
                 console.log('Predict Button clicked!');
 
+                this.$store.commit('setReleaseSpeed', this.speed)
+
                 const path = 'http://' + this.$store.state.host + '/new_prediction';
                 axios.post(path, this.gameState)
                 .then((res) => {
@@ -176,8 +178,10 @@
                     base_third: this.$store.state.bases[2],
                     pitcher_name: this.$store.state.current.pitcher.name,
                     pitcher_img: this.$store.state.current.pitcher.img,
+                    pitcher_id: this.$store.state.current.pitcher.id,
                     batter_name: this.$store.state.current.batter.name,
                     batter_img: this.$store.state.current.batter.img,
+                    release_speed: this.$store.state.release_speed,
                 };
             },
             isButtonDisabled() {

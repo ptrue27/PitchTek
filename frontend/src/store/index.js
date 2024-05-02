@@ -77,8 +77,8 @@ const defaultAccount = {
 const store = createStore({
     state() {
         return { 
-            //host: "localhost:5000", // development
-            host: "pitchtek.pro", // production
+            host: "localhost:5000", // development
+            //host: "pitchtek.pro", // production
             isLoggedIn: localStorage.getItem("token") !== null,
             recording: false,
             teamIds: [],
@@ -107,6 +107,9 @@ const store = createStore({
             balls: 0,
             strikes: 0,
             bases: [false, false, false],
+            release_speed: 0,
+            plate_x: 0,
+            plate_z: 2.49,
             account: { ...defaultAccount },
         }
     },
@@ -345,6 +348,15 @@ const store = createStore({
         },
         setAwayScore(state, score) {
             state.away.score = score;
+        },
+        setReleaseSpeed(state, speed) {
+            state.release_speed = speed;
+        },
+        setPlateX(state, x) {
+            state.plate_x = x;
+        },
+        setPlateZ(state, z) {
+            state.plate_z = z;
         },
         setHome(state, home) {
             state.home.batter = { ...defaultBatter };

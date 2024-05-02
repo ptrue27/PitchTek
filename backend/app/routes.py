@@ -157,19 +157,31 @@ def new_game():
 
 @app.route('/new_prediction', methods=['POST'])
 def new_prediction():
-    #predicter = Predictions_Class()
 
-    # Extract keys associated with 'param1'
-    #param1_keys = [key for key in request.args.keys() if key.startswith('param1')]
-    #param1_dict = {key.split('[', 1)[1][:-1]: request.args[key] for key in param1_keys}
 
-    #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
-    #pitch_speed = predicter.get_speed(pitch_type)
+    params = request.json  # Get all parameters passed
+    print("Params received:", params)  # Log all params received
+
+    # unpack game state variables
+    #release_speed = float(request.args.get("release_speed"))
+    #plate_x = float(request.args.get("plate_x"))
+    #plate_z = float(request.args.get("plate_z"))
+    #balls = int(request.args.get("balls"))
+    #strikes = int(request.args.get("strikes"))
+    #pitcher_id = int(request.args.get("pitcher_id"))
+
+    print("HERE")
+    #print("RELEASE SPEED", release_speed)
+    #print("plate_x", plate_x)
+    #print("plate_z", plate_z)
+    #print("balls", balls)
+    #print("strikes", strikes)
+    #print("pitcher_id", pitcher_id)
 
     # Predict next pitch
     prediction = {
         "img": "425794_CH_heat_map.jpg",
-        "speed": 83.3,
+        "speed": 983.3,
         "location": 4,
         "confidence": 54.73,
         "type": " Changeup (CH)",
