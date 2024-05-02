@@ -85,7 +85,7 @@ def visualize_prediction_with_error(pitch_type, location, error):
 
 def RF_prediction(release_speed, plate_x, plate_z, balls, strikes, pitcher_id):
 
-    conn = sqlite3.connect('databases\pitches.db')
+    conn = sqlite3.connect('..\databases\pitches.db')
     data = pd.read_sql_query(f"SELECT * FROM \"{pitcher_id}\";", conn)
     conn.close()
 
@@ -111,8 +111,16 @@ def RF_prediction(release_speed, plate_x, plate_z, balls, strikes, pitcher_id):
     filtered_data = data.loc[data['pitch_type'] == next_pitch_type]
     average_release_speed = filtered_data['release_speed'].mean()
 
-    return next_pitch_type, location, error, average_release_speed
+    # Temp code to generate all heat maps
+    #unique_values = data['pitch_type'].unique()
 
+    return next_pitch_type, location, average_release_speed
+
+
+#def create_all_heatmaps(:)
 
 if __name__ == "__main__":
-    RF_prediction(85,0,0,0,0,"434378")
+    next_pitch_type, location, average_release_speed =(
+        RF_prediction(85,0,0,0,0,"434378"))
+
+    print(next_pitch_type, location, average_release_speed)

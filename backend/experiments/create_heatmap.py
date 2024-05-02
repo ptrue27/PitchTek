@@ -40,7 +40,7 @@ def get_dataframe(id):
     return df
 
 # Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
-def make_heat_map(pitch_type, player_id, location):
+def make_heat_map(pitch_type, player_id, location, balls, strikes):
 
     df = get_dataframe(player_id)
 
@@ -97,13 +97,12 @@ def make_heat_map(pitch_type, player_id, location):
     #plt.show()
 
     #Export the plot
-    random_number = random.randint(0, 100000)
     directory = r"..\frontend\src\assets\heat_maps_v2"
-    file_name = f"{player_id}_{pitch_type}_heat_map_{random_number}.jpg"
+    file_name = f"{player_id}_{pitch_type}_heat_map_b{str(balls)}_s{str(strikes)}.jpg"
     file_path = os.path.join(directory, file_name)
     plt.savefig(file_path, bbox_inches='tight', pad_inches=0.1, dpi=500)
 
-    return file_name
+    #return file_name
 
 
 # This function is used to create the default strike zone
