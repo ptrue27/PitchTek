@@ -27,6 +27,9 @@ export default {
   methods: {
     addComponent() {
       // Capture the entire state of the Vuex store
+
+      console.log("AddComponent Reached")
+
       const storeSnapshot = {
         inning: this.inning,
         home: this.home,
