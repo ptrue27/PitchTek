@@ -182,6 +182,8 @@
                     batter_name: this.$store.state.current.batter.name,
                     batter_img: this.$store.state.current.batter.img,
                     release_speed: this.$store.state.release_speed,
+                    plate_x: this.$store.state.plate_x,
+                    plate_z: this.$store.state.plate_z
                 };
             },
             isButtonDisabled() {

@@ -1,4 +1,3 @@
-from app.get_prediction import Predictions_Class
 from app.data_visualizer import DataVisualizer
 from app import app, user_manager, stats_api, sql_utils
 

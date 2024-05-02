@@ -20,7 +20,9 @@
           [false, false, false],
           [false, false, false],
           [false, false, false]
-        ]
+        ],
+        xgrid: [-.6, 0, .6],
+        zgrid: [3.36, 2.49, 1.63],
       };
     },
     methods: {
@@ -31,6 +33,8 @@
           }
         }
         this.grid[rowIndex][colIndex] = true;
+        this.$store.commit("setPlateX",this.xgrid[colIndex])
+        this.$store.commit("setPlateZ",this.zgrid[rowIndex])
       }
     }
   };
