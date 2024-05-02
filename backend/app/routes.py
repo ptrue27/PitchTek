@@ -4,6 +4,7 @@ from flask import request, jsonify, render_template, send_from_directory
 from app.data_visualizer import DataVisualizer
 from app.pitch_predictions import RF_prediction
 from experiments.create_heatmap import make_heat_map
+import  time
 
 @app.route('/api/sign_up', methods=['POST'])
 def sign_up():

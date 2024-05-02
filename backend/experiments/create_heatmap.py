@@ -4,6 +4,8 @@
 #
 #
 import sqlite3
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -76,7 +78,7 @@ def make_heat_map(pitch_type, player_id, location):
         plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
 
 
-    # Add Pitch Location Prediction + Error Zone
+    # Add Pitch Location Prediction
     plt.plot(location[0], location[1], 'bo', markersize=30, alpha=0.5)
 
     # Remove the x and y-axis
@@ -102,6 +104,8 @@ def make_heat_map(pitch_type, player_id, location):
     file_name = f"{player_id}_{pitch_type}_heat_map_{random_number}.jpg"
     file_path = os.path.join(directory, file_name)
     plt.savefig(file_path, bbox_inches='tight', pad_inches=0.1, dpi=500)
+
+    plt.clf()
 
     return file_name
 

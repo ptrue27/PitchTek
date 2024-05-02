@@ -12,6 +12,7 @@
                   <!--Prediction image-->
                     <v-col cols="6">
                         <v-img :src=imageURLs[index] style="margin-top: 5px; margin-bottom: 5px; height: 392px;"
+                               @error=onImageError
                         ></v-img>
                     </v-col>
 
@@ -124,7 +125,9 @@ export default {
       console.log(this.predictions.length + "::" + this.predictions[0].type + this.predictions[1].type);
       this.currentPage = Math.min(this.currentPage + 1, this.predictions.length - 1);
     },
-
+    onImageError() {
+      console.error('Failed to load image');
+    }
   },
 };
 </script>
