@@ -26,6 +26,7 @@
                   style="margin-top: 25px; max-width: 225px"
                   class="record-btn"
                   color="green-darken-1"
+                  :disabled="this.$store.state.recording"
                 ></v-select>
               </v-col>
             </v-row>

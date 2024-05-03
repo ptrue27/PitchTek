@@ -10,6 +10,7 @@
                 variant="solo-filled" 
                 density="compact"
                 color="green-darken-1"
+                :disabled="this.$store.state.recording"
             ></v-select>
         </v-col>
                   
@@ -22,7 +23,7 @@
                 variant="solo-filled" 
                 density="compact"
                 color="green-darken-1"
-                style="margin-bottom: -30px;"
+                :disabled="this.$store.state.recording"
             ></v-select>
         </v-col>
      </v-row>
