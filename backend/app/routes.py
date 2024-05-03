@@ -157,8 +157,6 @@ def new_game():
 
 @app.route('/new_prediction', methods=['POST'])
 def new_prediction():
-
-
     params = request.json  # Get all parameters passed
     print("Params received:", params)  # Log all params received
 
