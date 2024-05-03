@@ -21,7 +21,10 @@ def get_dataframe(pitcher_id):
     if os.path.exists(file_path):
         data = pd.read_csv(file_path)
     else:
-        print(f"CSV file for pitcher ID {pitcher_id} not found.")
+        pitcher_id = "434378"
+        file_path = os.path.join(folder_path, f"{pitcher_id}.csv")
+        data = pd.read_csv(file_path)
+
 
     return data
 
