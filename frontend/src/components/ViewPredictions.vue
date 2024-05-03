@@ -51,7 +51,14 @@ export default {
         prediction: state => state.prediction,
     }),
     imageURL(){
-      return require("@/assets/heat_maps/" + this.prediction.img)
+
+      try {
+         return require("@/assets/heat_maps_v2/" + this.prediction.img)
+
+      }  catch (error){
+          console.error('Error loading image URLs:', error);
+          return require("@/assets/heat_maps_v2/default_heat_map.jpg")
+      }
     },
   },
 };
