@@ -155,6 +155,22 @@ def new_game():
     game_id = sql_utils.insert_record("GAMES", game, get_id=True)
     return jsonify({"id": game_id})
 
+pitch_dict = {
+    'CH' : "Changeup",
+    'CU' : "Curveball",
+    'FC' : "Cutter",
+    'EP' : "Eephus",
+    'FO' : "Forkball",
+    'FF' : "Fastball",
+    'KN' : "Knuckleball",
+    'KC' : "Knuckle-Curve",
+    'SC' : "Screwball",
+    'SI' : "Sinker",
+    'SL' : "Slider",
+    'SV' : "Slurve",
+    'FS' : "Splitter",
+    'ST' : "Sweeper"
+}
 
 @app.route('/new_prediction', methods=['POST'])
 def new_prediction():
@@ -183,7 +199,7 @@ def new_prediction():
         "speed": round(average_release_speed,1),
         "location": location,
         "confidence": 1154.73,
-        "type": pitch_type,
+        "type": pitch_dict[pitch_type],
     }
 
     # Store pitch data
