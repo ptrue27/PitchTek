@@ -22,11 +22,11 @@
           solo
           class="mt-3"
         ></v-autocomplete>
-        <v-btn color="primary" v-if="selectedPlayer" @click="fetchLatestAtBatPlot">Show Latest At-Bat Plot</v-btn>
+       <v-btn color="primary" v-if="selectedPlayer" @click="fetchLatestAtBatPlot">Show Latest At-Bat Plot</v-btn>
       </v-col>
       <v-col cols="12" sm="8" md="6" class="d-flex justify-center">
         <v-img v-if="showImage"
-               src="@/assets/static/latest_at_bat.png"
+              src="@/assets/static/latest_at_bat.png"
                alt="Latest At-Bat Plot">
         </v-img>
       </v-col>
@@ -168,7 +168,7 @@
       outingSummaries: [],
       chartData: null,
       chartInstance: null,
-      generatedImageUrl: '@/PitchTek/frontend/src/assets/static/latest_at_bat.png',
+      generatedImageUrl: 'C:/Users/davis/Documents/PitchTek/frontend/src/assets/static/latest_at_bat.png',
       nameIndexMap: new Map(),
       selectedImageUrl: '@/PitchTek/frontend/src/assets/strikezone.jpg',
       pitcherOutings: [],
@@ -254,18 +254,23 @@
         .catch(error => console.error('Failed to upload file:', error));
     },
     fetchLatestAtBatPlot() {
-      const timestamp = new Date().getTime();
-      const host = "http://" + this.$store.state.host + "/api/fetch_latest_at_bat_plot";
-      axios.get(host, { params: { player_name: this.selectedPlayer } })
-        .then(response => {
-          this.generatedImageUrl = `${response.data.image_url}?t=${timestamp}`;
-          this.showImage = true;
-        })
-        .catch(error => {
-          console.error("Error fetching latest at-bat plot:", error);
-        });
-        
-    },
+      const host = `http://${this.$store.state.host}/api/fetch_latest_at_bat_plot`;
+  axios.get(host, { params: { player_name: this.selectedPlayer }, responseType: 'blob' })
+    .then(response => {
+      // Create a URL for the blob object
+      const urlCreator = window.URL || window.webkitURL;
+      this.generatedImageUrl = urlCreator.createObjectURL(response.data);
+      this.showImage = true;
+    })
+    .catch(error => {
+      console.error("Error fetching latest at-bat plot:", error);
+      if (error.response && error.response.data) {
+        alert(`Error: ${error.response.data.error}`);
+      } else {
+        alert("Unknown error occurred. Please try again.");
+      }
+    });
+},
 analyzePitcherData() {
   if (this.selectedPitcherIndex === null || !this.csvData) return;
 

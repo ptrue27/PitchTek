@@ -10,6 +10,18 @@ import os
 import pandas as pd
 import statsapi
 from werkzeug.utils import secure_filename
+from flask import Flask, request, jsonify
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+from io import BytesIO
+import base64
+
 
 # Use the 'Agg' backend, which is non-interactive and does not require a GUI.
 matplotlib.use('Agg')  
@@ -155,37 +167,89 @@ def new_game():
     return jsonify({"id": game_id})
 
 
+class Config:
+    DATA_PATH = 'C:/Users/davis/Documents/PitchTek/backend/uploads/first_pitch.csv'
+
+app.config.from_object(Config)
+
+def load_and_preprocess_data():
+    data = pd.read_csv(app.config['DATA_PATH'])
+    data = data[['release_speed', 'plate_x', 'plate_z', 'balls', 'strikes', 'pitch_type']].dropna()
+    label_encoder = LabelEncoder()
+    data['pitch_type_encoded'] = label_encoder.fit_transform(data['pitch_type'])
+    return data, label_encoder
+
+data, label_encoder = load_and_preprocess_data()
+X = data[['release_speed', 'plate_x', 'plate_z', 'balls', 'strikes']]
+y = data['pitch_type_encoded']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+def predict_and_estimate_error(release_speed, plate_x, plate_z, balls, strikes):
+    # Convert plate_x and plate_z to float if they are not
+    plate_x = float(plate_x)
+    plate_z = float(plate_z)
+
+    input_features = pd.DataFrame({
+        'release_speed': [float(release_speed)],
+        'plate_x': [plate_x],
+        'plate_z': [plate_z],
+        'balls': [int(balls)],
+        'strikes': [int(strikes)]
+    })
+    predictions = model.predict(input_features)
+    probabilities = model.predict_proba(input_features)[0]
+    confidence = np.max(probabilities)
+    pitch_type = label_encoder.inverse_transform([predictions[0]])[0]
+    
+    # Random noise generation based on standard error
+    noise_x = np.random.normal(0, 0.1)  # Adjust the noise level as needed
+    noise_z = np.random.normal(0, 0.1)
+    location = (plate_x + noise_x, plate_z + noise_z)
+
+    # Assume error margins are known or calculated previously
+    error_x = 0.5  # Example fixed error margin
+    error_z = 0.5
+    return pitch_type, location, (error_x, error_z), confidence
+
+def visualize_prediction_with_error(pitch_type, location, error):
+    fig, ax = plt.subplots()
+    ax.set_xlim(-3, 3)
+    ax.set_ylim(0, 6)
+    ax.axhline(y=1.5, color='green', linestyle='--')
+    ax.axhline(y=3.5, color='green', linestyle='--')
+    ax.axvline(x=-0.708, color='green', linestyle='--')
+    ax.axvline(x=0.708, color='green', linestyle='--')
+    ax.plot(location[0], location[1], 'ro')
+    error_ellipse = Ellipse(xy=location, width=error[0], height=error[1], edgecolor='r', fc='None', lw=2)
+    ax.add_patch(error_ellipse)
+    ax.grid(True)
+    
+    img = BytesIO()
+    plt.savefig(img, format='png')
+    plt.close()
+    img.seek(0)
+    img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
+    return img_base64
+
 @app.route('/new_prediction', methods=['POST'])
 def new_prediction():
-    #predicter = Predictions_Class()
-
-    # Extract keys associated with 'param1'
-    #param1_keys = [key for key in request.args.keys() if key.startswith('param1')]
-    #param1_dict = {key.split('[', 1)[1][:-1]: request.args[key] for key in param1_keys}
-
-    #pitch_type = predicter.get_type(param1_dict, request.args.get("param2"))
-    #pitch_speed = predicter.get_speed(pitch_type)
-
-    # Predict next pitch
-    prediction = {
-        "img": "425794_CH_heat_map.jpg",
-        "speed": 83.3,
-        "location": 4,
-        "confidence": 54.73,
-        "type": " Changeup (CH)",
-    }
-
-    # Store pitch data
-    game_state = request.json
-    game_state["prediction_img"] = prediction["img"]
-    game_state["prediction_speed"] = prediction["speed"]
-    game_state["prediction_location"] = prediction["location"]
-    game_state["prediction_confidence"] = prediction["confidence"]
-    game_state["prediction_type"] = prediction["type"]
-    #sql_utils.insert_record("GAMESTATES", game_state)
-
-    return jsonify(prediction)
-
+    data = request.get_json()
+    pitch_type, location, error, confidence = predict_and_estimate_error(
+        data['release_speed'], data['plate_x'], data['plate_z'], data['balls'], data['strikes'])
+    image_base64 = visualize_prediction_with_error(pitch_type, location, error)
+    
+    return jsonify({
+        'type': pitch_type,
+        'location': location,
+        'error': error,
+        'confidence': confidence,
+        'image': image_base64
+    })
+@app.route('/images/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/api/new_season', methods=['POST'])
 @jwt_required()
@@ -334,9 +398,6 @@ def upload_file():
     return jsonify({'message': 'File uploaded successfully'}), 200
 
 
-@app.route('/images/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 @app.route('/api/generate-heatmap-counts', methods=['GET'])
 def generate_heatmap_counts():
     visualizer = DataVisualizer(df_global)  # Assuming df_global is your DataFrame

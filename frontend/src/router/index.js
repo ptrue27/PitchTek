@@ -6,6 +6,7 @@ import MatchupView from "./../views/MatchupView.vue";
 import StatisticsView from "./../views/StatisticsView.vue";
 import AccountView from "./../views/AccountView.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
+import PredictPitch from "./../views/PredictPitch.vue"
 import store from './../store';
 
 const routes = [
@@ -42,6 +43,12 @@ const routes = [
     name: "Account",
     component: AccountView,
     meta: { requiresAuth: true },
+  },
+  {
+  path: "/predict",
+  name: "Predict",
+  component: PredictPitch,
+  meta: { requiresAuth: true },
   },
   {
     path: '/:catchAll(.*)*',

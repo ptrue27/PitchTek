@@ -31,11 +31,13 @@
 
     <!-- Images Display Section -->
     <v-row justify="center" class="my-5">
-  <template v-if="Showimages">
-    <v-col v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
-      <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
-    </v-col>
-  </template>
+      <template v-if="Showimages">
+  <v-col v-for="(image, index) in images" :key="index" cols="12" sm="6" md="4">
+    <v-img :src="image" :alt="'Generated Image ' + index" class="my-2" contain></v-img>
+    <!-- Download button for each image -->
+    <v-btn color="primary" @click="downloadImage(image, index)">Download Image</v-btn>
+  </v-col>
+</template>
 </v-row>
 
     <!-- Player Name Input and Fetch Stats Button -->
@@ -133,6 +135,15 @@ export default {
     };
   },
   methods: {
+    downloadImage(imageUrl, index) {
+    // Create a temporary anchor element
+    const a = document.createElement('a');
+    a.href = imageUrl;
+    a.download = `GeneratedImage_${index}.png`; // Set the file name for download
+    document.body.appendChild(a);
+    a.click(); // Trigger the download
+    document.body.removeChild(a); // Remove the element after download
+  },
     uploadFile(file) {
     // Create a new FileReader object
     const reader = new FileReader();

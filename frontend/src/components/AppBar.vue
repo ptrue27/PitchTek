@@ -79,6 +79,13 @@
         Logout
       </v-btn>
 
+      <v-btn
+        v-if="$store.state.isLoggedIn"
+        to="/predict"
+        variant="tonal" class="mr-5"
+      >
+        Predict
+      </v-btn>
     </v-app-bar>
 </template>
 
