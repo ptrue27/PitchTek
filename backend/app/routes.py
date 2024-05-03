@@ -180,7 +180,7 @@ def new_prediction():
 
     prediction = {
         "img": file_name,
-        "speed": average_release_speed,
+        "speed": round(average_release_speed,1),
         "location": location,
         "confidence": 1154.73,
         "type": pitch_type,
