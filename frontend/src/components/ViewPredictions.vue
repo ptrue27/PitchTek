@@ -19,8 +19,8 @@
           <!--Predicted values-->
           <v-col cols="6">
               <v-row style="margin-top:60px;">
-                  <v-col class="predict-col">Confidence:</v-col>
-                  <v-col class="predict-data-col">{{ prediction.confidence }}%</v-col>
+                  <v-col class="predict-col"></v-col>
+                  <v-col class="predict-data-col"></v-col>
               </v-row>
               <v-row class="predict-row">
                 <v-col class="predict-col">Pitch type:</v-col>
@@ -31,8 +31,8 @@
                 <v-col class="predict-data-col">{{ prediction.speed }} mph</v-col>
               </v-row>
               <v-row class="predict-row">
-                <v-col class="predict-col">Location:</v-col>
-                <v-col class="predict-data-col">Zone {{ prediction.location }}</v-col>
+                <v-col class="predict-col"></v-col>
+                <v-col class="predict-data-col"></v-col>
               </v-row>
           </v-col>
       </v-row>
