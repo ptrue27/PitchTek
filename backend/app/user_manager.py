@@ -37,7 +37,7 @@ def user_sign_up(username, password):
         sql_utils.insert_record("SEASONS", record)
 
     # Complete login process
-    user_login(username, password)
+    return user_login(username, password)
 
 
 # Handle user login process

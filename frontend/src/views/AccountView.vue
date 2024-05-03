@@ -156,8 +156,8 @@
               </v-col>
             </v-row>
 
-            <v-row style="padding-right: 10px; border-top: gray 2px solid; margin-top: -10px;">
-              <v-col>
+            <v-row style="padding-right: 10px; border-top: #43A047 2px solid;">
+              <v-col style="padding-top: 0px;">
                 <!--Empty message-->        
                 <div v-if="gameStates.length === 0" 
                   class="empty-list-message" style="height: 658px;"
