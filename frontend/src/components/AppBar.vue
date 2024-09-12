@@ -39,16 +39,6 @@
         Dashboard
       </v-btn>
 
-      <!--Matchup button-->
-      <v-btn
-        v-if="$store.state.isLoggedIn"
-        to="/matchup"
-        prepend-icon="mdi-account-multiple"
-        variant="tonal" class="mr-5"
-      >
-        Matchup
-      </v-btn>
-
       <!--Statistics button-->
       <v-btn
         v-if="$store.state.isLoggedIn"

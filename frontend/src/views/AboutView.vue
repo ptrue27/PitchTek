@@ -9,7 +9,7 @@
           Department of Computer Science and Engineering
         </p>
         <p>
-          <strong>Team 23:</strong> Davis Dunkley, Parker True, Ethan Carroll<br/>
+          <strong>Team 23:</strong> Parker True, Davis Dunkley, Ethan Carroll<br/>
           <strong>Instructors:</strong> David Feil-Seifer, Devrin Lee, Sara Davis, Zach Estreito, Vinh Le<br/>
           <strong>Advisor:</strong> Dr. Emily Hand, Assistant Professor, UNR
         </p>
@@ -57,6 +57,9 @@
         <h2 style="margin-top: -5px;">
           References and Online Sources
         </h2>
+        <p style="margin-bottom: 5px;">
+          Read more about the groundbreaking baseball research that inspired PitchTek's pitch prediction model.
+        </p>
         <ul style="margin-left: 15px;">
           <li><a href="https://towardsdatascience.com/baseball-and-machine-learning-a-data-science-approach-to-2021-hitting-projections-4d6eeed01ede">Baseball and machine learning: A data science approach to 2021 hitting projections - Medium</a></li>
           <li><a href="https://www.mdpi.com/2076-3417/11/10/4499">Use of Machine Learning and Deep Learning to Predict the Outcomes of Major League Baseball Matches - Applied Sciences</a></li>

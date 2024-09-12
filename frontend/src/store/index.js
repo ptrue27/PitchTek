@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import createPersistedState from "vuex-persistedstate";
 
 const defaultBatter = {
     id: 0, 
@@ -75,6 +76,7 @@ const defaultAccount = {
 };
 
 const store = createStore({
+    plugins: [createPersistedState()],
     state() {
         return { 
             host: "localhost:5000", // development
@@ -99,10 +101,8 @@ const store = createStore({
             season: {
                 id: 0,
                 name: "Select Season",
-                ids: localStorage.getItem("seasonIds") ? 
-                    JSON.parse(localStorage.getItem("seasonIds")) : [],
-                names: localStorage.getItem("seasonNames") ? 
-                    JSON.parse(localStorage.getItem("seasonNames")) : [],
+                ids: [],
+                names: [],
             },
             balls: 0,
             strikes: 0,

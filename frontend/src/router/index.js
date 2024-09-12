@@ -2,7 +2,6 @@ import { createWebHistory, createRouter } from "vue-router";
 import LandingPageView from "./../views/LandingPageView.vue";
 import AboutView from "./../views/AboutView.vue";
 import DashboardView from "./../views/DashboardView.vue";
-import MatchupView from "./../views/MatchupView.vue";
 import StatisticsView from "./../views/StatisticsView.vue";
 import AccountView from "./../views/AccountView.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
@@ -23,12 +22,6 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: DashboardView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/matchup",
-    name: "Matchup",
-    component:MatchupView,
     meta: { requiresAuth: true },
   },
   {
