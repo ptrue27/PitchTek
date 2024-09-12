@@ -11,7 +11,7 @@
         <p>
           <strong>Team 23:</strong> Parker True, Davis Dunkley, Ethan Carroll<br/>
           <strong>Instructors:</strong> David Feil-Seifer, Devrin Lee, Sara Davis, Zach Estreito, Vinh Le<br/>
-          <strong>Advisor:</strong> Dr. Emily Hand, Assistant Professor, UNR
+          <strong>Advisor:</strong> Dr. Emily Hand, Assistant Professor - Machine Learning, UNR
         </p>
       </v-card>
 
