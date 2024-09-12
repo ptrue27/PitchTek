@@ -1,0 +1,14 @@
+from the course of the demo to the final day to sumbit i have added more to the project ive committed a few times adding to the program,
+I made the Statiscs page more visualling appealing in comparision there will be a bunch of screen shots of the code and the UI disgin i worked on, 
+I have start on the history page that is still incomplete but, ive gotten the templates to where the grpahs are supposed to, i am currenlty running into a runtime error that im having trouble figuring out 
+but i have also worked on the data parser for seperating all the data for the pitches and events now for the machine learning algorthim that ethan is making in a list format.
+this was made in a 2 weeks span to add some extra effort becasue parker has put in more work than us. thanks for reading and evaulating the updates.
+![Alt text](image.png)
+![Alt text](image-1.png)
+![
+    this was changed to the picture below 
+](image-2.png)
+![
+this is the beetter looking one, it still has a runtime error i cnat fgure out but this is what i got
+](image-3.png)
+![this is the parser ive been working after the demo](image-4.png)
