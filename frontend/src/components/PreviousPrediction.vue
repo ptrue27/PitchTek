@@ -273,9 +273,15 @@ export default {
   },
   computed: {
     imageURL() {
-      return require("@/assets/heat_maps/" + this.storeSnapshot.prediction_img )
-    },
 
+      try {
+        return require("@/assets/heat_maps_v2/" + this.prediction.img)
+
+      } catch (error) {
+        return require("@/assets/heat_maps_v2/default_heat_map.jpg")
+      }
+
+    },
   },
   methods: {
     getColor(state, index) {

@@ -12,6 +12,8 @@ import os
 import pandas as pd
 import statsapi
 from werkzeug.utils import secure_filename
+from app.pitch_predictions import RF_prediction
+from experiments.create_heatmap import make_heat_map
 
 # Use the Matplotlib 'Agg' backend
 use('Agg')
@@ -156,34 +158,50 @@ def new_game():
     return jsonify({"id": game_id})
 
 
+pitch_dict = {
+    'CH': "Changeup",
+    'CU': "Curveball",
+    'FC': "Cutter",
+    'EP': "Eephus",
+    'FO': "Forkball",
+    'FF': "Fastball",
+    'KN': "Knuckleball",
+    'KC': "Knuckle-Curve",
+    'SC': "Screwball",
+    'SI': "Sinker",
+    'SL': "Slider",
+    'SV': "Slurve",
+    'FS': "Splitter",
+    'ST': "Sweeper"
+}
+
+
 @app.route('/new_prediction', methods=['POST'])
 def new_prediction():
     params = request.json  # Get all parameters passed
     print("Params received:", params)  # Log all params received
 
     # unpack game state variables
-    # release_speed = float(request.args.get("release_speed"))
-    # plate_x = float(request.args.get("plate_x"))
-    # plate_z = float(request.args.get("plate_z"))
-    # balls = int(request.args.get("balls"))
-    # strikes = int(request.args.get("strikes"))
-    # pitcher_id = int(request.args.get("pitcher_id"))
+    release_speed = float(params["release_speed"])
+    plate_x = float(params["plate_x"])
+    plate_z = float(params["plate_z"])
+    balls = int(params["balls"])
+    strikes = int(params["strikes"])
+    pitcher_id = int(params["pitcher_id"])
 
-    print("HERE")
-    # print("RELEASE SPEED", release_speed)
-    # print("plate_x", plate_x)
-    # print("plate_z", plate_z)
-    # print("balls", balls)
-    # print("strikes", strikes)
-    # print("pitcher_id", pitcher_id)
+    # get pitch predictions
+    pitch_type, location, error, average_release_speed\
+        = RF_prediction(release_speed, plate_x, plate_z, balls, strikes, pitcher_id)
 
-    # Predict next pitch
+    # generate image and get image name
+    file_name = make_heat_map(pitch_type, pitcher_id, location)
+
     prediction = {
-        "img": "425794_CH_heat_map.jpg",
-        "speed": 983.3,
-        "location": 4,
-        "confidence": 54.73,
-        "type": " Changeup (CH)",
+        "img": file_name,
+        "speed": round(average_release_speed, 1),
+        "location": location,
+        "confidence": 1154.73,
+        "type": pitch_dict[pitch_type],
     }
 
     # Store pitch data

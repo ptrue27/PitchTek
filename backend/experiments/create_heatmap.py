@@ -2,45 +2,35 @@
 #
 # NOTE: The heat map is from the catchers perspective
 #
-# Pitchers with heatmaps that look the same: 543056
-import unittest
+#
 import sqlite3
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import matplotlib.patches as patches
+import random
+import os
 
 
-def get_dataframe(id):
-    # Connect to SQLite database
-    conn = sqlite3.connect('databases/pitches.db')
+def get_dataframe(pitcher_id):
 
-    # Create a cursor object to execute SQL queries
-    cursor = conn.cursor()
+    folder_path = "databases/pitches"
+    file_path = os.path.join(folder_path, f"{pitcher_id}.csv")
+    if os.path.exists(file_path):
+        data = pd.read_csv(file_path)
+    else:
+        pitcher_id = "434378"
+        file_path = os.path.join(folder_path, f"{pitcher_id}.csv")
+        data = pd.read_csv(file_path)
 
-    # Execute a SQL query to fetch data from the table
-    query = f"SELECT * FROM \"{id}\";"
-    cursor.execute(query)
 
-    # Fetch all rows from the executed query
-    rows = cursor.fetchall()
-
-    # Get the column names from the cursor description
-    columns = [col[0] for col in cursor.description]
-
-    # Create a pandas DataFrame with fetched data and column names
-    df = pd.DataFrame(rows, columns=columns)
-
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
-
-    return df
+    return data
 
 # Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
-def make_heat_map(pitch_type, player_id):
+def make_heat_map(pitch_type, player_id, location):
 
-    path = '../uploads/' + player_id + '_pitch_data.csv'
     df = get_dataframe(player_id)
 
     # Extract values
@@ -68,11 +58,15 @@ def make_heat_map(pitch_type, player_id):
 
     # Create horizontal lines
     for i in range(1, 3):
-        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.73, color='black', linestyle='-')
+        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.72, color='black', linestyle='-')
 
     # Create vertical lines
     for i in range(1, 3):
         plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
+
+
+    # Add Pitch Location Prediction
+    plt.plot(location[0], location[1], 'bo', markersize=30, alpha=0.5)
 
     # Remove the x and y-axis
     #plt.axis('off')
@@ -92,10 +86,15 @@ def make_heat_map(pitch_type, player_id):
     #plt.show()
 
     #Export the plot
-    file_name = r"..\frontend\src\assets\heat_maps\\" + player_id + "_" + pitch_type + "_heat_map.jpg"
-    plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
+    random_number = random.randint(0, 100000)
+    directory = r"..\frontend\src\assets\heat_maps_v2"
+    file_name = f"{player_id}_{pitch_type}_heat_map_{random_number}.jpg"
+    file_path = os.path.join(directory, file_name)
+    plt.savefig(file_path, bbox_inches='tight', pad_inches=0.1, dpi=500)
 
-    #return file_name
+    plt.clf()
+
+    return file_name
 
 
 # This function is used to create the default strike zone
@@ -129,7 +128,7 @@ def create_default_strike_zone():
 
     # Create vertical lines
     for i in range(1, 3):
-        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
+        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.78, color='black', linestyle='-')
 
     # Remove tics
     plt.xticks([])
@@ -143,16 +142,14 @@ def create_default_strike_zone():
     plt.savefig(file_name, bbox_inches='tight', pad_inches=0.1)
 
 
-def main():
+def runtime_main():
 
-    id = "608665"
-
-    #create_default_strike_zone()
-    make_heat_map("SI", id)
-   # make_heat_map("SL", id)
-    #make_heat_map("CU", id)
-    #make_heat_map("CH", id)
+    id = "434378"
+    location = [0.5615384615384615, 1.9673992673992675]
+    error = [0.5585559817570016, 0.8199079238523023]
+    make_heat_map("FF", id, location, error)
 
 
-main()
+
+
 
