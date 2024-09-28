@@ -82,12 +82,17 @@ export default {
       const index = this.$store.state.teamNames.indexOf(this.homeTeamName);
       const teamId = this.$store.state.teamIds[index];
       const path = 'http://' + this.$store.state.host + '/api/get_roster';
+      const token = localStorage.getItem("token");
       const params = {
         season_name: this.$store.state.season.name,
         team_id: teamId
       };
 
-      axios.get(path, { params })
+      axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+      })
         .then((res) => {
           const roster = res.data;
           console.log("Loaded roster for " + teamId + ": " + 
@@ -122,12 +127,17 @@ export default {
       const index = this.$store.state.teamNames.indexOf(this.awayTeamName);
       const teamId = this.$store.state.teamIds[index];
       const path = 'http://' + this.$store.state.host + '/api/get_roster';
+      const token = localStorage.getItem("token");
       const params = {
         season_name: this.$store.state.season.name,
         team_id: teamId
       };
 
-      axios.get(path, { params })
+      axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+      })
         .then((res) => {
           const roster = res.data;
           console.log("Loaded roster for " + teamId + ": " + 

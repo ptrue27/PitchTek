@@ -250,6 +250,7 @@
         } 
         else {
           const path = "http://" + this.$store.state.host + "/api/new_game";
+          const token = localStorage.getItem("token");
           const body = {
             home_team_name: this.$store.state.home.name,
             away_team_name: this.$store.state.away.name,
@@ -257,7 +258,11 @@
           };
           console.log(this.$store.state.season);
 
-          axios.post(path, body)
+          axios.post(path, body, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+          })
               .then((res) => {
                   const gameId = res.data.id;
                   console.log("Started game: " + gameId);
@@ -278,11 +283,16 @@
 
         // Fill team selection lists
         const path = "http://" + this.$store.state.host + "/api/get_teams";
+        const token = localStorage.getItem("token");
         const params = { 
           season_id: this.$store.state.season.id,
           season_name: this.$store.state.season.name,
         };
-        axios.get(path, { params })
+        axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+        })
             .then((res) => {
                 const teams = res.data;
                 console.log("Loaded teams: " + teams["ids"].length);

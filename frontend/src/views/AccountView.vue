@@ -282,11 +282,16 @@
         const index = this.$store.state.account.gameNames.indexOf(this.gameName);
         const gameId = this.$store.state.account.gameIds[index];
         const path = "http://" + this.$store.state.host + "/api/get_history";
+        const token = localStorage.getItem("token");
         const params = { 
           game_id: gameId,
         };
 
-        axios.get(path, { params })
+        axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+        })
             .then((res) => {
                 const gameStates = res.data.game_states;
                 console.log("Loaded game states: " + gameStates.length);
@@ -303,12 +308,17 @@
       handleSeasonChange() {
         // Fill team selection list
         var path = "http://" + this.$store.state.host + "/api/get_teams";
+        const token = localStorage.getItem("token");
         var params = { 
           season_id: this.$store.state.account.seasonId,
           season_name: this.seasonName,
         };
 
-        axios.get(path, { params })
+        axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+        })
             .then((res) => {
                 const teams = res.data;
                 console.log("Loaded teams: " + teams["ids"].length);
@@ -324,7 +334,11 @@
           season_id: this.$store.state.account.seasonId,
         };
 
-        axios.get(path, { params })
+        axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+        })
             .then((res) => {
                 let games = res.data;
                 console.log("Loaded games: " + games.ids.length);
@@ -338,12 +352,17 @@
         const index = this.$store.state.account.teamNames.indexOf(this.teamName);
         const teamId = this.$store.state.account.teamIds[index];
         const path = 'http://' + this.$store.state.host + '/api/get_roster';
+        const token = localStorage.getItem("token");
         const params = {
           season_name: this.seasonName,
           team_id: teamId,
         };
 
-        axios.get(path, { params })
+        axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+        })
           .then((res) => {
             const roster = res.data;
             console.log("Loaded roster for " + teamId + ": " + 

@@ -135,19 +135,23 @@
         methods: {
             handlePredictButtonClick() {
                 console.log('Predict Button clicked!');
-
                 this.$store.commit('setReleaseSpeed', this.speed)
 
-                const path = 'http://' + this.$store.state.host + '/new_prediction';
-                axios.post(path, this.gameState)
-                .then((res) => {
-                    const prediction = res.data;
-                    console.log("Pitch Prediction Recieved: " + prediction);
-                    this.$store.commit("predict", prediction);
+                const path = 'http://' + this.$store.state.host + '/api/new_prediction';
+                const token = localStorage.getItem("token");
+                axios.post(path, this.gameState, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
                 })
-                .catch((error) => {
-                    console.error(error);
-                });
+                    .then((res) => {
+                        const prediction = res.data;
+                        console.log("Pitch Prediction Recieved: " + prediction);
+                        this.$store.commit("predict", prediction);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
                 this.speed = 0.0;
                 this.type = "Select Pitch";
                 this.dialog = false;

@@ -1,7 +1,7 @@
-import base64
-from app.get_prediction import Predictions_Class
-from app.data_visualizer import DataVisualizer
 from app import app, user_manager, stats_api, sql_utils
+from app.create_heatmap import encode_image, make_heat_map
+from app.data_visualizer import DataVisualizer
+from app.pitch_predictions import RF_prediction
 
 from datetime import datetime
 from flask import request, jsonify, render_template, send_from_directory
@@ -12,19 +12,14 @@ import os
 import pandas as pd
 import statsapi
 from werkzeug.utils import secure_filename
-from app.pitch_predictions import RF_prediction
-from experiments.create_heatmap import make_heat_map
 
-# Use the Matplotlib 'Agg' backend
+HOST = "localhost:5000"  # DEVELOPMENT
+# HOST = "pitchtek.pro" # PRODUCTION
+
 use('Agg')
-
-# Configure directories using environment variables or default to a relative path
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', './uploads')
 app.config['STATIC_FOLDER'] = os.getenv('STATIC_FOLDER', './static')
-
 df_global = pd.DataFrame()
-HOST = "localhost:5000"  # development
-# HOST = "pitchtek.pro" # deployment
 
 
 @app.route('/api/sign_up', methods=['POST'])
@@ -52,6 +47,7 @@ def logout():
 
 
 @app.route("/api/get_teams", methods=["GET"])
+@jwt_required
 def get_teams():
     season_id = request.args.get("season_id")
     season_name = request.args.get("season_name")
@@ -68,6 +64,7 @@ def get_teams():
 
 
 @app.route('/api/get_roster', methods=['GET'])
+@jwt_required
 def get_roster():
     team_id = request.args.get("team_id")
     season_name = request.args.get("season_name")
@@ -88,6 +85,7 @@ def get_roster():
 
 
 @app.route('/api/get_batter', methods=['GET'])
+@jwt_required
 def get_batter():
     id = request.args.get("id")
     season_name = request.args.get("season_name")
@@ -102,6 +100,7 @@ def get_batter():
 
 
 @app.route('/api/get_pitcher', methods=['GET'])
+@jwt_required
 def get_pitcher():
     id = request.args.get("id")
     season_name = request.args.get("season_name")
@@ -116,6 +115,7 @@ def get_pitcher():
 
 
 @app.route('/api/get_versus', methods=['GET'])
+@jwt_required
 def get_versus():
     pitcher_id = request.args.get("pitcher_id")
     batter_id = request.args.get("batter_id")
@@ -131,6 +131,7 @@ def get_versus():
 
 
 @app.route('/api/get_history', methods=['GET'])
+@jwt_required
 def get_history():
     game_id = request.args.get("game_id")
     game_states = sql_utils.get_records("GAMESTATES", "game_id",  game_id)
@@ -138,6 +139,7 @@ def get_history():
 
 
 @app.route('/api/get_games', methods=['GET'])
+@jwt_required
 def get_games():
     season_id = request.args.get("season_id")
     games = sql_utils.get_records("GAMES", "season_id", season_id, sort='DESC')
@@ -150,6 +152,7 @@ def get_games():
 
 
 @app.route('/api/new_game', methods=['POST'])
+@jwt_required
 def new_game():
     game = request.json
     current_time = datetime.now()
@@ -158,30 +161,29 @@ def new_game():
     return jsonify({"id": game_id})
 
 
-pitch_dict = {
-    'CH': "Changeup",
-    'CU': "Curveball",
-    'FC': "Cutter",
-    'EP': "Eephus",
-    'FO': "Forkball",
-    'FF': "Fastball",
-    'KN': "Knuckleball",
-    'KC': "Knuckle-Curve",
-    'SC': "Screwball",
-    'SI': "Sinker",
-    'SL': "Slider",
-    'SV': "Slurve",
-    'FS': "Splitter",
-    'ST': "Sweeper"
-}
-
-
-@app.route('/new_prediction', methods=['POST'])
+@app.route('/api/new_prediction', methods=['POST'])
+@jwt_required
 def new_prediction():
-    params = request.json  # Get all parameters passed
-    print("Params received:", params)  # Log all params received
+    pitch_types = {
+        'CH': "Changeup",
+        'CU': "Curveball",
+        'FC': "Cutter",
+        'EP': "Eephus",
+        'FO': "Forkball",
+        'FF': "Fastball",
+        'KN': "Knuckleball",
+        'KC': "Knuckle-Curve",
+        'SC': "Screwball",
+        'SI': "Sinker",
+        'SL': "Slider",
+        'SV': "Slurve",
+        'FS': "Splitter",
+        'ST': "Sweeper"
+    }
 
-    # unpack game state variables
+    # Parse parameters
+    params = request.json
+    print("/api/new_prediction:", params)
     release_speed = float(params["release_speed"])
     plate_x = float(params["plate_x"])
     plate_z = float(params["plate_z"])
@@ -189,22 +191,22 @@ def new_prediction():
     strikes = int(params["strikes"])
     pitcher_id = int(params["pitcher_id"])
 
-    # get pitch predictions
-    pitch_type, location, error, average_release_speed\
-        = RF_prediction(release_speed, plate_x, plate_z, balls, strikes, pitcher_id)
-
-    # generate image and get image name
-    file_name = make_heat_map(pitch_type, pitcher_id, location)
+    # Get pitch prediction
+    pitch_type, location, error, average_release_speed = RF_prediction(
+        release_speed, plate_x, plate_z, balls, strikes, pitcher_id)
 
     prediction = {
         "img": file_name,
         "speed": round(average_release_speed, 1),
         "location": location,
         "confidence": 1154.73,
-        "type": pitch_dict[pitch_type],
+        "type": pitch_types[pitch_type],
     }
 
-    # Store pitch data
+    # Generate heatmap image
+    file_name = make_heat_map(pitch_type, pitcher_id, location)
+
+    # Save gamestate parameters with prediction
     game_state = request.json
     game_state["prediction_img"] = prediction["img"]
     game_state["prediction_speed"] = prediction["speed"]
@@ -395,10 +397,6 @@ def generate_velocity_chart():
     visualizer = DataVisualizer(df_global)
     img_data = visualizer.generate_pitch_velocity_chart()
     return send_file(img_data, mimetype='image/png', as_attachment=False)
-
-
-def encode_image(img_bytes):
-    return base64.b64encode(img_bytes.getvalue()).decode('utf-8')
 
 
 @app.route('/api/generate-images', methods=['POST'])

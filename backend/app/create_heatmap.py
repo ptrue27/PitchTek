@@ -3,15 +3,19 @@
 # NOTE: The heat map is from the catchers perspective
 #
 #
-import sqlite3
+import os
+import random
+import matplotlib.patches as patches
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import base64
 import matplotlib
 matplotlib.use('agg')
-import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
-import matplotlib.patches as patches
-import random
-import os
+
+
+def encode_image(img_bytes):
+    return base64.b64encode(img_bytes.getvalue()).decode('utf-8')
 
 
 def get_dataframe(pitcher_id):
@@ -25,10 +29,11 @@ def get_dataframe(pitcher_id):
         file_path = os.path.join(folder_path, f"{pitcher_id}.csv")
         data = pd.read_csv(file_path)
 
-
     return data
 
 # Given a player id and a pitch type, this function exports a jpg file that represents a heatmap for the given vars.
+
+
 def make_heat_map(pitch_type, player_id, location):
 
     df = get_dataframe(player_id)
@@ -40,52 +45,56 @@ def make_heat_map(pitch_type, player_id, location):
     df.dropna(subset=["plate_x", "plate_z"], inplace=True)
 
     # Create a 2D histogram
-    heatmap, xedges, yedges = np.histogram2d(df["plate_x"], df["plate_z"], bins=20)
+    heatmap, xedges, yedges = np.histogram2d(
+        df["plate_x"], df["plate_z"], bins=20)
 
     # Change the backround color
     # plt.figure(facecolor="gray")
 
     # Plot the heat map
-    plt.imshow(heatmap.T, extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap='Reds')
+    plt.imshow(heatmap.T, extent=[
+               xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap='Reds')
 
     # Set custom limits for the x and y-axis
     plt.xlim(-2., 2)
     plt.ylim(.3, 4.7)
 
     # Add a custom box or rectangle
-    custom_box = patches.Rectangle((-.9, 1.2), 1.8, 2.6, linewidth=2, edgecolor='black', facecolor='none', label='Custom Box')
+    custom_box = patches.Rectangle(
+        (-.9, 1.2), 1.8, 2.6, linewidth=2, edgecolor='black', facecolor='none', label='Custom Box')
     plt.gca().add_patch(custom_box)
 
     # Create horizontal lines
     for i in range(1, 3):
-        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.72, color='black', linestyle='-')
+        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28,
+                    xmax=.72, color='black', linestyle='-')
 
     # Create vertical lines
     for i in range(1, 3):
-        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.79, color='black', linestyle='-')
-
+        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21,
+                    ymax=.79, color='black', linestyle='-')
 
     # Add Pitch Location Prediction
     plt.plot(location[0], location[1], 'bo', markersize=30, alpha=0.5)
 
     # Remove the x and y-axis
-    #plt.axis('off')
+    # plt.axis('off')
 
     # Set the dimensions of the plot
-    #plt.figure(figsize=(1, 1.5))
+    # plt.figure(figsize=(1, 1.5))
 
     # Set custom limits to crop the plot
-    #plt.xlim(2, 8)
-    #plt.ylim(-2, 8)
+    # plt.xlim(2, 8)
+    # plt.ylim(-2, 8)
 
     # Remove tics
     plt.xticks([])
     plt.yticks([])
 
     # Display the plot
-    #plt.show()
+    # plt.show()
 
-    #Export the plot
+    # Export the plot
     random_number = random.randint(0, 100000)
     directory = r"..\frontend\src\assets\heat_maps_v2"
     file_name = f"{player_id}_{pitch_type}_heat_map_{random_number}.jpg"
@@ -106,29 +115,34 @@ def create_default_strike_zone():
     df = df[df['pitch_type'] == ""]
 
     # Create a 2D histogram
-    heatmap, xedges, yedges = np.histogram2d(df["plate_x"], df["plate_z"], bins=20)
+    heatmap, xedges, yedges = np.histogram2d(
+        df["plate_x"], df["plate_z"], bins=20)
 
     # Change the backround color
     # plt.figure(facecolor="gray")
 
     # Plot the heat map
-    plt.imshow(heatmap.T, extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap="Greys")
+    plt.imshow(heatmap.T, extent=[
+               xedges[0], xedges[-1], yedges[0], yedges[-1]], origin='lower', cmap="Greys")
 
     # Set custom limits for the x and y-axis
     plt.xlim(-2., 2)
     plt.ylim(.3, 4.7)
 
     # Add a custom box or rectangle
-    custom_box = patches.Rectangle((-.9, 1.2), 1.8, 2.6, linewidth=2, edgecolor='black', facecolor='none', label='Custom Box')
+    custom_box = patches.Rectangle(
+        (-.9, 1.2), 1.8, 2.6, linewidth=2, edgecolor='black', facecolor='none', label='Custom Box')
     plt.gca().add_patch(custom_box)
 
     # Create horizontal lines
     for i in range(1, 3):
-        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28, xmax=.73, color='black', linestyle='-')
+        plt.axhline(y=1.2 + i * 2.6 / 3, xmin=.28,
+                    xmax=.73, color='black', linestyle='-')
 
     # Create vertical lines
     for i in range(1, 3):
-        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21, ymax=.78, color='black', linestyle='-')
+        plt.axvline(x=-.9 + i * 1.8 / 3, ymin=.21,
+                    ymax=.78, color='black', linestyle='-')
 
     # Remove tics
     plt.xticks([])
@@ -148,8 +162,3 @@ def runtime_main():
     location = [0.5615384615384615, 1.9673992673992675]
     error = [0.5585559817570016, 0.8199079238523023]
     make_heat_map("FF", id, location, error)
-
-
-
-
-

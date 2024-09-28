@@ -92,14 +92,19 @@ export default {
         handlePitcherChange() {
             const index = this.pitcherNames.indexOf(this.pitcher.name);
             const pitcherId = this.pitcherIds[index];
-            const path = 'http://' + this.$store.state.host + '/api/get_pitcher';
-            const params = {
+            var path = 'http://' + this.$store.state.host + '/api/get_pitcher';
+            const token = localStorage.getItem("token");
+            var params = {
                 id: pitcherId,
                 season_name: this.$store.state.season.name,
             };
 
             // Get pitcher stats
-            axios.get(path, { params })
+            axios.get(path, params, { headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    } 
+            })
                 .then((res) => {
                     const newPitcher = res.data;
                     console.log("Changed pitcher: " + newPitcher.name + ", " + newPitcher.id);
@@ -107,13 +112,17 @@ export default {
                     
                     // Get matchup stats
                     if (this.batterId) {
-                        const path = 'http://' + this.$store.state.host + '/api/get_versus';
-                        const params = {
+                        path = 'http://' + this.$store.state.host + '/api/get_versus';
+                        params = {
                             pitcher_id: pitcherId,
                             batter_id: this.batterId,
                             season_name: this.$store.state.season.name,
                         };
-                        axios.get(path, { params })
+                        axios.get(path, params, { headers: {
+                                Authorization: `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                            } 
+                        })
                             .then((res) => {
                                 const matchupStats = res.data;
                                 console.log("Matchup: " + matchupStats);

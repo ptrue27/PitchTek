@@ -1,10 +1,12 @@
 import sqlite3
 from pybaseball import playerid_lookup, statcast_pitcher
-from experiments.create_heatmap import make_heat_map
+from backend.app.create_heatmap import make_heat_map
 import os
 
 import pandas as pd
 # This function gets me a list of every pitcher in the mlb.db database
+
+
 def extract_unique_ids():
 
     # Connect to the SQLite database
@@ -25,7 +27,7 @@ def extract_unique_ids():
 
 # This function filters out the ids that are already in the database
 def filter_out_ids(ls):
-    
+
     connection = sqlite3.connect('databases/pitches.db')
     cursor = connection.cursor()
 
@@ -61,8 +63,8 @@ def download_player_pitch_data(id):
 def create_database():
 
     conn = sqlite3.connect('databases\pitches.db')
-    #cursor = conn.cursor()
-    #conn.commit()
+    # cursor = conn.cursor()
+    # conn.commit()
     conn.close()
 
 
@@ -106,6 +108,7 @@ def get_already_made_images():
 
     return first_six_chars_list
 
+
 def get_pitch_types_from_player():
 
     # Connect to the SQLite database
@@ -130,23 +133,26 @@ def get_pitch_types_from_player():
         column_names = [column[1] for column in columns]
 
         if 'pitch_type' in column_names:
-            cursor.execute(f"SELECT DISTINCT pitch_type FROM \"{table_name}\";")
+            cursor.execute(f"SELECT DISTINCT pitch_type FROM \"{
+                           table_name}\";")
             unique_values = cursor.fetchall()
 
             # Step 5: Print the unique values
             print("Unique values of 'pitch_type':")
             for value in unique_values:
                 print(value[0])
-                if(value[0] != None) and ((table_name + "_" + value[0]) not in images):
+                if (value[0] != None) and ((table_name + "_" + value[0]) not in images):
                     make_heat_map(value[0], table_name)
 
     # Close the connection
     conn.close()
+
 
 def main():
 
     data_base_manager()
 
     get_pitch_types_from_player()
+
 
 main()
